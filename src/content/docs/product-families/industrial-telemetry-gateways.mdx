@@ -1,0 +1,35 @@
+---
+title: Industrial Telemetry Gateways
+description: A category guide to telemetry gateways used to bridge field devices, remote sites, and upstream monitoring systems.
+referenceType: product-family
+adProfile: product-family
+commercialIntent: high
+reviewCadence: Quarterly review
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Industrial Telemetry Gateways
+
+Telemetry gateways sit at the point where field signals, remote asset context, buffering, translation, and upstream transport all meet. They are often the architectural center of a remote monitoring site.
+
+## What they usually do
+
+- Collect, normalize, or buffer field data
+- Translate between device protocols and upstream telemetry paths
+- Provide local logic, diagnostics, or edge-aware resilience
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Telemetry protocol fit"
+		href="/protocols/telemetry-protocol-fit/"
+		description="Use protocol pages to decide where translation and reshaping should happen."
+	/>
+	<LinkCard
+		title="Cellular vs LoRaWAN vs satellite"
+		href="/network-paths/cellular-vs-lorawan-vs-satellite/"
+		description="Backhaul choices strongly reshape gateway requirements."
+	/>
+</div>

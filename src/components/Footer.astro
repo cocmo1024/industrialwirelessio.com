@@ -1,0 +1,55 @@
+---
+import EditLink from 'virtual:starlight/components/EditLink';
+import LastUpdated from 'virtual:starlight/components/LastUpdated';
+import Pagination from 'virtual:starlight/components/Pagination';
+import AdSlot from './AdSlot.astro';
+import { getAdPlan } from '../utils/ad-config';
+
+const route = Astro.locals.starlightRoute;
+const plan = getAdPlan(route.id, route.entry?.data);
+---
+
+<footer class="sl-flex">
+	<div class="meta sl-flex">
+		<EditLink />
+		<LastUpdated />
+	</div>
+	<Pagination />
+	<section class="footer-commercial">
+		<div class="footer-commercial__copy">
+			<h2>Commercial transparency</h2>
+			<p>
+				Future sponsorships, affiliate relationships, and display inventory are intended to remain
+				clearly disclosed and separate from editorial judgment.
+			</p>
+			<p class="footer-commercial__links">
+				<a href="/advertising/">Advertising</a>
+				<span aria-hidden="true"> / </span>
+				<a href="/affiliate-disclosure/">Affiliate Disclosure</a>
+				<span aria-hidden="true"> / </span>
+				<a href="/editorial-policy/">Editorial Policy</a>
+			</p>
+		</div>
+		<AdSlot {...plan.footer} />
+	</section>
+</footer>
+
+<style>
+	@layer starlight.core {
+		footer {
+			flex-direction: column;
+			gap: 1.5rem;
+		}
+		.meta {
+			gap: 0.75rem 3rem;
+			justify-content: space-between;
+			flex-wrap: wrap;
+			margin-top: 3rem;
+			font-size: var(--sl-text-sm);
+			color: var(--sl-color-gray-3);
+		}
+		.meta > :global(p:only-child) {
+			margin-inline-start: auto;
+		}
+	}
+</style>

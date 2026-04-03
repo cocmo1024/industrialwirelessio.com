@@ -1,0 +1,35 @@
+---
+title: Modbus RTU, MQTT, and OPC UA in Telemetry
+description: A practical framework for placing common protocol choices at the right layer of a remote telemetry architecture.
+referenceType: protocol
+adProfile: protocol
+commercialIntent: high
+reviewCadence: Quarterly review
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Modbus RTU, MQTT, and OPC UA in Telemetry
+
+These protocols are often discussed as if they are direct substitutes. In practice, they usually serve different roles in the stack. The correct decision is less about ideology and more about where data originates, where it is reshaped, and what the upstream platform expects.
+
+## A useful framing
+
+- `Modbus RTU` often lives close to field devices and legacy equipment
+- `MQTT` is often useful for telemetry transport and event-oriented movement
+- `OPC UA` is often useful where richer contextual integration or upstream interoperability matters
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Telemetry protocol fit"
+		href="/protocols/telemetry-protocol-fit/"
+		description="Step back and decide which layer of the system should own translation and data shaping."
+	/>
+	<LinkCard
+		title="Industrial telemetry gateways"
+		href="/product-families/industrial-telemetry-gateways/"
+		description="Protocol debates usually become easier once the gateway role is defined."
+	/>
+</div>

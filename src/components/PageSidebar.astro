@@ -1,0 +1,37 @@
+---
+import MobileTableOfContents from 'virtual:starlight/components/MobileTableOfContents';
+import TableOfContents from 'virtual:starlight/components/TableOfContents';
+import AdSlot from './AdSlot.astro';
+import { getAdPlan } from '../utils/ad-config';
+
+const route = Astro.locals.starlightRoute;
+const plan = getAdPlan(route.id, route.entry?.data);
+---
+
+{
+	route.toc && (
+		<div class="lg:sl-hidden">
+			<MobileTableOfContents />
+		</div>
+	)
+}
+
+<div class="right-sidebar-panel sl-hidden lg:sl-block">
+	<div class="sl-container">
+		{route.toc && <TableOfContents />}
+		<section class="ad-rail">
+			<h2>Commercial Layout</h2>
+			<p>{plan.summary}</p>
+			<div class="ad-rail__stack">
+				{plan.rail.map((slot) => <AdSlot {...slot} compact />)}
+			</div>
+			<p class="ad-rail__links">
+				<a href="/advertising/">Advertising</a>
+				<span aria-hidden="true"> / </span>
+				<a href="/affiliate-disclosure/">Affiliate Disclosure</a>
+				<span aria-hidden="true"> / </span>
+				<a href="/editorial-policy/">Editorial Policy</a>
+			</p>
+		</section>
+	</div>
+</div>

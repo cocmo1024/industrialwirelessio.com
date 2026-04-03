@@ -13,6 +13,7 @@ export default defineConfig({
 			description:
 				'Field-oriented reference system for remote telemetry, industrial wireless architecture, network paths, and site reliability.',
 			tagline: 'Remote telemetry, field connectivity, network path choices, and reliability planning organized for real deployments.',
+			lastUpdated: true,
 			social: [
 				{
 					icon: 'github',
@@ -27,6 +28,14 @@ export default defineConfig({
 						{
 							label: 'Applications',
 							autogenerate: { directory: 'applications' },
+						},
+						{
+							label: 'Product Families',
+							autogenerate: { directory: 'product-families' },
+						},
+						{
+							label: 'Vendors',
+							autogenerate: { directory: 'vendors' },
 						},
 						{
 							label: 'Network Paths',
@@ -49,13 +58,26 @@ export default defineConfig({
 				{
 					label: 'Site',
 					collapsed: true,
-					items: ['about', 'contact', 'privacy', 'disclaimer'],
+					items: [
+						'about',
+						'contact',
+						'privacy',
+						'terms-of-use',
+						'disclaimer',
+						'editorial-policy',
+						'advertising',
+						'affiliate-disclosure',
+					],
 				},
 			],
 			customCss: ['./src/styles/global.css'],
 			pagefind: true,
 			favicon: '/favicon.svg',
 			credits: false,
+			components: {
+				PageSidebar: './src/components/PageSidebar.astro',
+				Footer: './src/components/Footer.astro',
+			},
 		}),
 		sitemap(),
 	],

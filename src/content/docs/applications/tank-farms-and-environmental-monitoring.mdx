@@ -1,0 +1,35 @@
+---
+title: Tank Farms and Environmental Monitoring
+description: A field architecture pattern for telemetry systems that need distributed monitoring, sparse maintenance windows, and dependable alarm visibility.
+referenceType: application
+adProfile: application
+commercialIntent: high
+reviewCadence: Quarterly review
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Tank Farms and Environmental Monitoring
+
+These deployments usually depend on wide physical distribution, environmental exposure, and monitoring-first system goals. The architecture has to prioritize reliability, field serviceability, and data confidence over feature density.
+
+## Typical pressures
+
+- Long equipment spacing or difficult access
+- Alarm visibility requirements with limited on-site staffing
+- Power, enclosure, and serviceability constraints that dominate device choice
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Industrial telemetry gateways"
+		href="/product-families/industrial-telemetry-gateways/"
+		description="Choose the gateway class before over-optimizing the upstream data path."
+	/>
+	<LinkCard
+		title="Site survivability planning"
+		href="/reliability/site-survivability-planning/"
+		description="Field conditions often matter more than the radio selection itself."
+	/>
+</div>

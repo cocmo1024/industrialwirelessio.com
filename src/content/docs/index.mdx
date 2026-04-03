@@ -2,6 +2,10 @@
 title: Industrial Wireless I/O
 description: Field-oriented reference system for remote telemetry, industrial wireless architecture, network paths, and site reliability.
 template: splash
+referenceType: home
+adProfile: foundation
+commercialIntent: medium
+reviewCadence: Monthly review
 hero:
   title: |
     Industrial Wireless I/O
@@ -20,6 +24,12 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 <CardGrid stagger>
 	<Card title="Applications" icon="open-book">
 		Remote telemetry environments and field deployment contexts organized around asset behavior, maintenance reality, and data goals.
+	</Card>
+	<Card title="Product families" icon="add-document">
+		Gateways, remote I/O, RTU-class hardware, antennas, and edge-adjacent building blocks organized by deployment role.
+	</Card>
+	<Card title="Vendors" icon="open-book">
+		Portfolio-oriented vendor pages that help readers understand where ecosystem fit matters more than spec-sheet breadth.
 	</Card>
 	<Card title="Network paths" icon="random">
 		Cellular, LoRaWAN, satellite, and hybrid backhaul choices framed by terrain, uptime, and operating constraints.
@@ -42,6 +52,16 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 		title="Start with applications"
 		href="/applications/"
 		description="Define the remote asset, site conditions, and monitoring objective before narrowing hardware or network choices."
+	/>
+	<LinkCard
+		title="Review product families"
+		href="/product-families/"
+		description="Map gateways, remote I/O, and field hardware categories to the job the site actually has to do."
+	/>
+	<LinkCard
+		title="Study vendors"
+		href="/vendors/"
+		description="Use vendor pages to compare ecosystem depth, industrial fit, and portfolio logic without relying on marketing copy."
 	/>
 	<LinkCard
 		title="Compare network paths"
@@ -97,6 +117,8 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 	<a href="/contact/">Contact</a>
 	<span aria-hidden="true"> / </span>
 	<a href="/privacy/">Privacy</a>
+	<span aria-hidden="true"> / </span>
+	<a href="/terms-of-use/">Terms</a>
 	<span aria-hidden="true"> / </span>
 	<a href="/disclaimer/">Disclaimer</a>
 </p>

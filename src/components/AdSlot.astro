@@ -1,0 +1,23 @@
+---
+interface Props {
+	zone: string;
+	headline: string;
+	sizes: string[];
+	audience?: string;
+	note?: string;
+	compact?: boolean;
+}
+
+const { zone, headline, sizes, audience, note, compact = false } = Astro.props;
+---
+
+<section class:list={['ad-slot', compact && 'ad-slot--compact']}>
+	<div class="ad-slot__meta">
+		<span class="ad-slot__eyebrow">Reserved placement</span>
+		<span class="ad-slot__zone">{zone}</span>
+	</div>
+	<p class="ad-slot__headline">{headline}</p>
+	{audience && <p class="ad-slot__audience">{audience}</p>}
+	<p class="ad-slot__sizes">{sizes.join(' / ')}</p>
+	{note && <p class="ad-slot__note">{note}</p>}
+</section>
