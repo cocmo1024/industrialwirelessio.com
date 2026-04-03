@@ -99,6 +99,50 @@ body {
 	border-radius: 999px;
 }
 
+.portal-links {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+	gap: 1rem;
+	margin: 1.5rem 0 2rem;
+}
+
+.portal-links .sl-link-card {
+	border-radius: 1rem;
+	border-color: color-mix(in srgb, var(--sl-color-accent) 16%, var(--sl-color-hairline));
+	background:
+		linear-gradient(180deg, color-mix(in srgb, var(--site-amber) 34%, transparent), transparent 70%),
+		var(--site-panel);
+}
+
+.signal-strip {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+	gap: 1rem;
+	margin: 1.5rem 0 2rem;
+}
+
+.signal-strip > div {
+	padding: 1rem 1.1rem;
+	border-radius: 1rem;
+	border: 1px solid color-mix(in srgb, var(--sl-color-accent) 16%, var(--sl-color-hairline));
+	background: color-mix(in srgb, var(--site-panel) 88%, transparent);
+}
+
+.signal-strip strong {
+	display: block;
+	margin-bottom: 0.5rem;
+	font-size: 0.86rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--sl-color-accent-high);
+}
+
+.footnote-links {
+	margin-top: 2rem;
+	font-size: 0.95rem;
+	color: var(--sl-color-gray-3);
+}
+
 .sl-markdown-content h2 {
 	padding-bottom: 0.42rem;
 	border-bottom: 1px solid color-mix(in srgb, var(--sl-color-accent) 18%, var(--sl-color-hairline));

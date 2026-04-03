@@ -1,0 +1,43 @@
+---
+title: Cellular vs LoRaWAN vs Satellite
+description: A practical comparison of three common remote telemetry backhaul options for field industrial deployments.
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Cellular vs LoRaWAN vs Satellite
+
+These options solve different problems. The right choice depends on coverage confidence, site density, power limits, maintenance expectations, and whether the deployment can support additional local infrastructure.
+
+## Cellular is usually strongest when
+
+- Public coverage is credible at the site.
+- Moderate bandwidth and straightforward deployment matter.
+- The team wants fewer local network components to own.
+
+## LoRaWAN is usually strongest when
+
+- Asset density supports a local wireless network design.
+- Low power and broad sensor distribution matter.
+- The team can support gateway placement and network management.
+
+## Satellite is usually strongest when
+
+- Coverage confidence matters more than bandwidth cost.
+- Remote access is rare and failure is expensive.
+- The site profile makes terrestrial assumptions risky.
+
+## Related paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Remote pump stations and water sites"
+		href="/applications/remote-pump-stations-and-water-sites/"
+		description="See how site type changes the practical meaning of coverage, serviceability, and uptime."
+	/>
+	<LinkCard
+		title="Site survivability planning"
+		href="/reliability/site-survivability-planning/"
+		description="Network choice only works when the full field architecture can survive maintenance and environment pressures."
+	/>
+</div>

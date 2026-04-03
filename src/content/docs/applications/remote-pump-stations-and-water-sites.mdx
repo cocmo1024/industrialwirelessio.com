@@ -1,0 +1,37 @@
+---
+title: Remote Pump Stations and Water Sites
+description: A reference path for telemetry designs in water, pumping, and remote field environments with strong uptime demands.
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Remote Pump Stations and Water Sites
+
+These sites reward simple, durable architectures. Power can be limited, access windows are sparse, and reliability matters more than feature density. The correct design often comes from field survivability and serviceability before it comes from radio preference.
+
+## Typical pressures
+
+- Intermittent or constrained power budgets.
+- Uneven network coverage or backhaul uncertainty.
+- Limited opportunities for on-site troubleshooting.
+
+## Design implications
+
+- Local buffering becomes more important when backhaul is unstable.
+- Enclosure, antenna, and power design can matter as much as the gateway itself.
+- Hardware categories should be chosen for serviceability, not only capability density.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Cellular vs LoRaWAN vs satellite"
+		href="/network-paths/cellular-vs-lorawan-vs-satellite/"
+		description="Match the network path to terrain, scale, coverage confidence, and maintenance expectations."
+	/>
+	<LinkCard
+		title="Power, enclosures, and antennas"
+		href="/hardware/power-enclosures-and-antennas/"
+		description="Pressure-test whether the physical deployment stack fits the site just as well as the data path."
+	/>
+</div>

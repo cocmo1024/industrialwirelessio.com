@@ -1,0 +1,37 @@
+---
+title: Site Survivability Planning
+description: A framework for designing telemetry systems that can withstand remote field conditions and limited maintenance access.
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Site Survivability Planning
+
+Remote systems should be designed around the days when everything is inconvenient: weak coverage, bad weather, no immediate site access, and power behaving worse than the design spreadsheet assumed. Survivability planning is where architecture earns trust.
+
+## Survivability priorities
+
+- Local resilience when communications fail temporarily.
+- Physical protection against environmental stress and mounting realities.
+- Recovery procedures that do not require expert intervention for routine failures.
+
+## Ask early
+
+- What happens if the site cannot be reached for longer than expected?
+- Which failures should trigger alerts, local fallback, or store-and-forward behavior?
+- Which components are most likely to fail first, and how hard are they to replace?
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Power, enclosures, and antennas"
+		href="/hardware/power-enclosures-and-antennas/"
+		description="Physical-layer discipline is one of the fastest ways to improve site survivability."
+	/>
+	<LinkCard
+		title="Cellular vs LoRaWAN vs satellite"
+		href="/network-paths/cellular-vs-lorawan-vs-satellite/"
+		description="The network path only works if its failure profile matches the site's tolerance for interruption."
+	/>
+</div>

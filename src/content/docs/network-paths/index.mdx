@@ -1,0 +1,39 @@
+---
+title: Network Paths
+description: Network path reference pages for cellular, LoRaWAN, satellite, and hybrid telemetry architecture decisions.
+---
+
+import { LinkCard, Steps } from '@astrojs/starlight/components';
+
+# Network Paths
+
+Network path choice is usually the most decisive architecture step in remote telemetry. Once the backhaul model is chosen, the rest of the stack tends to follow. This section keeps that decision tied to field conditions instead of product preference.
+
+## Core paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Cellular vs LoRaWAN vs satellite"
+		href="/network-paths/cellular-vs-lorawan-vs-satellite/"
+		description="A practical comparison of common remote backhaul options and the site realities that should decide between them."
+	/>
+	<LinkCard
+		title="Applications"
+		href="/applications/"
+		description="Return to the site profile if network discussion starts drifting away from the asset and operating context."
+	/>
+	<LinkCard
+		title="Hardware"
+		href="/hardware/"
+		description="Use the network decision to shape gateway, antenna, power, and enclosure planning."
+	/>
+</div>
+
+## Network review flow
+
+<Steps>
+	1. Define site geography, asset density, and maintenance access.
+	2. Confirm latency tolerance, buffering needs, and expected data volume.
+	3. Compare coverage confidence, power burden, and deployment complexity.
+	4. Choose the path that best fits the field operating model, not the one with the best slide deck.
+</Steps>

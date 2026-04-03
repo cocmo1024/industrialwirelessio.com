@@ -1,0 +1,39 @@
+---
+title: Reliability
+description: Reliability planning for remote telemetry, industrial wireless architecture, maintenance access, and long-term site survivability.
+---
+
+import { LinkCard, Steps } from '@astrojs/starlight/components';
+
+# Reliability
+
+Reliability is the page set that turns an interesting telemetry design into a field-worthy one. This section is about failure reduction, serviceability, maintenance access, and long-term survivability in remote industrial deployments.
+
+## Core paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Site survivability planning"
+		href="/reliability/site-survivability-planning/"
+		description="A practical framework for designing remote telemetry systems that can survive both environment and operations."
+	/>
+	<LinkCard
+		title="Hardware"
+		href="/hardware/"
+		description="Stress-test the physical stack against the actual field conditions and service model."
+	/>
+	<LinkCard
+		title="Network paths"
+		href="/network-paths/"
+		description="Confirm that the chosen backhaul model matches outage tolerance, coverage confidence, and response times."
+	/>
+</div>
+
+## Reliability review flow
+
+<Steps>
+	1. List the most likely environmental, power, and communications failure modes.
+	2. Decide which failures must be tolerated locally and which require intervention.
+	3. Design maintenance, recovery, and replacement paths before deployment.
+	4. Re-check whether the architecture is still reasonable after those realities are included.
+</Steps>

@@ -1,43 +1,102 @@
 ---
 title: Industrial Wireless I/O
-description: Field-oriented reference material for remote telemetry, industrial wireless architecture, network paths, and reliability planning.
+description: Field-oriented reference system for remote telemetry, industrial wireless architecture, network paths, and site reliability.
 template: splash
 hero:
   title: |
     Industrial Wireless I/O
-  tagline: Field-oriented reference material for remote telemetry, industrial wireless architecture, network paths, and reliability planning.
+  tagline: Field-oriented reference system for remote telemetry, industrial wireless architecture, network paths, and site reliability.
   actions:
     - text: Browse applications
       link: /applications/
       icon: right-arrow
-    - text: About this site
-      link: /about/
+    - text: Compare network paths
+      link: /network-paths/
       variant: minimal
 ---
 
-import { Card, CardGrid } from '@astrojs/starlight/components';
+import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 
 <CardGrid stagger>
 	<Card title="Applications" icon="open-book">
-		Field use cases, remote assets, and telemetry environments organized as real deployment contexts.
+		Remote telemetry environments and field deployment contexts organized around asset behavior, maintenance reality, and data goals.
 	</Card>
 	<Card title="Network paths" icon="random">
-		Backhaul choices, topologies, and transport constraints for industrial remote monitoring.
+		Cellular, LoRaWAN, satellite, and hybrid backhaul choices framed by terrain, uptime, and operating constraints.
 	</Card>
 	<Card title="Protocols" icon="forward-slash">
-		Data transport, interoperability, and edge-to-cloud connectivity considerations.
+		Data transport and interoperability paths tied to field devices, gateways, and upstream monitoring systems.
+	</Card>
+	<Card title="Hardware" icon="document">
+		Remote I/O, gateways, power systems, antennas, enclosures, and edge footprints evaluated as a deployment stack.
 	</Card>
 	<Card title="Reliability" icon="approve-check-circle">
-		Power, antennas, enclosures, maintenance, and field survivability planning.
+		Site survivability, failure reduction, maintenance access, and long-term field resilience planning.
 	</Card>
 </CardGrid>
 
-<p class="mt-8 text-sm text-[var(--sl-color-gray-3)]">
+## Navigate by field decision
+
+<div class="portal-links">
+	<LinkCard
+		title="Start with applications"
+		href="/applications/"
+		description="Define the remote asset, site conditions, and monitoring objective before narrowing hardware or network choices."
+	/>
+	<LinkCard
+		title="Compare network paths"
+		href="/network-paths/"
+		description="Choose the backhaul model that fits terrain, duty cycle, power availability, and service expectations."
+	/>
+	<LinkCard
+		title="Review protocol fit"
+		href="/protocols/"
+		description="Separate field-layer and upstream data movement decisions before locking in the stack."
+	/>
+	<LinkCard
+		title="Plan the hardware stack"
+		href="/hardware/"
+		description="Connect gateways, I/O, power, enclosures, and antennas into a site-ready footprint."
+	/>
+	<LinkCard
+		title="Pressure-test reliability"
+		href="/reliability/"
+		description="Use survivability planning to catch the field realities that kill remote projects after install."
+	/>
+</div>
+
+## What this site optimizes
+
+<div class="signal-strip">
+	<div>
+		<strong>Research model</strong>
+		<p>Application first, network path second, hardware and reliability after that. Field reality drives the architecture.</p>
+	</div>
+	<div>
+		<strong>High-value traffic</strong>
+		<p>Intent tends to be strongest around remote telemetry design, network comparison, hardware footprint decisions, and reliability planning.</p>
+	</div>
+	<div>
+		<strong>Long-term edge</strong>
+		<p>Field architecture pages stay valuable because remote deployment mistakes repeat across industries and site types.</p>
+	</div>
+</div>
+
+## How to use this reference
+
+<Steps>
+	1. Start with the asset type, site conditions, and data or control objective.
+	2. Narrow the likely network path before choosing the rest of the stack.
+	3. Match protocols and hardware to the field architecture instead of treating them as isolated choices.
+	4. Finish with reliability planning to see whether the design can survive real operating conditions.
+</Steps>
+
+<p class="footnote-links">
 	<a href="/about/">About</a>
-	<span aria-hidden="true"> · </span>
+	<span aria-hidden="true"> / </span>
 	<a href="/contact/">Contact</a>
-	<span aria-hidden="true"> · </span>
+	<span aria-hidden="true"> / </span>
 	<a href="/privacy/">Privacy</a>
-	<span aria-hidden="true"> · </span>
+	<span aria-hidden="true"> / </span>
 	<a href="/disclaimer/">Disclaimer</a>
 </p>

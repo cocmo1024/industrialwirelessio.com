@@ -1,0 +1,39 @@
+---
+title: Protocols
+description: Protocol reference pages for remote telemetry systems, field devices, gateways, and upstream industrial monitoring stacks.
+---
+
+import { LinkCard, Steps } from '@astrojs/starlight/components';
+
+# Protocols
+
+Protocol decisions in remote telemetry are best understood as architecture boundaries. This section separates field communication needs from upstream data transport and explains how the gateway or edge layer often bridges the two.
+
+## Core paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Telemetry protocol fit"
+		href="/protocols/telemetry-protocol-fit/"
+		description="A practical frame for deciding where Modbus, MQTT, OPC UA, and related approaches belong in remote telemetry."
+	/>
+	<LinkCard
+		title="Network paths"
+		href="/network-paths/"
+		description="Use the chosen backhaul model to pressure-test which protocol layers make sense."
+	/>
+	<LinkCard
+		title="Hardware"
+		href="/hardware/"
+		description="Check which device classes and gateway footprints can own protocol translation cleanly."
+	/>
+</div>
+
+## Protocol review flow
+
+<Steps>
+	1. Confirm what happens at the field device layer and what happens upstream.
+	2. Decide where translation, buffering, and data shaping should occur.
+	3. Choose the simplest protocol mix that still supports the monitoring objective.
+	4. Avoid treating every layer of the architecture as if it needs the same protocol.
+</Steps>

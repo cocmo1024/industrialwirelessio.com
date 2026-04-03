@@ -1,0 +1,35 @@
+---
+title: Power, Enclosures, and Antennas
+description: A field-first guide to the physical deployment stack behind remote telemetry reliability.
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Power, Enclosures, and Antennas
+
+Many telemetry projects fail in the physical layer long before the logic layer is questioned. Power design, enclosure choice, and antenna planning are not accessories. They are core architecture decisions for remote field deployments.
+
+## Pay close attention to
+
+- Power budget stability across weather, load, and service intervals.
+- Enclosure selection relative to moisture, heat, dust, and maintenance access.
+- Antenna placement and cabling decisions that preserve signal quality and survivability.
+
+## Common oversight
+
+Treating the gateway as the architecture while leaving power and enclosure design until procurement. In the field, those choices often decide uptime more than the gateway model name.
+
+## Related paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Remote pump stations and water sites"
+		href="/applications/remote-pump-stations-and-water-sites/"
+		description="Site conditions in water and pumping environments quickly expose weak physical-layer decisions."
+	/>
+	<LinkCard
+		title="Site survivability planning"
+		href="/reliability/site-survivability-planning/"
+		description="Reliability planning is where physical-layer choices prove whether they are truly deployment ready."
+	/>
+</div>

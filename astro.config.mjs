@@ -11,8 +11,8 @@ export default defineConfig({
 		starlight({
 			title: 'Industrial Wireless I/O',
 			description:
-				'Field-oriented reference material for remote telemetry, industrial wireless architecture, network paths, and reliability planning.',
-			tagline: 'Remote telemetry, field connectivity, and industrial wireless architecture organized for real deployments.',
+				'Field-oriented reference system for remote telemetry, industrial wireless architecture, network paths, and site reliability.',
+			tagline: 'Remote telemetry, field connectivity, network path choices, and reliability planning organized for real deployments.',
 			social: [
 				{
 					icon: 'github',
@@ -23,7 +23,28 @@ export default defineConfig({
 			sidebar: [
 				{
 					label: 'Reference Areas',
-					items: ['applications', 'network-paths', 'protocols', 'hardware', 'reliability'],
+					items: [
+						{
+							label: 'Applications',
+							autogenerate: { directory: 'applications' },
+						},
+						{
+							label: 'Network Paths',
+							autogenerate: { directory: 'network-paths' },
+						},
+						{
+							label: 'Protocols',
+							autogenerate: { directory: 'protocols' },
+						},
+						{
+							label: 'Hardware',
+							autogenerate: { directory: 'hardware' },
+						},
+						{
+							label: 'Reliability',
+							autogenerate: { directory: 'reliability' },
+						},
+					],
 				},
 				{
 					label: 'Site',

@@ -1,0 +1,54 @@
+---
+title: Applications
+description: Application-first reference pages for remote telemetry, field connectivity, and wireless industrial monitoring deployments.
+---
+
+import { LinkCard, Steps } from '@astrojs/starlight/components';
+
+# Applications
+
+Applications are the right starting point for remote telemetry because site context dominates architecture. Asset behavior, terrain, service access, power constraints, and monitoring goals usually shape the winning design before hardware catalogs help.
+
+<div class="signal-strip">
+	<div>
+		<strong>Use this section for</strong>
+		<p>Remote pump stations, water sites, tanks, dispersed utility assets, and other environments where field reality dominates the stack.</p>
+	</div>
+	<div>
+		<strong>What it prevents</strong>
+		<p>Choosing radios or gateways too early without understanding access, power, enclosure, and maintenance constraints.</p>
+	</div>
+	<div>
+		<strong>Move next to</strong>
+		<p>Network paths once the site profile is stable, then protocols and hardware to refine the footprint.</p>
+	</div>
+</div>
+
+## Core paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Remote pump stations and water sites"
+		href="/applications/remote-pump-stations-and-water-sites/"
+		description="A high-value lane for telemetry projects with sparse maintenance access and strong reliability demands."
+	/>
+	<LinkCard
+		title="Network paths"
+		href="/network-paths/"
+		description="Choose the backhaul model that matches the site instead of forcing the site to fit the preferred network."
+	/>
+	<LinkCard
+		title="Reliability"
+		href="/reliability/"
+		description="Use survivability planning to catch the hidden field assumptions early."
+	/>
+</div>
+
+## Decision flow
+
+<Steps>
+	1. Define the remote asset, site access pattern, and business or operational outcome.
+	2. Separate sensing needs from control needs and local buffering needs.
+	3. Narrow the likely network path and hardware footprint.
+	4. Validate the design against power, enclosure, antenna, and maintenance reality.
+</Steps>

@@ -1,0 +1,35 @@
+---
+title: Telemetry Protocol Fit
+description: A practical framework for placing field and upstream protocols in remote telemetry architectures.
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Telemetry Protocol Fit
+
+Remote telemetry stacks often use different protocols at different layers. The field device layer may need one language, while the upstream system expects another. The gateway or edge device becomes the place where those worlds are reconciled.
+
+## Typical pattern
+
+- Field devices speak the protocols they were built around.
+- The telemetry layer translates, buffers, or reshapes data for transport.
+- Upstream systems receive a protocol that fits the monitoring platform and data architecture.
+
+## Common mistake
+
+Treating protocol choice as a pure standards debate instead of asking which layer of the system owns translation, context, and data shaping.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Power, enclosures, and antennas"
+		href="/hardware/power-enclosures-and-antennas/"
+		description="The physical footprint often determines which protocol stack is realistic to support in the field."
+	/>
+	<LinkCard
+		title="Cellular vs LoRaWAN vs satellite"
+		href="/network-paths/cellular-vs-lorawan-vs-satellite/"
+		description="Backhaul design changes protocol tradeoffs more than many teams expect."
+	/>
+</div>

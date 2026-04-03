@@ -1,0 +1,39 @@
+---
+title: Hardware
+description: Hardware reference pages for remote telemetry stacks including gateways, power systems, antennas, enclosures, and field I/O.
+---
+
+import { LinkCard, Steps } from '@astrojs/starlight/components';
+
+# Hardware
+
+Hardware should be evaluated as a site footprint, not as isolated line items. The gateway, I/O, power design, antenna plan, and enclosure choices either work together or fail together in the field.
+
+## Core paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Power, enclosures, and antennas"
+		href="/hardware/power-enclosures-and-antennas/"
+		description="A practical checklist for the physical layer that often decides whether remote telemetry survives first deployment."
+	/>
+	<LinkCard
+		title="Applications"
+		href="/applications/"
+		description="Return to the site profile if hardware selection starts ignoring access, weather, or maintenance conditions."
+	/>
+	<LinkCard
+		title="Reliability"
+		href="/reliability/"
+		description="Use reliability planning to stress-test the hardware stack against failure modes and service intervals."
+	/>
+</div>
+
+## Hardware planning flow
+
+<Steps>
+	1. Confirm what the site must sense, transmit, store, and survive.
+	2. Design the physical stack around power, environment, mounting, and access.
+	3. Choose device classes and accessories that reduce field maintenance burden.
+	4. Validate the stack against site survivability before deployment.
+</Steps>
