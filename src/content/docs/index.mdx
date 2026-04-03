@@ -1,0 +1,43 @@
+---
+title: Industrial Wireless I/O
+description: Field-oriented reference material for remote telemetry, industrial wireless architecture, network paths, and reliability planning.
+template: splash
+hero:
+  title: |
+    Industrial Wireless I/O
+  tagline: Field-oriented reference material for remote telemetry, industrial wireless architecture, network paths, and reliability planning.
+  actions:
+    - text: Browse applications
+      link: /applications/
+      icon: right-arrow
+    - text: About this site
+      link: /about/
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+<CardGrid stagger>
+	<Card title="Applications" icon="open-book">
+		Field use cases, remote assets, and telemetry environments organized as real deployment contexts.
+	</Card>
+	<Card title="Network paths" icon="random">
+		Backhaul choices, topologies, and transport constraints for industrial remote monitoring.
+	</Card>
+	<Card title="Protocols" icon="forward-slash">
+		Data transport, interoperability, and edge-to-cloud connectivity considerations.
+	</Card>
+	<Card title="Reliability" icon="approve-check-circle">
+		Power, antennas, enclosures, maintenance, and field survivability planning.
+	</Card>
+</CardGrid>
+
+<p class="mt-8 text-sm text-[var(--sl-color-gray-3)]">
+	<a href="/about/">About</a>
+	<span aria-hidden="true"> · </span>
+	<a href="/contact/">Contact</a>
+	<span aria-hidden="true"> · </span>
+	<a href="/privacy/">Privacy</a>
+	<span aria-hidden="true"> · </span>
+	<a href="/disclaimer/">Disclaimer</a>
+</p>

@@ -1,4 +1,14 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="16" fill="#111827" />
-  <text x="50%" y="52%" text-anchor="middle" dominant-baseline="middle" font-size="24" font-family="Arial, sans-serif" font-weight="700" fill="#7dd3fc">IW</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>Industrial Wireless I/O</title>
+  <defs>
+    <linearGradient id="iwi" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#58d9ff" />
+      <stop offset="100%" stop-color="#ffd27a" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="#071018" />
+  <path d="M18 42c4-4 8-6 14-6s10 2 14 6" fill="none" stroke="url(#iwi)" stroke-linecap="round" stroke-width="4"/>
+  <path d="M22 34c3-3 6-4.5 10-4.5S39 31 42 34" fill="none" stroke="#58d9ff" stroke-linecap="round" stroke-width="4"/>
+  <path d="M27 26c1.6-1.2 3.2-1.8 5-1.8s3.4.6 5 1.8" fill="none" stroke="#ffd27a" stroke-linecap="round" stroke-width="4"/>
+  <circle cx="32" cy="46" r="4" fill="#f7fbff"/>
 </svg>

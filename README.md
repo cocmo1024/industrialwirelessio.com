@@ -1,6 +1,12 @@
 # Industrial Wireless I/O
 
-Static Astro site for [industrialwirelessio.com](https://industrialwirelessio.com/).
+Starlight-based documentation site for `industrialwirelessio.com`.
+
+## Focus
+
+- Remote telemetry and industrial wireless architecture
+- Protocol, topology, and hardware reference material
+- Reliability-oriented guidance for field deployments
 
 ## Local Development
 
@@ -15,11 +21,11 @@ npm run dev
 npm run build
 ```
 
-## Foundation
+## Deployment
 
-- Homepage
-- About page
-- Contact page
-- Privacy policy
-- Disclaimer
-- Sitemap, robots, RSS, and base SEO metadata
+Use Cloudflare Pages with:
+
+- Build command: `npm run build`
+- Output directory: `dist`
+
+Do not use `wrangler deploy` for this repository.

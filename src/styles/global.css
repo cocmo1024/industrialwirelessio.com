@@ -1,70 +1,110 @@
-@import "tailwindcss";
-@import "./typography.css";
+@layer base, starlight, theme, components, utilities;
 
-@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+@import '@astrojs/starlight-tailwind';
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
+@import '@fontsource/source-serif-4/400.css';
+@import '@fontsource/source-serif-4/600.css';
+@import '@fontsource/ibm-plex-sans/400.css';
+@import '@fontsource/ibm-plex-sans/500.css';
+@import '@fontsource/ibm-plex-mono/400.css';
 
 :root,
-html[data-theme="light"] {
-  --background: #fdfdfd;
-  --foreground: #282728;
-  --accent: #006cac;
-  --muted: #e6e6e6;
-  --border: #ece9e9;
+::backdrop {
+	--sl-font: 'IBM Plex Sans';
+	--sl-font-mono: 'IBM Plex Mono';
+	--sl-color-accent-low: hsl(196, 76%, 12%);
+	--sl-color-accent: hsl(196, 86%, 63%);
+	--sl-color-accent-high: hsl(40, 88%, 81%);
+	--sl-color-gray-1: hsl(192, 24%, 92%);
+	--sl-color-gray-2: hsl(194, 14%, 77%);
+	--sl-color-gray-3: hsl(195, 10%, 58%);
+	--sl-color-gray-4: hsl(198, 12%, 38%);
+	--sl-color-gray-5: hsl(204, 18%, 20%);
+	--sl-color-gray-6: hsl(208, 24%, 11%);
+	--sl-color-black: hsl(210, 34%, 7%);
+	--site-ring: hsla(198, 90%, 68%, 0.12);
+	--site-amber: hsla(40, 96%, 67%, 0.14);
+	--site-panel: hsla(208, 24%, 12%, 0.84);
 }
 
-html[data-theme="dark"] {
-  --background: #212737;
-  --foreground: #eaedf3;
-  --accent: #ff6b01;
-  --muted: #343f60;
-  --border: #ab4b08;
+:root[data-theme='light'] {
+	--sl-color-accent-low: hsl(196, 80%, 94%);
+	--sl-color-accent: hsl(198, 70%, 36%);
+	--sl-color-accent-high: hsl(212, 68%, 18%);
+	--sl-color-gray-1: hsl(216, 24%, 18%);
+	--sl-color-gray-2: hsl(216, 15%, 28%);
+	--sl-color-gray-3: hsl(214, 10%, 40%);
+	--sl-color-gray-4: hsl(212, 8%, 59%);
+	--sl-color-gray-5: hsl(194, 18%, 84%);
+	--sl-color-gray-6: hsl(195, 42%, 96%);
+	--sl-color-black: hsl(0, 0%, 100%);
+	--sl-color-white: hsl(214, 36%, 11%);
+	--sl-color-bg-nav: hsla(0, 0%, 100%, 0.9);
+	--sl-color-bg-sidebar: hsl(196, 42%, 97%);
+	--sl-color-bg: linear-gradient(180deg, #effafc 0%, #fffdfa 100%);
+	--site-ring: hsla(199, 74%, 46%, 0.1);
+	--site-amber: hsla(38, 86%, 50%, 0.08);
+	--site-panel: hsla(0, 0%, 100%, 0.9);
 }
 
-@theme inline {
-  --font-app: var(--font-google-sans-code);
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-accent: var(--accent);
-  --color-muted: var(--muted);
-  --color-border: var(--border);
+body {
+	background:
+		radial-gradient(circle at top left, var(--site-ring), transparent 24rem),
+		radial-gradient(circle at top right, var(--site-amber), transparent 20rem),
+		var(--sl-color-bg);
 }
 
-@layer base {
-  * {
-    @apply border-border outline-accent/75;
-    scrollbar-width: auto;
-    scrollbar-color: var(--color-muted) transparent;
-  }
-  html {
-    @apply overflow-y-scroll scroll-smooth;
-  }
-  body {
-    @apply flex min-h-svh flex-col bg-background font-app text-foreground selection:bg-accent/75 selection:text-background;
-  }
-  a,
-  button {
-    @apply outline-offset-1 outline-accent focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-dashed;
-  }
-  button:not(:disabled),
-  [role="button"]:not(:disabled) {
-    cursor: pointer;
-  }
+.site-title {
+	font-size: 0.88rem;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
 }
 
-@utility max-w-app {
-  @apply max-w-3xl;
+.hero {
+	padding: clamp(2.25rem, 4vw, 3.25rem);
+	border-radius: 1.75rem;
+	border: 1px solid color-mix(in srgb, var(--sl-color-accent) 20%, transparent);
+	background:
+		linear-gradient(145deg, color-mix(in srgb, var(--site-ring) 75%, transparent), transparent 55%),
+		var(--site-panel);
+	box-shadow: 0 22px 58px rgba(0, 0, 0, 0.18);
 }
 
-@utility app-layout {
-  @apply mx-auto w-full max-w-app px-4;
+.hero h1,
+.sl-markdown-content :is(h1, h2, h3) {
+	font-family: 'Source Serif 4', Georgia, serif;
+	letter-spacing: -0.04em;
 }
 
-.active-nav {
-  @apply underline decoration-wavy decoration-2 underline-offset-8;
+.hero h1 {
+	max-width: 10ch;
+	font-weight: 600;
 }
 
-/* Source: https://piccalil.li/blog/a-more-modern-css-reset/ */
-/* Anything that has been anchored to should have extra scroll margin */
-:target {
-  scroll-margin-block: 1rem;
+.hero .tagline {
+	max-width: 42rem;
+}
+
+.card {
+	border-radius: 1.2rem;
+	border-color: color-mix(in srgb, var(--sl-color-accent) 18%, var(--sl-color-hairline));
+	background:
+		linear-gradient(180deg, color-mix(in srgb, var(--site-amber) 42%, transparent), transparent 70%),
+		var(--site-panel);
+}
+
+.card .icon {
+	border-radius: 999px;
+}
+
+.sl-markdown-content h2 {
+	padding-bottom: 0.42rem;
+	border-bottom: 1px solid color-mix(in srgb, var(--sl-color-accent) 18%, var(--sl-color-hairline));
+}
+
+.sidebar-pane,
+.right-sidebar-panel {
+	border-inline-start: 1px solid color-mix(in srgb, var(--sl-color-accent) 10%, transparent);
 }

@@ -1,6 +1,5 @@
 # build output
 dist/
-
 # generated types
 .astro/
 
@@ -14,19 +13,10 @@ yarn-error.log*
 pnpm-debug.log*
 local-dev.log
 
+
 # environment variables
 .env
 .env.production
 
 # macOS-specific files
 .DS_Store
-
-# jetbrains setting folder
-.idea/
-
-# pagefind
-
-public/pagefind
-
-# local tooling
-.wrangler/
