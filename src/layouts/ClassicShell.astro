@@ -1,0 +1,141 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import AdSlot from '../components/AdSlot.astro';
+import SidebarCard from '../components/SidebarCard.astro';
+import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+
+interface Props {
+	title?: string;
+	description?: string;
+	image?: string;
+	pageTitle?: string;
+	pageIntro?: string;
+	introLabel?: string;
+	showPageIntro?: boolean;
+	keywords?: string[];
+	pageType?: "website" | "article";
+	robots?: string;
+	publishedTime?: string;
+	modifiedTime?: string;
+	section?: string;
+	tags?: string[];
+	schemas?: Record<string, unknown>[];
+	breadcrumbs?: { name: string; path: string }[];
+}
+
+const {
+	title = SITE_TITLE,
+	description = SITE_DESCRIPTION,
+	image,
+	pageTitle = SITE_TITLE,
+	pageIntro = SITE_DESCRIPTION,
+	introLabel = "Front Page",
+	showPageIntro = true,
+	keywords = [],
+	pageType = "website",
+	robots,
+	publishedTime,
+	modifiedTime,
+	section,
+	tags = [],
+	schemas = [],
+	breadcrumbs = [],
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<BaseHead
+			title={title}
+			description={description}
+			image={image}
+			keywords={keywords}
+			pageType={pageType}
+			robots={robots}
+			publishedTime={publishedTime}
+			modifiedTime={modifiedTime}
+			section={section}
+			tags={tags}
+			schemas={schemas}
+			breadcrumbs={breadcrumbs}
+		/>
+	</head>
+	<body>
+		<div class="site-frame">
+			<Header />
+
+			<div class="site-grid">
+				<aside class="left-rail">
+					<div class="rail-stack">
+						<SidebarCard title="Field Layers" eyebrow="Pillars">
+							<ul>
+								<li>Field architecture for remote assets and distributed systems</li>
+								<li>Network comparison content for pre-purchase design choices</li>
+								<li>Reliability planning for antennas, power, panels, and upkeep</li>
+							</ul>
+						</SidebarCard>
+
+						<SidebarCard title="High-Value Queries" eyebrow="Traffic Quality" compact={true}>
+							<ul>
+								<li>Engineers comparing network paths before buying hardware</li>
+								<li>Teams troubleshooting remote site reliability constraints</li>
+								<li>Readers working toward long-life architecture decisions</li>
+							</ul>
+						</SidebarCard>
+
+						<slot name="left-rail" />
+					</div>
+				</aside>
+
+				<main class="content-column">
+					<div class="content-stack">
+						{
+							showPageIntro && (
+								<section class="page-intro">
+									<p class="eyebrow">{introLabel}</p>
+									<h1>{pageTitle}</h1>
+									<p>{pageIntro}</p>
+								</section>
+							)
+						}
+
+						<slot />
+					</div>
+				</main>
+
+				<aside class="right-rail">
+					<div class="rail-stack">
+						<AdSlot
+							slotId="rail-telemetry-sponsor"
+							format="rectangle"
+							headline="Reserved connectivity sponsor"
+							note="Hold this rectangle for future wireless gateway, telemetry platform, or network partner campaigns once the site earns sustained architecture intent."
+						/>
+
+						<SidebarCard title="Why Retention Lasts" eyebrow="Commercial Fit">
+							<p>
+								Field connectivity content stays useful when it connects protocols, hardware, and
+								maintenance reality. That creates durable search visibility and better sponsor fit than
+								short-lived industrial news.
+							</p>
+						</SidebarCard>
+
+						<AdSlot
+							slotId="rail-network-tower"
+							format="tower"
+							headline="Architecture resource tower"
+							note="Reserve this tall unit for future spec downloads, telemetry partner campaigns, or house resources tied to the most technical architecture pages."
+						/>
+
+						<slot name="right-rail" />
+					</div>
+				</aside>
+			</div>
+
+			<Footer />
+		</div>
+	</body>
+</html>

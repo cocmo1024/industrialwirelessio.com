@@ -1,0 +1,97 @@
+---
+import SidebarCard from '../components/SidebarCard.astro';
+import ClassicShell from '../layouts/ClassicShell.astro';
+import { SITE_CONTACT_EMAIL, SITE_DOMAIN, SITE_KEYWORDS, SITE_TITLE } from '../consts';
+---
+
+<ClassicShell
+	title={`${SITE_TITLE} | Privacy Policy`}
+	description={`Privacy policy for ${SITE_TITLE} (${SITE_DOMAIN}).`}
+	pageTitle="Privacy Policy"
+	pageIntro={`${SITE_TITLE} is an English-language editorial publication. This placeholder privacy policy explains the basic information practices we may use as ${SITE_DOMAIN} grows.`}
+	introLabel="Foundation Page"
+	keywords={[...SITE_KEYWORDS, 'privacy policy', SITE_DOMAIN]}
+	breadcrumbs={[
+		{ name: 'Home', path: '/' },
+		{ name: 'Privacy Policy', path: '/privacy/' },
+	]}
+>
+	<Fragment slot="left-rail">
+		<SidebarCard title="At A Glance" eyebrow="Policy Notes">
+			<ul>
+				<li>This site is content-first and English-language only.</li>
+				<li>Ad slots are currently placeholders, not active ad network units.</li>
+				<li>Questions can be directed to <a href={`mailto:${SITE_CONTACT_EMAIL}`}>{SITE_CONTACT_EMAIL}</a>.</li>
+			</ul>
+		</SidebarCard>
+	</Fragment>
+
+	<section class="section-block">
+		<div class="section-head">
+			<div>
+				<p class="eyebrow">Overview</p>
+				<h2>What this privacy page is meant to cover</h2>
+			</div>
+		</div>
+		<p>
+			This website is intended to publish evergreen editorial content, category guides, and future
+			sponsor-ready inventory. We may collect limited information needed to understand audience
+			behavior, reply to inquiries, and keep the site working reliably.
+		</p>
+	</section>
+
+	<div class="policy-grid">
+		<section class="policy-card">
+			<p class="section-kicker">Information</p>
+			<h3>What may be collected</h3>
+			<ul>
+				<li>Basic analytics signals such as pages visited, referrers, browser type, and country-level usage.</li>
+				<li>Contact details you share voluntarily when you email or send a business inquiry.</li>
+				<li>Technical records that help diagnose abuse, broken pages, or suspicious traffic patterns.</li>
+			</ul>
+		</section>
+
+		<section class="policy-card">
+			<p class="section-kicker">How It Is Used</p>
+			<h3>Why the information matters</h3>
+			<ul>
+				<li>To improve content structure, navigation, and topic coverage.</li>
+				<li>To understand which articles attract lasting search traffic and buyer intent.</li>
+				<li>To respond to editorial, partnership, or contact requests.</li>
+			</ul>
+		</section>
+
+		<section class="policy-card">
+			<p class="section-kicker">Future Tools</p>
+			<h3>Cookies, analytics, and later ad systems</h3>
+			<p>
+				As the site matures, we may add analytics tools, newsletter software, or advertising
+				platforms. If that happens, this page should be updated so readers can understand what was
+				added and why.
+			</p>
+		</section>
+
+		<section class="policy-card">
+			<p class="section-kicker">External Links</p>
+			<h3>Third-party destinations</h3>
+			<p>
+				Articles may link to software tools, vendor pages, documentation, or partner resources.
+				Those external sites operate under their own privacy practices and terms.
+			</p>
+		</section>
+	</div>
+
+	<section class="section-block">
+		<div class="section-head">
+			<div>
+				<p class="eyebrow">Contact</p>
+				<h2>Privacy questions and updates</h2>
+			</div>
+		</div>
+		<p>
+			If you have a question about this privacy notice, email <a href={`mailto:${SITE_CONTACT_EMAIL}`}>{SITE_CONTACT_EMAIL}</a>.
+			This document is a practical placeholder and should be refined again before major advertising,
+			newsletter, or account features go live.
+		</p>
+	</section>
+</ClassicShell>

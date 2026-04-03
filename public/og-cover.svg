@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#0f6f68"/>
+  <path d="M0 120h1200M0 240h1200M0 360h1200M0 480h1200M120 0v630M240 0v630M360 0v630M480 0v630M600 0v630M720 0v630M840 0v630M960 0v630M1080 0v630" stroke="rgba(255,255,255,0.07)" stroke-width="2"/>
+  <text x="80" y="220" fill="#f4fffd" font-size="74" font-family="Georgia, serif">Industrial Wireless I/O</text>
+  <text x="80" y="300" fill="#d8f2ef" font-size="34" font-family="Arial, sans-serif">Telemetry architecture, network comparison, and field reliability</text>
+  <text x="80" y="470" fill="#f4fffd" font-size="28" font-family="Arial, sans-serif">Modern field-manual publishing for remote asset networks</text>
+</svg>

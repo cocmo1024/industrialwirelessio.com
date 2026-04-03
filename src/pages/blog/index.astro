@@ -1,0 +1,64 @@
+---
+import { getCollection } from 'astro:content';
+import AdSlot from '../../components/AdSlot.astro';
+import PostPreviewCard from '../../components/PostPreviewCard.astro';
+import SidebarCard from '../../components/SidebarCard.astro';
+import ClassicShell from '../../layouts/ClassicShell.astro';
+import { SITE_DESCRIPTION, SITE_KEYWORDS, SITE_TITLE } from '../../consts';
+import { sortPosts } from '../../utils/content';
+
+const posts = sortPosts(await getCollection('blog'));
+---
+
+<ClassicShell
+	title={`${SITE_TITLE} | Blog`}
+	description={SITE_DESCRIPTION}
+	pageTitle="Industrial wireless I/O archive"
+	pageIntro="Treat the archive as a technical resource center for remote I/O design, protocol selection, and connectivity reliability planning."
+	introLabel="Archive"
+	keywords={[...SITE_KEYWORDS, 'wireless io archive', 'industrial connectivity archive']}
+	breadcrumbs={[
+		{ name: 'Home', path: '/' },
+		{ name: 'Telemetry', path: '/blog/' },
+	]}
+>
+	<Fragment slot="left-rail">
+		<SidebarCard title="Archive Goal" eyebrow="Evergreen">
+			<p>
+				The highest-value content here will answer recurring field questions about architecture,
+				range, power, latency, protocol support, and survivability.
+			</p>
+		</SidebarCard>
+	</Fragment>
+
+	<section class="section-block">
+		<div class="section-head">
+			<div>
+				<p class="eyebrow">All Entries</p>
+				<h3>Latest connectivity coverage</h3>
+			</div>
+		</div>
+
+		<div class="post-stream">
+			{posts.length === 0 ? (
+				<p>No posts yet. The archive is ready for network comparisons, module guides, and field panel checklists.</p>
+			) : (
+				posts.map((post, index) => (
+					<>
+						<PostPreviewCard post={post} featured={index === 0} />
+						{
+							index === 0 && (
+								<AdSlot
+									slotId="archive-inline-connectivity"
+									format="inline"
+									headline="Inline network solution slot"
+									note="A responsive unit after the lead article is a strong place for gateway vendors, engineering downloads, or architecture-specific sponsor campaigns."
+								/>
+							)
+						}
+					</>
+				))
+			)}
+		</div>
+	</section>
+</ClassicShell>

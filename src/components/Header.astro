@@ -1,0 +1,28 @@
+---
+import HeaderLink from './HeaderLink.astro';
+import { NAV_BLOG_LABEL, SITE_DESCRIPTION, SITE_DOMAIN, SITE_EYEBROW, SITE_TAGLINE, SITE_TITLE } from '../consts';
+---
+
+<header class="site-header">
+	<div class="header-brand">
+		<div class="brand-signal">
+			<p class="eyebrow">{SITE_EYEBROW}</p>
+			<a class="site-domain" href="/">{SITE_DOMAIN}</a>
+		</div>
+		<p class="site-title">
+			<a class="site-title-link" href="/">{SITE_TITLE}</a>
+		</p>
+		<p class="site-summary">{SITE_DESCRIPTION}</p>
+	</div>
+
+	<div class="header-meta">
+		<nav class="primary-nav" aria-label="Primary">
+			<HeaderLink href="/">Home</HeaderLink>
+			<HeaderLink href="/blog">{NAV_BLOG_LABEL}</HeaderLink>
+			<HeaderLink href="/topics">Topics</HeaderLink>
+			<HeaderLink href="/about">About</HeaderLink>
+			<HeaderLink href="/contact">Contact</HeaderLink>
+		</nav>
+		<p class="header-note">{SITE_TAGLINE}</p>
+	</div>
+</header>

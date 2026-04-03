@@ -1,0 +1,53 @@
+---
+import { getCollection } from 'astro:content';
+import PostPreviewCard from '../../components/PostPreviewCard.astro';
+import ClassicShell from '../../layouts/ClassicShell.astro';
+import { SITE_KEYWORDS, SITE_TITLE } from '../../consts';
+import { slugify, sortPosts } from '../../utils/content';
+
+export async function getStaticPaths() {
+	const posts = sortPosts(await getCollection('blog'));
+	const tagMap = new Map<string, typeof posts>();
+
+	for (const post of posts) {
+		for (const tag of post.data.tags) {
+			const existing = tagMap.get(tag) ?? [];
+			existing.push(post);
+			tagMap.set(tag, existing);
+		}
+	}
+
+	return [...tagMap.entries()].map(([tag, tagPosts]) => ({
+		params: { tag: slugify(tag) },
+		props: { tag, posts: tagPosts },
+	}));
+}
+
+const { tag, posts } = Astro.props;
+---
+
+<ClassicShell
+	title={`${tag} | ${SITE_TITLE}`}
+	description={`${tag} tag archive on ${SITE_TITLE}.`}
+	pageTitle={`${tag} tag archive`}
+	pageIntro={`This tag page collects every post touching ${tag}, helping build internal topical relevance and easier archive navigation.`}
+	introLabel="Tag"
+	keywords={[...SITE_KEYWORDS, tag]}
+	breadcrumbs={[
+		{ name: 'Home', path: '/' },
+		{ name: 'Telemetry', path: '/blog/' },
+		{ name: tag, path: `/tags/${slugify(tag)}/` },
+	]}
+>
+	<section class="section-block">
+		<div class="section-head">
+			<div>
+				<p class="eyebrow">Tag Archive</p>
+				<h3>{tag}</h3>
+			</div>
+		</div>
+		<div class="post-stream">
+			{posts.map((post) => <PostPreviewCard post={post} featured={post.data.featured} />)}
+		</div>
+	</section>
+</ClassicShell>

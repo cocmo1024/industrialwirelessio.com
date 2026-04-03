@@ -1,0 +1,131 @@
+---
+import SidebarCard from '../components/SidebarCard.astro';
+import ClassicShell from '../layouts/ClassicShell.astro';
+import { SITE_KEYWORDS, SITE_TITLE } from '../consts';
+import {
+	SITE_AUDIENCES,
+	SITE_CONTENT_FORMATS,
+	SITE_CONTENT_PILLARS,
+	SITE_POSITIONING,
+	SITE_PRIORITY_CLUSTERS,
+	SITE_UPDATE_PLAYBOOK,
+	SITE_VALUE_LANES,
+} from '../sitePlan';
+---
+
+<ClassicShell
+	title={`${SITE_TITLE} | Topic Map`}
+	description={`Topic map and long-term SEO plan for ${SITE_TITLE}.`}
+	pageTitle="Topic map for long-term, high-value field connectivity traffic"
+	pageIntro="This page defines what Industrial Wireless I/O should cover, which industrial traffic is worth winning, and how the archive should expand into a dependable remote-telemetry field manual."
+	introLabel="Topic Map"
+	keywords={[...SITE_KEYWORDS, 'topic map', 'connectivity editorial pillars', 'high-value telemetry traffic']}
+	breadcrumbs={[
+		{ name: 'Home', path: '/' },
+		{ name: 'Topics', path: '/topics/' },
+	]}
+>
+	<Fragment slot="left-rail">
+		<SidebarCard title="Positioning" eyebrow="North Star">
+			<p>{SITE_POSITIONING}</p>
+		</SidebarCard>
+
+		<SidebarCard title="Primary Audiences" eyebrow="Who Matters Most">
+			<ul>
+				{SITE_AUDIENCES.map((audience) => (
+					<li><strong>{audience.title}:</strong> {audience.summary}</li>
+				))}
+			</ul>
+		</SidebarCard>
+	</Fragment>
+
+	<section class="section-block">
+		<div class="section-head">
+			<div>
+				<p class="eyebrow">High-Value Traffic</p>
+				<h2>What this site should win instead of generic IoT attention</h2>
+			</div>
+		</div>
+		<div class="detail-grid">
+			{SITE_VALUE_LANES.map((lane) => (
+				<article class="detail-card">
+					<p class="section-kicker">Value Lane</p>
+					<h3>{lane.title}</h3>
+					<p>{lane.summary}</p>
+				</article>
+			))}
+		</div>
+	</section>
+
+	<section class="section-block">
+		<div class="section-head">
+			<div>
+				<p class="eyebrow">Core Pillars</p>
+				<h2>The three categories that should anchor the field archive</h2>
+			</div>
+		</div>
+		<div class="hub-grid">
+			{SITE_CONTENT_PILLARS.map((pillar) => (
+				<article class="hub-card">
+					<h4><a href={pillar.href}>{pillar.title}</a></h4>
+					<p>{pillar.summary}</p>
+				</article>
+			))}
+		</div>
+	</section>
+
+	<section class="section-block">
+		<div class="section-head">
+			<div>
+				<p class="eyebrow">Priority Clusters</p>
+				<h2>Compounding search themes worth expanding over time</h2>
+			</div>
+		</div>
+		<div class="detail-grid">
+			{SITE_PRIORITY_CLUSTERS.map((cluster) => (
+				<article class="detail-card">
+					<p class="section-kicker">Cluster</p>
+					<h3>{cluster.title}</h3>
+					<p>{cluster.summary}</p>
+					<p><strong>Why it wins:</strong> {cluster.whyItWins}</p>
+				</article>
+			))}
+		</div>
+	</section>
+
+	<section class="section-block">
+		<div class="section-head">
+			<div>
+				<p class="eyebrow">Content Formats</p>
+				<h2>Page types that support both SEO depth and later industrial monetization</h2>
+			</div>
+		</div>
+		<div class="detail-grid">
+			{SITE_CONTENT_FORMATS.map((format) => (
+				<article class="detail-card">
+					<p class="section-kicker">Format</p>
+					<h3>{format.title}</h3>
+					<p>{format.summary}</p>
+				</article>
+			))}
+		</div>
+	</section>
+
+	<section class="section-block">
+		<div class="section-head">
+			<div>
+				<p class="eyebrow">Update Engine</p>
+				<h2>How the archive should keep compounding instead of scattering</h2>
+			</div>
+		</div>
+		<div class="detail-grid">
+			{SITE_UPDATE_PLAYBOOK.map((step) => (
+				<article class="detail-card">
+					<p class="section-kicker">Cadence</p>
+					<h3>{step.title}</h3>
+					<p>{step.summary}</p>
+				</article>
+			))}
+		</div>
+	</section>
+</ClassicShell>

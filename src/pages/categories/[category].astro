@@ -1,0 +1,51 @@
+---
+import { getCollection } from 'astro:content';
+import PostPreviewCard from '../../components/PostPreviewCard.astro';
+import ClassicShell from '../../layouts/ClassicShell.astro';
+import { SITE_KEYWORDS, SITE_TITLE } from '../../consts';
+import { slugify, sortPosts } from '../../utils/content';
+
+export async function getStaticPaths() {
+	const posts = sortPosts(await getCollection('blog'));
+	const categoryMap = new Map<string, typeof posts>();
+
+	for (const post of posts) {
+		const existing = categoryMap.get(post.data.category) ?? [];
+		existing.push(post);
+		categoryMap.set(post.data.category, existing);
+	}
+
+	return [...categoryMap.entries()].map(([category, categoryPosts]) => ({
+		params: { category: slugify(category) },
+		props: { category, posts: categoryPosts },
+	}));
+}
+
+const { category, posts } = Astro.props;
+---
+
+<ClassicShell
+	title={`${category} | ${SITE_TITLE}`}
+	description={`${category} articles and topic-cluster coverage on ${SITE_TITLE}.`}
+	pageTitle={`${category} topic hub`}
+	pageIntro={`Every article in this category is grouped here to strengthen topical depth, internal linking, and long-term search performance.`}
+	introLabel="Category"
+	keywords={[...SITE_KEYWORDS, category]}
+	breadcrumbs={[
+		{ name: 'Home', path: '/' },
+		{ name: 'Telemetry', path: '/blog/' },
+		{ name: category, path: `/categories/${slugify(category)}/` },
+	]}
+>
+	<section class="section-block">
+		<div class="section-head">
+			<div>
+				<p class="eyebrow">Topic Cluster</p>
+				<h3>{category}</h3>
+			</div>
+		</div>
+		<div class="post-stream">
+			{posts.map((post) => <PostPreviewCard post={post} featured={post.data.featured} />)}
+		</div>
+	</section>
+</ClassicShell>

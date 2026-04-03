@@ -1,0 +1,40 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import FormattedDate from './FormattedDate.astro';
+import { categoryPath, estimateReadingMinutes } from '../utils/content';
+
+interface Props {
+	post: CollectionEntry<'blog'>;
+	featured?: boolean;
+}
+
+const { post, featured = false } = Astro.props;
+const readingMinutes = estimateReadingMinutes(post.body);
+---
+
+<article class:list={["post-card", { featured }]}>
+	<a class="post-card-link" href={`/blog/${post.id}/`}>
+		<div class="post-card-media">
+			{post.data.heroImage ? (
+				<img src={post.data.heroImage} alt="" width={720} height={420} />
+			) : (
+				<div class="post-card-media"></div>
+			)}
+		</div>
+
+		<div class="post-card-body">
+			<div class="meta-row">
+				<span class="meta-pill">{featured || post.data.featured ? "Featured" : "Entry"}</span>
+				<span><FormattedDate date={post.data.pubDate} /></span>
+				<span>{readingMinutes} min read</span>
+			</div>
+			<p class="taxonomy-row">
+				<a class="taxonomy-link" href={categoryPath(post.data.category)}>{post.data.category}</a>
+				{post.data.tags.slice(0, 2).map((tag) => <span class="taxonomy-tag">{tag}</span>)}
+			</p>
+			<h2 class="post-card-title">{post.data.title}</h2>
+			<p>{post.data.description}</p>
+			<p class="section-kicker">Continue reading the full article</p>
+		</div>
+	</a>
+</article>

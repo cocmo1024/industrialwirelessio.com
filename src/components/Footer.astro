@@ -1,0 +1,32 @@
+---
+import { SITE_CONTACT_EMAIL, SITE_DOMAIN, SITE_FOOTER_NOTE, SITE_TITLE } from '../consts';
+const today = new Date();
+---
+
+<footer class="site-footer">
+	<div class="footer-brand">
+		<p class="eyebrow">Editorial Foundation</p>
+		<p>
+			<strong>{SITE_TITLE}</strong> is built as an English-language reference publication with
+			clear topic clusters, ad placeholders that are ready when the audience matures, and a layout
+			designed to keep evergreen content easy to explore.
+		</p>
+	</div>
+
+	<nav class="footer-links" aria-label="Footer">
+		<a href="/">Home</a>
+		<a href="/blog">Blog</a>
+		<a href="/topics">Topics</a>
+		<a href="/methodology">Methodology</a>
+		<a href="/about">About</a>
+		<a href="/privacy">Privacy</a>
+		<a href="/disclaimer">Disclaimer</a>
+		<a href="/contact">Contact</a>
+	</nav>
+
+	<div class="footer-mini">
+		<p>&copy; {today.getFullYear()} {SITE_DOMAIN}. All rights reserved.</p>
+		<p>{SITE_FOOTER_NOTE}</p>
+		<p><a href={`mailto:${SITE_CONTACT_EMAIL}`}>{SITE_CONTACT_EMAIL}</a></p>
+	</div>
+</footer>
