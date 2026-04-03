@@ -1,0 +1,81 @@
+---
+title: Remote Tank Level Telemetry for Water and Wastewater
+description: An application guide for remote tank monitoring projects where level visibility, alarm behavior, power limits, and unattended-site reliability shape the architecture.
+referenceType: application
+adProfile: application
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: remote tank level telemetry water wastewater
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Utility engineers
+  - Telemetry designers
+  - Integrators
+  - Operations teams
+contentStatus: seed
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Remote Tank Level Telemetry for Water and Wastewater
+
+Remote tank monitoring is one of the clearest telemetry use cases because the operational value is immediate. Teams need level visibility, alarm confidence, and supportable remote access without building a field system that consumes too much power or demands too many service visits.
+
+## Why this application matters
+
+Water and wastewater teams usually want:
+
+- dependable high and low level alarms;
+- visibility across dispersed tanks or storage assets;
+- better operator awareness without constant site visits;
+- a telemetry footprint that can survive unattended operation.
+
+This makes the topic commercially strong because the reader is usually evaluating a real deployment, not broad IIoT theory.
+
+## Architecture pressures
+
+Strong designs usually need to balance:
+
+- sensor reliability and alarm behavior;
+- constrained power or solar-backed installations;
+- variable cellular coverage and delayed field access;
+- enclosure and lightning exposure at outdoor sites.
+
+That mix often pushes teams toward conservative, low-maintenance architectures.
+
+## What should be pressure-tested
+
+Before deploying, teams should define:
+
+- what alarm priority deserves immediate communication;
+- what level changes can tolerate deadband or batching;
+- how long the site can operate through power or backhaul problems;
+- whether the chosen hardware can be serviced quickly by the field team.
+
+Those questions matter more than the most advanced dashboard feature set.
+
+## Related paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Lift stations and sewer network telemetry"
+		href="/applications/lift-stations-and-sewer-network-telemetry/"
+		description="See how another remote water-asset class changes the same telemetry design choices."
+	/>
+	<LinkCard
+		title="Alarm priority and deadband design"
+		href="/protocols/alarm-priority-and-deadband-design-for-remote-telemetry/"
+		description="Tune message behavior before flooding the communications layer."
+	/>
+	<LinkCard
+		title="Carrier failover and dual-path design"
+		href="/network-paths/carrier-failover-and-dual-path-design-for-remote-sites/"
+		description="Pressure-test whether the remote network should stay simple or add a second communications path."
+	/>
+	<LinkCard
+		title="Surge protection and lightning risk"
+		href="/hardware/surge-protection-and-lightning-risk-at-remote-sites/"
+		description="Validate that the physical protection model is as serious as the telemetry plan."
+	/>
+</div>

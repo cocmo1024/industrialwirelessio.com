@@ -1,0 +1,80 @@
+---
+title: Carrier Failover and Dual-Path Design for Remote Sites
+description: A network-path guide for remote telemetry teams deciding when single-path cellular is enough and when critical sites justify carrier failover or a second communications path.
+referenceType: network-path
+adProfile: network-path
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: carrier failover dual path remote telemetry
+searchIntent: compare
+decisionStage: shortlist
+targetRoles:
+  - Telemetry architects
+  - Utility engineers
+  - OT network leads
+  - Integrators
+contentStatus: seed
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Carrier Failover and Dual-Path Design for Remote Sites
+
+Redundancy sounds attractive in remote telemetry, but it is only worth the added complexity when the site's criticality, outage cost, and service model justify it. Many sites do well with one disciplined cellular path. Others need a stronger communications strategy because the cost of blind operation is materially higher.
+
+## Which layer this decision belongs to
+
+This is a field network resilience decision. It sits above:
+
+- local device and power survivability;
+- antenna and enclosure quality;
+- telemetry behavior such as buffering and alarm prioritization.
+
+If those lower layers are weak, a second path can create the illusion of resilience without fixing the true problem.
+
+## When a single path is enough
+
+One path is often sufficient when:
+
+- the site can tolerate delayed visibility for a bounded period;
+- outages are inconvenient but not immediately critical;
+- the support model values simplicity;
+- local buffering and alarm logic are strong enough to bridge short disruptions.
+
+In these environments, cleaner design often beats more infrastructure.
+
+## When dual-path design becomes worth it
+
+A second path becomes more attractive when:
+
+- the site has high operational or regulatory consequence;
+- blind operation creates unacceptable risk;
+- coverage quality is uneven or known to fluctuate materially;
+- the organization can actually support the added communications footprint.
+
+Redundancy helps only when it is maintained as part of the operating model.
+
+## Related paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Private APN vs public cellular"
+		href="/network-paths/private-apn-vs-public-cellular-for-remote-sites/"
+		description="Decide whether control and segmentation matter before adding extra path complexity."
+	/>
+	<LinkCard
+		title="Remote tank level telemetry"
+		href="/applications/remote-tank-level-telemetry-for-water-and-wastewater/"
+		description="Use a concrete remote-site application to judge whether redundancy is justified."
+	/>
+	<LinkCard
+		title="Alarm priority and deadband design"
+		href="/protocols/alarm-priority-and-deadband-design-for-remote-telemetry/"
+		description="Reduce unnecessary traffic before assuming more path diversity is the answer."
+	/>
+	<LinkCard
+		title="Solar, battery, and low-power site planning"
+		href="/reliability/solar-battery-and-low-power-site-planning/"
+		description="Make sure the power budget can support the communications model you choose."
+	/>
+</div>

@@ -1,0 +1,81 @@
+---
+title: Alarm Priority and Deadband Design for Remote Telemetry
+description: A telemetry-behavior reference for remote sites that need meaningful alarming, low-noise reporting, and communications efficiency under real field constraints.
+referenceType: protocol
+adProfile: protocol
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: alarm priority deadband remote telemetry
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Utility engineers
+  - Telemetry architects
+  - Integrators
+  - Remote operations teams
+contentStatus: seed
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Alarm Priority and Deadband Design for Remote Telemetry
+
+Many remote telemetry systems are noisy for the wrong reasons and quiet about the things that matter most. Alarm priority and deadband design exist to prevent that. In constrained field environments, communications discipline is part of reliability, not just a dashboard preference.
+
+## Which layer this decision belongs to
+
+This is a telemetry behavior decision that shapes:
+
+- which events should be sent immediately;
+- which changes should be filtered or delayed;
+- how much data the site moves under normal conditions;
+- what operators actually see during abnormal conditions.
+
+A good design keeps the system useful under stress instead of flooding it with low-value traffic.
+
+## Typical fit
+
+These patterns matter most when:
+
+- the site has tight power or bandwidth limits;
+- operators need confidence in alarm ordering and significance;
+- the asset value changes gradually most of the time but can still cross important thresholds;
+- the site may be unattended for long periods.
+
+Deadband is useful when it suppresses noise. It is harmful when it hides operationally meaningful change.
+
+## Common field mistake
+
+The most common mistake is treating every change as equally important. That leads to:
+
+- alert fatigue;
+- unnecessary traffic;
+- confusion during real abnormal events;
+- poor battery and communications efficiency.
+
+The better model is to define what truly deserves immediate visibility and what can be summarized.
+
+## Related paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Report by exception and store-and-forward"
+		href="/protocols/report-by-exception-and-store-and-forward/"
+		description="Place alarm priority inside the larger telemetry behavior model."
+	/>
+	<LinkCard
+		title="Remote tank level telemetry"
+		href="/applications/remote-tank-level-telemetry-for-water-and-wastewater/"
+		description="Apply deadband logic to a classic remote water monitoring problem."
+	/>
+	<LinkCard
+		title="Carrier failover and dual-path design"
+		href="/network-paths/carrier-failover-and-dual-path-design-for-remote-sites/"
+		description="Reduce unnecessary traffic before adding communications redundancy."
+	/>
+	<LinkCard
+		title="Solar, battery, and low-power planning"
+		href="/reliability/solar-battery-and-low-power-site-planning/"
+		description="Match alarm behavior to the energy budget the site can really support."
+	/>
+</div>

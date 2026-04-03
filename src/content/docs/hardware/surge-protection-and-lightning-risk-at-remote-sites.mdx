@@ -1,0 +1,81 @@
+---
+title: Surge Protection and Lightning Risk at Remote Sites
+description: A hardware reference for telemetry deployments where surge exposure, grounding quality, and lightning risk often do more damage than the nominal radio or gateway choice.
+referenceType: hardware
+adProfile: hardware
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: surge protection lightning risk remote telemetry
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Field engineers
+  - Utility designers
+  - Integrators
+  - Operations teams
+contentStatus: seed
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Surge Protection and Lightning Risk at Remote Sites
+
+Remote telemetry systems are often designed around communications and power, then damaged by the physical environment they live in. Surge exposure and lightning risk are part of the field stack, especially for outdoor water, utility, and dispersed asset sites where antennas, long runs, and uneven grounding conditions are common.
+
+## What this category is for
+
+This topic matters when the deployment includes:
+
+- exposed outdoor equipment;
+- long sensor or power runs;
+- elevated antenna placement;
+- sites with limited inspection frequency after weather events.
+
+These conditions can turn a nominally correct telemetry design into a recurring replacement program.
+
+## Where it sits in the field stack
+
+Surge and lightning planning interacts with:
+
+- power entry and backup design;
+- enclosure and grounding quality;
+- antenna placement and cable routing;
+- the choice of how much valuable electronics are concentrated at one location.
+
+That is why physical protection cannot be handled as a final procurement checkbox.
+
+## When teams underweight the risk
+
+The most common mistake is assuming carrier or gateway selection is the key resilience decision. In reality, remote sites often fail because:
+
+- grounding assumptions were vague;
+- transient protection was incomplete;
+- cable routes invited avoidable exposure;
+- the site was too hard to inspect after seasonal events.
+
+This is field survivability work, not accessory purchasing.
+
+## Related paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Power, enclosures, and antennas"
+		href="/hardware/power-enclosures-and-antennas/"
+		description="Extend surge planning into the broader physical implementation stack."
+	/>
+	<LinkCard
+		title="Solar, battery, and low-power site planning"
+		href="/reliability/solar-battery-and-low-power-site-planning/"
+		description="Protect the site's power strategy from the environmental failures that can undermine it."
+	/>
+	<LinkCard
+		title="Remote tank level telemetry"
+		href="/applications/remote-tank-level-telemetry-for-water-and-wastewater/"
+		description="Apply physical protection logic to a common unattended monitoring deployment."
+	/>
+	<LinkCard
+		title="Lift stations and sewer network telemetry"
+		href="/applications/lift-stations-and-sewer-network-telemetry/"
+		description="See how outdoor utility sites raise the stakes for field protection decisions."
+	/>
+</div>
