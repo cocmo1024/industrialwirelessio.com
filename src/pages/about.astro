@@ -1,105 +1,22 @@
 ---
-import SidebarCard from '../components/SidebarCard.astro';
-import ClassicShell from '../layouts/ClassicShell.astro';
-import { SITE_CONTACT_EMAIL, SITE_DESCRIPTION, SITE_KEYWORDS, SITE_TITLE } from '../consts';
+import Main from "@/layouts/Main.astro";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { SITE } from "@/config";
 ---
 
-<ClassicShell
-	title={`${SITE_TITLE} | About`}
-	description={SITE_DESCRIPTION}
-	pageTitle="About Industrial Wireless I/O"
-	pageIntro="Industrial Wireless I/O is being built as an English-language field connectivity reference brand for engineers, operators, and technical teams working on remote telemetry and distributed assets."
-	introLabel="About"
-	keywords={[...SITE_KEYWORDS, 'about Industrial Wireless I/O']}
-	breadcrumbs={[
-		{ name: 'Home', path: '/' },
-		{ name: 'About', path: '/about/' },
-	]}
->
-	<Fragment slot="left-rail">
-		<SidebarCard title="Audience" eyebrow="Who It Helps">
-			<ul>
-				<li>Engineers comparing wireless and telemetry architectures</li>
-				<li>Operators managing remote assets and uptime concerns</li>
-				<li>Readers who need field-reality guidance, not just hardware lists</li>
-			</ul>
-		</SidebarCard>
-
-		<SidebarCard title="Editorial Bias" eyebrow="What We Favor">
-			<p>
-				We favor field-tested logic, cleaner explanations, and content that respects power, enclosure,
-				site access, reliability, and maintenance constraints.
-			</p>
-		</SidebarCard>
-	</Fragment>
-
-	<section class="section-block">
-		<div class="section-head">
-			<div>
-				<p class="eyebrow">Editorial Thesis</p>
-				<h2>Connectivity content should be grounded in field reality</h2>
-			</div>
-		</div>
-		<p>
-			This site is meant to become a dependable field manual for wireless I/O and telemetry decisions.
-			That means architecture comparisons, reliability planning, and practical deployment guidance are
-			more important than light product commentary or broad industrial trend posts.
-		</p>
-	</section>
-
-	<div class="detail-grid">
-		<section class="detail-card">
-			<p class="section-kicker">SEO Logic</p>
-			<h3>Long-life architecture questions</h3>
-			<p>
-				Search demand is strongest where teams are deciding between network paths, remote asset
-				strategies, and survivability tradeoffs that remain relevant for years.
-			</p>
-		</section>
-
-		<section class="detail-card">
-			<p class="section-kicker">Commercial Logic</p>
-			<h3>Higher-value technical intent</h3>
-			<p>
-				Readers working through network design and field reliability problems are often closer to
-				hardware, platform, and engineering-services spend than general industrial audiences.
-			</p>
-		</section>
-
-		<section class="detail-card">
-			<p class="section-kicker">Brand Goal</p>
-			<h3>Modern field manual energy</h3>
-			<p>
-				The visual direction is more refined than a typical industrial blog, but the content hierarchy
-				stays practical so the brand still feels precise and trustworthy.
-			</p>
-		</section>
-	</div>
-
-	<section class="section-block">
-		<div class="section-head">
-			<div>
-				<p class="eyebrow">Planning Surface</p>
-				<h2>The long-term framework is visible inside the site</h2>
-			</div>
-		</div>
-		<p>
-			The <a href="/topics/">topic map</a> defines the field and telemetry clusters worth building, while the
-			<a href="/methodology/"> methodology page</a> explains how architecture and reliability pages should
-			stay useful over time.
-		</p>
-	</section>
-
-	<section class="section-block">
-		<div class="section-head">
-			<div>
-				<p class="eyebrow">Reach Out</p>
-				<h2>Corrections, suggestions, and future partner fit</h2>
-			</div>
-		</div>
-		<p>
-			For editorial notes or future business conversations, email <a href={`mailto:${SITE_CONTACT_EMAIL}`}>{SITE_CONTACT_EMAIL}</a>.
-			The current stage is about building a stronger field-reference foundation first so later sponsor inventory has real credibility behind it.
-		</p>
-	</section>
-</ClassicShell>
+<Layout title={`About | ${SITE.title}`}>
+  <Header />
+  <Main pageTitle="About" pageDesc={`About ${SITE.title}`}>
+    <div class="app-prose max-w-app">
+      <p>
+        Industrial Wireless I/O is an independent English-language publication focused on wireless I/O, industrial telemetry, and field connectivity architecture.
+      </p>
+      <p>
+        The site favors concise, durable publishing that helps readers understand network tradeoffs, remote monitoring patterns, and practical field connectivity decisions.
+      </p>
+    </div>
+  </Main>
+  <Footer />
+</Layout>

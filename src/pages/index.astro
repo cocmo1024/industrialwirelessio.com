@@ -1,216 +1,29 @@
 ---
-import { getCollection } from 'astro:content';
-import AdSlot from '../components/AdSlot.astro';
-import PostPreviewCard from '../components/PostPreviewCard.astro';
-import SidebarCard from '../components/SidebarCard.astro';
-import ClassicShell from '../layouts/ClassicShell.astro';
-import { SITE_DESCRIPTION, SITE_KEYWORDS } from '../consts';
-import { SITE_PRIORITY_CLUSTERS, SITE_UPDATE_PLAYBOOK } from '../sitePlan';
-import { sortPosts } from '../utils/content';
-
-const posts = sortPosts(await getCollection('blog'));
-const [featuredPost, ...morePosts] = posts;
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import LinkButton from "@/components/LinkButton.astro";
+import { SITE } from "@/config";
 ---
 
-<ClassicShell
-	title="Industrial Wireless I/O | Telemetry Architecture, Network Comparison, and Reliability Planning"
-	description={SITE_DESCRIPTION}
-	pageTitle="Wireless I/O and industrial connectivity guides for long-life telemetry decisions"
-	pageIntro="Industrial Wireless I/O is built as a high-trust English-language field manual for engineers and operators working on remote assets, network tradeoffs, and telemetry reliability. The structure favors architecture depth, practical deployment logic, and future partner-ready inventory without crowding the experience early."
-	introLabel="Industrial Wireless I/O"
-	keywords={[...SITE_KEYWORDS, 'industrial connectivity field manual', 'wireless remote io guides', 'telemetry architecture']}
->
-	<Fragment slot="left-rail">
-		<SidebarCard title="Start Here" eyebrow="Core Routes">
-			<ul>
-				<li><a href="/categories/field-architecture/">Field Architecture</a> for remote sites and asset context</li>
-				<li><a href="/categories/network-comparison/">Network Comparison</a> for LoRaWAN, cellular, and mixed networks</li>
-				<li><a href="/categories/deployment-reliability/">Deployment Reliability</a> for panels, antennas, and maintenance planning</li>
-			</ul>
-		</SidebarCard>
-
-		<SidebarCard title="High-Value Traffic" eyebrow="Why It Matters">
-			<p>
-				The readers who matter most are deciding how to design, harden, and maintain remote telemetry
-				systems. Those decisions usually connect directly to hardware, services, and engineering spend.
-			</p>
-		</SidebarCard>
-	</Fragment>
-
-	<section class="hero-panel">
-		<div class="hero-grid">
-			<div>
-				<p class="eyebrow">Field Manual</p>
-				<h2>Built for architecture decisions that have to survive the real world</h2>
-				<p>
-					This site should feel like a dependable field reference: clear network tradeoffs, practical
-					panel and antenna logic, and content that respects the difference between a lab-friendly idea
-					and a remote deployment that has to keep working.
-				</p>
-				<div class="chip-row">
-					<a class="taxonomy-link" href="/categories/field-architecture/">Field Architecture</a>
-					<a class="taxonomy-link" href="/categories/network-comparison/">Network Comparison</a>
-					<a class="taxonomy-link" href="/categories/deployment-reliability/">Deployment Reliability</a>
-					<a class="taxonomy-link" href="/blog/">Archive</a>
-				</div>
-			</div>
-
-			<div class="hero-aside">
-				<article class="detail-card">
-					<p class="section-kicker">Reader Intent</p>
-					<h3>Why this audience is valuable</h3>
-					<ul class="signal-list">
-						<li>They are comparing architecture paths before purchase</li>
-						<li>They care about uptime, power, enclosure, and site conditions</li>
-						<li>They often need hardware, services, or engineering guidance next</li>
-					</ul>
-				</article>
-
-				<article class="detail-card">
-					<p class="section-kicker">Long-Term Asset</p>
-					<h3>What compounds here</h3>
-					<p>
-						Network tradeoff pages, reliability checklists, and field design explainers stay useful
-						longer than product announcement coverage and attract more serious technical attention.
-					</p>
-				</article>
-			</div>
-		</div>
-	</section>
-
-	<section class="section-block">
-		<div class="section-head">
-			<div>
-				<p class="eyebrow">Field Manuals</p>
-				<h2>Three editorial lanes with strong shelf life</h2>
-			</div>
-		</div>
-		<div class="hub-grid">
-			<article class="hub-card">
-				<h4><a href="/categories/field-architecture/">Field Architecture</a></h4>
-				<p>Remote site design logic that connects telemetry systems to physical assets, layout, and environment reality.</p>
-			</article>
-			<article class="hub-card">
-				<h4><a href="/categories/network-comparison/">Network Comparison</a></h4>
-				<p>Pre-purchase tradeoff coverage for LoRaWAN, cellular, private wireless, and mixed connectivity decisions.</p>
-			</article>
-			<article class="hub-card">
-				<h4><a href="/categories/deployment-reliability/">Deployment Reliability</a></h4>
-				<p>Durable operational content around antennas, power, panels, enclosure design, and maintenance survival.</p>
-			</article>
-		</div>
-	</section>
-
-	{featuredPost ? (
-		<>
-			<section class="section-block">
-				<div class="section-head">
-					<div>
-						<p class="eyebrow">Lead Guide</p>
-						<h2>Featured wireless I/O article</h2>
-					</div>
-				</div>
-				<PostPreviewCard post={featuredPost} featured={true} />
-			</section>
-
-			<AdSlot
-				slotId="home-connectivity-banner"
-				format="banner"
-				headline="Reserved connectivity solution sponsor"
-				note="This center-column unit is reserved for future gateway, telemetry platform, or partner campaigns after the site earns deeper architecture trust."
-			/>
-		</>
-	) : (
-		<section class="section-block">
-			<div class="section-head">
-				<div>
-					<p class="eyebrow">Lead Guide</p>
-					<h2>No posts published yet</h2>
-				</div>
-			</div>
-			<p>Start with architecture comparisons, remote site design guides, and reliability planning content.</p>
-		</section>
-	)}
-
-	<section class="section-block">
-		<div class="section-head">
-			<div>
-				<p class="eyebrow">Why This Can Win</p>
-				<h2>Architecture depth creates both SEO value and partner value</h2>
-			</div>
-		</div>
-		<div class="detail-grid">
-			<article class="detail-card">
-				<p class="section-kicker">Search Moat</p>
-				<h3>Field reality is hard to fake</h3>
-				<p>Pages about remote-site constraints, uptime, power, and enclosure choices create more durable search value than surface-level hardware roundups.</p>
-			</article>
-			<article class="detail-card">
-				<p class="section-kicker">Commercial Fit</p>
-				<h3>Pre-purchase architecture traffic</h3>
-				<p>Readers deciding between network paths and reliability strategies are often close to module, gateway, or services spend.</p>
-			</article>
-			<article class="detail-card">
-				<p class="section-kicker">Retention</p>
-				<h3>Reference content gets revisited</h3>
-				<p>Field manuals, comparison pages, and deployment checklists can become repeat-use resources for teams running distributed assets over time.</p>
-			</article>
-		</div>
-	</section>
-
-	<section class="section-block">
-		<div class="section-head">
-			<div>
-				<p class="eyebrow">Editorial Engine</p>
-				<h2>The long-term field manual strategy is now visible on-site</h2>
-			</div>
-		</div>
-		<div class="detail-grid">
-			<article class="detail-card">
-				<p class="section-kicker">Topic Map</p>
-				<h3><a href="/topics/">See the telemetry cluster plan</a></h3>
-				<p>
-					The current top-priority cluster is <strong>{SITE_PRIORITY_CLUSTERS[0].title}</strong>, the
-					kind of field-use-case topic that can compound into durable high-intent traffic.
-				</p>
-			</article>
-			<article class="detail-card">
-				<p class="section-kicker">Methodology</p>
-				<h3><a href="/methodology/">Read how field pages should be built</a></h3>
-				<p>
-					The methodology page defines how architecture comparisons, reliability guides, and hardware
-					role pages should stay practical and trustworthy.
-				</p>
-			</article>
-			<article class="detail-card">
-				<p class="section-kicker">Cadence</p>
-				<h3>{SITE_UPDATE_PLAYBOOK[0].title}</h3>
-				<p>{SITE_UPDATE_PLAYBOOK[0].summary}</p>
-			</article>
-		</div>
-	</section>
-
-	<section class="section-block">
-		<div class="section-head">
-			<div>
-				<p class="eyebrow">Archive Stream</p>
-				<h2>Recent wireless I/O entries</h2>
-			</div>
-		</div>
-
-		<div class="post-stream">
-			{morePosts.length > 0 ? (
-				morePosts.map((post) => <PostPreviewCard post={post} />)
-			) : (
-				<p>Use this stream for reliability checklists, network architecture explainers, and field deployment playbooks.</p>
-			)}
-		</div>
-	</section>
-
-	<AdSlot
-		slotId="home-mobile-specsheet"
-		format="mobile"
-		headline="Reserved mobile field CTA"
-		note="This compact unit can later carry a telemetry checklist, field guide download, or partner promotion once the mobile audience proves valuable."
-	/>
-</ClassicShell>
+<Layout title={SITE.title}>
+  <Header />
+  <main id="main-content" data-layout="index" class="app-layout">
+    <section class="py-14 sm:py-20">
+      <p class="text-sm font-medium tracking-[0.18em] uppercase text-accent">
+        {new URL(SITE.website).hostname}
+      </p>
+      <h1 class="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">
+        {SITE.title}
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg text-muted">
+        {SITE.desc}
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <LinkButton href="/about">About</LinkButton>
+        <LinkButton href="/contact">Contact</LinkButton>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</Layout>

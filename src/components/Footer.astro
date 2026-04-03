@@ -1,32 +1,36 @@
 ---
-import { SITE_CONTACT_EMAIL, SITE_DOMAIN, SITE_FOOTER_NOTE, SITE_TITLE } from '../consts';
-const today = new Date();
+import type { HTMLAttributes } from "astro/types";
+import { SITE } from "@/config";
+
+const currentYear = new Date().getFullYear();
+
+type Props = {
+  noMarginTop?: boolean;
+} & HTMLAttributes<"footer">;
+
+const { noMarginTop = false, class: className, ...attrs } = Astro.props;
 ---
 
-<footer class="site-footer">
-	<div class="footer-brand">
-		<p class="eyebrow">Editorial Foundation</p>
-		<p>
-			<strong>{SITE_TITLE}</strong> is built as an English-language reference publication with
-			clear topic clusters, reserved sponsor inventory that can be activated later, and a layout
-			designed to keep evergreen content easy to explore.
-		</p>
-	</div>
-
-	<nav class="footer-links" aria-label="Footer">
-		<a href="/">Home</a>
-		<a href="/blog">Blog</a>
-		<a href="/topics">Topics</a>
-		<a href="/methodology">Methodology</a>
-		<a href="/about">About</a>
-		<a href="/privacy">Privacy</a>
-		<a href="/disclaimer">Disclaimer</a>
-		<a href="/contact">Contact</a>
-	</nav>
-
-	<div class="footer-mini">
-		<p>&copy; {today.getFullYear()} {SITE_DOMAIN}. All rights reserved.</p>
-		<p>{SITE_FOOTER_NOTE}</p>
-		<p><a href={`mailto:${SITE_CONTACT_EMAIL}`}>{SITE_CONTACT_EMAIL}</a></p>
-	</div>
+<footer
+  class:list={["app-layout", { "mt-auto": !noMarginTop }, className]}
+  {...attrs}
+>
+  <div
+    class:list={[
+      "py-6 sm:py-4",
+      "border-t border-border",
+      "flex flex-col items-center justify-between gap-4 sm:flex-row",
+    ]}
+  >
+    <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm">
+      <a href="/about" class="hover:text-accent">About</a>
+      <a href="/contact" class="hover:text-accent">Contact</a>
+      <a href="/privacy" class="hover:text-accent">Privacy</a>
+      <a href="/disclaimer" class="hover:text-accent">Disclaimer</a>
+    </div>
+    <div class="my-2 flex flex-col items-center text-center whitespace-nowrap sm:items-end">
+      <span>Copyright &#169; {currentYear} {SITE.title}</span>
+      <span>All rights reserved.</span>
+    </div>
+  </div>
 </footer>

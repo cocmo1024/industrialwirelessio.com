@@ -1,5 +1,9 @@
-type Runtime = import("@astrojs/cloudflare").Runtime<Env>;
-
-declare namespace App {
-  interface Locals extends Runtime {}
+interface Window {
+  theme?: {
+    themeValue: string;
+    setPreference: () => void;
+    reflectPreference: () => void;
+    getTheme: () => string;
+    setTheme: (val: string) => void;
+  };
 }

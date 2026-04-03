@@ -1,22 +1,25 @@
-# industrialwirelessio.com
+# Industrial Wireless I/O
 
-Independent Astro site for `industrialwirelessio.com`.
+Static Astro site for [industrialwirelessio.com](https://industrialwirelessio.com/).
 
-## Positioning
-
-- Topic: industrial wireless I/O, remote telemetry, LoRaWAN, cellular, and field connectivity design
-- Layout: classic three-column industrial editorial site
-- Monetization: module vendor sponsorships, gateway promotions, engineering resources, and distributor partnerships
-
-## Quick Start
+## Local Development
 
 ```bash
 npm install
 npm run dev
 ```
 
-## Content Direction
+## Build
 
-- Publish practical guides for remote I/O design, protocol choice, and reliability planning
-- Build clusters around LoRaWAN, cellular telemetry, hazardous locations, and panel design
-- Use the side rails for vendor comparison tools, spec-sheet downloads, and sponsored network guides
+```bash
+npm run build
+```
+
+## Foundation
+
+- Homepage
+- About page
+- Contact page
+- Privacy policy
+- Disclaimer
+- Sitemap, robots, RSS, and base SEO metadata

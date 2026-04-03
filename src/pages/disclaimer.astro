@@ -1,84 +1,28 @@
 ---
-import SidebarCard from '../components/SidebarCard.astro';
-import ClassicShell from '../layouts/ClassicShell.astro';
-import { SITE_CONTACT_EMAIL, SITE_DOMAIN, SITE_KEYWORDS, SITE_TITLE } from '../consts';
+import Main from "@/layouts/Main.astro";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { SITE } from "@/config";
 ---
 
-<ClassicShell
-	title={`${SITE_TITLE} | Disclaimer`}
-	description={`Disclaimer for ${SITE_TITLE} (${SITE_DOMAIN}).`}
-	pageTitle="Disclaimer"
-	pageIntro={`${SITE_TITLE} publishes editorial commentary, comparison content, and practical reference material. This disclaimer sets expectations for how that content should be interpreted.`}
-	introLabel="Foundation Page"
-	keywords={[...SITE_KEYWORDS, 'disclaimer', SITE_DOMAIN]}
-	breadcrumbs={[
-		{ name: 'Home', path: '/' },
-		{ name: 'Disclaimer', path: '/disclaimer/' },
-	]}
->
-	<Fragment slot="left-rail">
-		<SidebarCard title="Plain-English Summary" eyebrow="Key Points">
-			<ul>
-				<li>Content is for general informational use.</li>
-				<li>Articles may include future sponsor, partner, or affiliate placements.</li>
-				<li>Readers should verify critical decisions with primary sources and qualified professionals.</li>
-			</ul>
-		</SidebarCard>
-	</Fragment>
-
-	<div class="policy-grid">
-		<section class="policy-card">
-			<p class="section-kicker">Editorial Use</p>
-			<h3>Information, not formal advice</h3>
-			<p>
-				This site shares editorial insights, frameworks, market observations, and practical guidance.
-				It is not legal, financial, engineering, medical, or investment advice, and it should not be
-				treated as a substitute for professional judgment.
-			</p>
-		</section>
-
-		<section class="policy-card">
-			<p class="section-kicker">Accuracy</p>
-			<h3>Best-effort, not guaranteed</h3>
-			<p>
-				We aim to keep pages useful and up to date, but markets, products, regulations, and pricing
-				change. Readers should confirm important facts directly with manufacturers, vendors, service
-				providers, or primary documentation.
-			</p>
-		</section>
-
-		<section class="policy-card">
-			<p class="section-kicker">Commercial Disclosure</p>
-			<h3>Future ads, partners, and affiliate links</h3>
-			<p>
-				Some pages may eventually include direct-sold sponsor placements, house ads, partner
-				references, or affiliate links. When those are active, this site should make them reasonably
-				clear to readers.
-			</p>
-		</section>
-
-		<section class="policy-card">
-			<p class="section-kicker">Liability</p>
-			<h3>Reader responsibility still matters</h3>
-			<p>
-				Any action taken from the information on this site is done at the reader&apos;s own discretion.
-				That includes software purchases, vendor outreach, engineering decisions, or implementation
-				work influenced by editorial content here.
-			</p>
-		</section>
-	</div>
-
-	<section class="section-block">
-		<div class="section-head">
-			<div>
-				<p class="eyebrow">Questions</p>
-				<h2>Need clarification?</h2>
-			</div>
-		</div>
-		<p>
-			For editorial or disclosure questions, email <a href={`mailto:${SITE_CONTACT_EMAIL}`}>{SITE_CONTACT_EMAIL}</a>.
-			This page is intentionally pragmatic for the current build stage and can be made more formal
-			before launch or monetization activation.
-		</p>
-	</section>
-</ClassicShell>
+<Layout title={`Disclaimer | ${SITE.title}`}>
+  <Header />
+  <Main
+    pageTitle="Disclaimer"
+    pageDesc={`${SITE.title} publishes informational content. This page sets expectations for how that content should be interpreted.`}
+  >
+    <div class="app-prose max-w-app">
+      <p>
+        Content on this site is provided for general informational purposes only.
+      </p>
+      <p>
+        Readers should verify important details with primary sources and qualified professionals before making decisions.
+      </p>
+      <p>
+        Questions can be sent to <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>.
+      </p>
+    </div>
+  </Main>
+  <Footer />
+</Layout>

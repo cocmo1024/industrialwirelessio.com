@@ -1,81 +1,25 @@
 ---
-import SidebarCard from '../components/SidebarCard.astro';
-import ClassicShell from '../layouts/ClassicShell.astro';
-import { SITE_CONTACT_EMAIL, SITE_DOMAIN, SITE_KEYWORDS, SITE_TITLE } from '../consts';
+import Main from "@/layouts/Main.astro";
+import Layout from "@/layouts/Layout.astro";
+import Header from "@/components/Header.astro";
+import Footer from "@/components/Footer.astro";
+import { SITE } from "@/config";
 ---
 
-<ClassicShell
-	title={`${SITE_TITLE} | Contact`}
-	description={`Contact ${SITE_TITLE}.`}
-	pageTitle="Contact"
-	pageIntro={`${SITE_TITLE} is being shaped as a durable English-language editorial brand. For now, email is the simplest contact channel for editorial notes, business inquiries, and partnership conversations.`}
-	introLabel="Foundation Page"
-	keywords={[...SITE_KEYWORDS, 'contact', SITE_DOMAIN]}
-	breadcrumbs={[
-		{ name: 'Home', path: '/' },
-		{ name: 'Contact', path: '/contact/' },
-	]}
->
-	<Fragment slot="left-rail">
-		<SidebarCard title="Best Reasons To Reach Out" eyebrow="Contact Fit">
-			<ul>
-				<li>Editorial corrections or topic suggestions</li>
-				<li>Partnership or sponsor conversations for the future</li>
-				<li>Questions about content reuse, quotes, or collaborations</li>
-			</ul>
-		</SidebarCard>
-	</Fragment>
-
-	<div class="contact-grid">
-		<section class="contact-card">
-			<p class="section-kicker">Primary Channel</p>
-			<h3>Email</h3>
-			<p><a href={`mailto:${SITE_CONTACT_EMAIL}`}>{SITE_CONTACT_EMAIL}</a></p>
-			<p>
-				Use email for editorial feedback, partnerships, guest expertise, or general business contact.
-			</p>
-		</section>
-
-		<section class="contact-card">
-			<p class="section-kicker">Current Stage</p>
-			<h3>Lean publication setup</h3>
-			<p>
-				This site is still in its foundation phase. There is no public office address, account portal,
-				or support desk yet, so email remains the main path.
-			</p>
-		</section>
-
-		<section class="contact-card">
-			<p class="section-kicker">Editorial</p>
-			<h3>What helps most</h3>
-			<ul>
-				<li>Specific page URLs when reporting corrections</li>
-				<li>Clear context when suggesting a new topic cluster</li>
-				<li>Concise details when proposing partnerships or media buys</li>
-			</ul>
-		</section>
-
-		<section class="contact-card">
-			<p class="section-kicker">Response Window</p>
-			<h3>Reasonable expectations</h3>
-			<p>
-				Because this is an editorial build rather than a staffed support platform, response timing may
-				vary. Priority usually goes to corrections, high-quality topic suggestions, and relevant business inquiries.
-			</p>
-		</section>
-	</div>
-
-	<section class="section-block">
-		<div class="section-head">
-			<div>
-				<p class="eyebrow">Business</p>
-				<h2>Future partnerships are easier when the fit is clear</h2>
-			</div>
-		</div>
-		<p>
-			Reserved sponsor placements already exist across the site, but no live ad network or direct-sold campaign
-			is running yet. If you are reaching out about a future fit, include the product category, target
-			audience, and the kind of placement you have in mind.
-		</p>
-	</section>
-</ClassicShell>
+<Layout title={`Contact | ${SITE.title}`}>
+  <Header />
+  <Main
+    pageTitle="Contact"
+    pageDesc={`Use email to contact ${SITE.title} about editorial corrections, business inquiries, or general questions.`}
+  >
+    <div class="app-prose max-w-app">
+      <p>
+        Email: <a href={`mailto:${SITE.contactEmail}`}>{SITE.contactEmail}</a>
+      </p>
+      <p>
+        Email is the primary contact channel for this website.
+      </p>
+    </div>
+  </Main>
+  <Footer />
+</Layout>
