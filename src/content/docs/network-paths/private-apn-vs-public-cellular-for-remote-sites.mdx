@@ -1,0 +1,85 @@
+---
+title: Private APN vs Public Cellular for Remote Sites
+description: A network-path comparison for remote telemetry teams deciding whether private APN arrangements materially improve serviceability, segmentation, and operational control.
+referenceType: network-path
+adProfile: network-path
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: private apn vs public cellular remote telemetry
+searchIntent: compare
+decisionStage: shortlist
+targetRoles:
+  - Telemetry architects
+  - Utility engineers
+  - OT network leads
+  - Integrators
+contentStatus: seed
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Private APN vs Public Cellular for Remote Sites
+
+Many remote telemetry projects eventually ask whether a private APN is necessary. The right answer is rarely ideological. What matters is whether the added operating model improves segmentation, addressing, and support enough to justify the extra coordination. For some fleets it absolutely does. For others it adds complexity without solving the real field problem.
+
+## Which layer this decision belongs to
+
+This is a network-operations decision, not a substitute for good site design. A private APN can shape:
+
+- addressing and routing consistency;
+- network isolation preferences;
+- visibility into device connectivity across a fleet;
+- how the remote communications layer is managed operationally.
+
+It does not compensate for weak power design, poor antenna placement, or the wrong field hardware.
+
+## When public cellular is enough
+
+Public cellular is often enough when:
+
+- the telemetry footprint is modest;
+- the project mostly needs dependable outbound visibility and alarms;
+- the support team values simplicity over custom network control;
+- device management and security needs are already well bounded.
+
+Many remote sites succeed perfectly well with public cellular plus disciplined device and application design.
+
+## When a private APN becomes valuable
+
+A private APN becomes more attractive when:
+
+- the deployment spans a meaningful fleet of remote assets;
+- network segmentation and addressing need to be more controlled;
+- operations teams want stronger consistency across carriers or geographies;
+- the support model benefits from clearer remote-network ownership.
+
+In these cases, the added coordination can create a cleaner long-term operating boundary.
+
+## Common field mistake
+
+The common mistake is adopting a private APN because it sounds more industrial or more secure by default. If the real failure pattern is poor coverage, weak antennas, unstable power, or bad telemetry behavior during outages, the APN choice will not fix the field layer.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Cellular vs LoRaWAN vs satellite"
+		href="/network-paths/cellular-vs-lorawan-vs-satellite/"
+		description="Choose the family of backhaul first, then refine the cellular operating model."
+	/>
+	<LinkCard
+		title="Lift stations and sewer network telemetry"
+		href="/applications/lift-stations-and-sewer-network-telemetry/"
+		description="See how the network-path decision behaves in a real remote utility application."
+	/>
+	<LinkCard
+		title="Industrial telemetry gateways"
+		href="/product-families/industrial-telemetry-gateways/"
+		description="Match the network-path model to the device class that actually owns the field boundary."
+	/>
+	<LinkCard
+		title="Solar, battery, and low-power planning"
+		href="/reliability/solar-battery-and-low-power-site-planning/"
+		description="Validate the backhaul choice against the site power budget and maintenance model."
+	/>
+</div>

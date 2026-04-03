@@ -1,0 +1,87 @@
+---
+title: Report by Exception and Store-and-Forward
+description: A protocol-behavior reference for remote telemetry systems that need to balance alarm timeliness, low-power operation, and resilience during communication outages.
+referenceType: protocol
+adProfile: protocol
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: report by exception store and forward telemetry
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Telemetry architects
+  - Utility engineers
+  - Remote monitoring teams
+  - Integrators
+contentStatus: seed
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Report by Exception and Store-and-Forward
+
+Remote telemetry systems often work better when they transmit less, not more. In field deployments with constrained power, unstable backhaul, and sparse maintenance windows, aggressive polling can create noise and fragile behavior. Report-by-exception and store-and-forward patterns exist because remote sites need to stay useful when communications are imperfect.
+
+## Which layer this decision belongs to
+
+This is less about a named protocol and more about telemetry behavior. The key question is how the site should act when:
+
+- values change materially;
+- alarms or thresholds are crossed;
+- links are temporarily unavailable;
+- operators need confidence that important events were not lost.
+
+Those decisions shape device choice, buffering needs, and alarm strategy.
+
+## Typical fit
+
+These patterns are a good fit when:
+
+- the site mainly needs alarm visibility and trend snapshots;
+- the power budget rewards low-traffic communications;
+- backhaul quality is variable;
+- operators care more about seeing meaningful changes than constant chatter.
+
+This is why remote utilities, tanks, and scattered assets often benefit from exception-driven behavior.
+
+## Common field mistake
+
+A frequent mistake is designing remote telemetry as if the link were a stable on-premise network. Constant polling can waste power, increase cost, and still fail to preserve the events that matter most when coverage drops.
+
+The better question is usually: what must arrive immediately, what can be buffered, and what can wait.
+
+## Hardware and reliability consequences
+
+These behavior choices affect:
+
+- whether the device class needs reliable local buffering;
+- how alarm thresholds are configured and tested;
+- battery and solar sizing assumptions;
+- how much field troubleshooting is required after communication interruptions.
+
+They are operational decisions, not just protocol preferences.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Telemetry protocol fit"
+		href="/protocols/telemetry-protocol-fit/"
+		description="Place report behavior inside the larger protocol and message-shape decision."
+	/>
+	<LinkCard
+		title="Industrial telemetry gateways"
+		href="/product-families/industrial-telemetry-gateways/"
+		description="Choose hardware that can buffer and recover cleanly when the field link degrades."
+	/>
+	<LinkCard
+		title="Lift stations and sewer network telemetry"
+		href="/applications/lift-stations-and-sewer-network-telemetry/"
+		description="Apply event-driven telemetry patterns to a remote utility environment."
+	/>
+	<LinkCard
+		title="Solar, battery, and low-power planning"
+		href="/reliability/solar-battery-and-low-power-site-planning/"
+		description="Connect telemetry behavior to the actual energy budget at the site."
+	/>
+</div>

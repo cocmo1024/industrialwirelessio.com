@@ -1,0 +1,92 @@
+---
+title: Solar, Battery, and Low-Power Site Planning
+description: A reliability reference for remote telemetry deployments where power budgeting, battery autonomy, and service intervals shape the viability of the entire site.
+referenceType: reliability
+adProfile: reliability
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: solar battery planning remote telemetry
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Utility engineers
+  - Field telemetry designers
+  - Integrators
+  - Operations teams
+contentStatus: seed
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Solar, Battery, and Low-Power Site Planning
+
+Power planning is one of the fastest ways to tell whether a remote telemetry design is grounded in field reality. A site with a beautiful connectivity diagram and a weak power budget is still a weak system. In low-access environments, battery autonomy, charging assumptions, and device duty cycles often matter more than the feature density of the gateway.
+
+## Why the power model matters
+
+Remote sites often depend on:
+
+- battery-backed operation during utility instability;
+- solar support where mains power is weak or absent;
+- communication devices with uneven current draw profiles;
+- service intervals that assume the site can be left alone for longer than expected.
+
+That means the power model has to be treated as part of the architecture, not as a procurement afterthought.
+
+## What should be validated early
+
+Teams should pressure-test:
+
+- average and peak current draw across the full device stack;
+- autonomy expectations during poor weather or power loss;
+- how telemetry behavior changes during degraded power states;
+- whether the enclosure and charging environment support long-term battery health.
+
+If those answers are vague, the site design is not ready.
+
+## Why remote power models fail
+
+The most common failure patterns include:
+
+- optimistic assumptions about solar input or sunlight consistency;
+- forgetting the effect of heaters, radios, or surges on peak draw;
+- failing to match reporting behavior to the available energy budget;
+- designing a site that can only be reliable if service visits happen more often than planned.
+
+These failures are expensive because they usually appear after the site is already deployed.
+
+## Reliability consequences
+
+Strong low-power planning improves:
+
+- confidence in alarm visibility during outages;
+- realistic communication strategy for weak or intermittent links;
+- replacement planning for batteries and field components;
+- the odds that the site remains supportable by the actual field team.
+
+That is why good power design often makes the rest of the telemetry stack simpler.
+
+## Related paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Power, enclosures, and antennas"
+		href="/hardware/power-enclosures-and-antennas/"
+		description="Extend the power budget into the physical deployment details that keep field hardware alive."
+	/>
+	<LinkCard
+		title="Report by exception and store-and-forward"
+		href="/protocols/report-by-exception-and-store-and-forward/"
+		description="Adjust telemetry behavior so the data strategy matches the site's actual energy budget."
+	/>
+	<LinkCard
+		title="Private APN vs public cellular"
+		href="/network-paths/private-apn-vs-public-cellular-for-remote-sites/"
+		description="Pressure-test whether the network model is realistic for the site's power and service profile."
+	/>
+	<LinkCard
+		title="Lift stations and sewer network telemetry"
+		href="/applications/lift-stations-and-sewer-network-telemetry/"
+		description="See how power planning shapes remote utility telemetry architectures in practice."
+	/>
+</div>

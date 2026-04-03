@@ -1,0 +1,92 @@
+---
+title: Lift Stations and Sewer Network Telemetry
+description: A practical application guide for lift station and sewer telemetry projects where alarm visibility, low-power resilience, and field serviceability matter more than feature density.
+referenceType: application
+adProfile: application
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: lift station telemetry architecture
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Utility engineers
+  - Telemetry designers
+  - Integrators
+  - Operations teams
+contentStatus: seed
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Lift Stations and Sewer Network Telemetry
+
+Lift station telemetry is a high-value field-connectivity problem because the cost of poor visibility is immediate. Overflow risk, pump health, power issues, and sparse service windows all push teams toward architectures that are simple, durable, and easy to recover in bad conditions. Buyers in this category are rarely looking for novelty. They are looking for reliable awareness when the site is unattended.
+
+## Why this site type matters
+
+Lift stations and sewer assets usually combine:
+
+- intermittent field access and limited staffing;
+- strong alarm visibility requirements;
+- constrained enclosures and messy physical environments;
+- communication conditions that are good enough until they are not.
+
+That mix makes the architecture different from a clean indoor industrial network design.
+
+## Field pressures and operating limits
+
+The telemetry design needs to survive:
+
+- short power interruptions or unstable utility conditions;
+- temporary backhaul loss;
+- environmental exposure and enclosure degradation;
+- operators who need the site to be understandable at a glance during service.
+
+These realities often make conservative design more valuable than capability-heavy devices.
+
+## Architecture implications
+
+Strong lift station designs usually emphasize:
+
+- clear local alarm handling and event buffering;
+- practical cellular architecture with realistic signal expectations;
+- low-maintenance device classes that can be replaced without specialist intervention;
+- power and surge planning that treats outages as normal, not exceptional.
+
+The best system is usually the one the field team can trust and service repeatedly.
+
+## Network, protocol, and reliability fit
+
+Lift station sites often benefit from:
+
+- cellular as the default backhaul unless site clustering strongly favors another path;
+- report-by-exception and store-and-forward behavior instead of noisy constant polling;
+- hardware footprints sized to the true telemetry and alarm job;
+- reliability planning that starts with battery, solar, antenna, and enclosure reality.
+
+Those choices reduce false confidence and improve survivability.
+
+## Related paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Remote pump stations and water sites"
+		href="/applications/remote-pump-stations-and-water-sites/"
+		description="Place lift station telemetry inside the broader remote water-asset architecture pattern."
+	/>
+	<LinkCard
+		title="Private APN vs public cellular"
+		href="/network-paths/private-apn-vs-public-cellular-for-remote-sites/"
+		description="Pressure-test the cellular operating model before assuming any remote site should use the same path."
+	/>
+	<LinkCard
+		title="Report by exception and store-and-forward"
+		href="/protocols/report-by-exception-and-store-and-forward/"
+		description="Decide how events and telemetry should behave when communication links are imperfect."
+	/>
+	<LinkCard
+		title="Solar, battery, and low-power planning"
+		href="/reliability/solar-battery-and-low-power-site-planning/"
+		description="Make sure the power model is as durable as the data path."
+	/>
+</div>
