@@ -1,0 +1,59 @@
+---
+type RouteData = Record<string, unknown>;
+
+const route = Astro.locals.starlightRoute;
+const data = (route.entry?.data ?? {}) as RouteData;
+
+const intentLabels: Record<string, string> = {
+	learn: 'Learn',
+	compare: 'Compare',
+	select: 'Select',
+	design: 'Design',
+	deploy: 'Deploy',
+};
+
+const stageLabels: Record<string, string> = {
+	'problem-aware': 'Problem Aware',
+	'solution-aware': 'Solution Aware',
+	'vendor-aware': 'Vendor Aware',
+	shortlist: 'Shortlist',
+	implementation: 'Implementation',
+	operations: 'Operations',
+};
+
+const statusLabels: Record<string, string> = {
+	seed: 'Seed',
+	growing: 'Growing',
+	cornerstone: 'Cornerstone',
+};
+
+const roles =
+	Array.isArray(data.targetRoles) && data.targetRoles.every((role) => typeof role === 'string')
+		? data.targetRoles
+		: [];
+
+const signals = [
+	typeof data.primaryKeyword === 'string' && ['Primary Keyword', data.primaryKeyword],
+	typeof data.searchIntent === 'string' && ['Search Intent', intentLabels[data.searchIntent] ?? data.searchIntent],
+	typeof data.decisionStage === 'string' && ['Decision Stage', stageLabels[data.decisionStage] ?? data.decisionStage],
+	roles.length > 0 && ['Target Roles', roles.join(', ')],
+	typeof data.contentStatus === 'string' && ['Content Status', statusLabels[data.contentStatus] ?? data.contentStatus],
+	typeof data.reviewCadence === 'string' && ['Review Cadence', data.reviewCadence],
+].filter(Boolean) as [string, string][];
+---
+
+{
+	signals.length > 0 && (
+		<section class="reference-signals">
+			<h2>Reference Signals</h2>
+			<dl>
+				{signals.map(([label, value]) => (
+					<div>
+						<dt>{label}</dt>
+						<dd>{value}</dd>
+					</div>
+				))}
+			</dl>
+		</section>
+	)
+}

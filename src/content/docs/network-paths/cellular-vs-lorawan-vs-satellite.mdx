@@ -1,31 +1,81 @@
 ---
 title: Cellular vs LoRaWAN vs Satellite
-description: A practical comparison of three common remote telemetry backhaul options for field industrial deployments.
+description: A practical comparison of cellular, LoRaWAN, and satellite for remote telemetry, including where each path fits and how field conditions change the right choice.
+referenceType: network-path
+adProfile: network-path
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: cellular vs lorawan vs satellite for telemetry
+searchIntent: compare
+decisionStage: shortlist
+targetRoles:
+  - Telemetry designers
+  - Controls engineers
+  - Utility teams
+  - System integrators
+contentStatus: cornerstone
 ---
 
 import { LinkCard } from '@astrojs/starlight/components';
 
 # Cellular vs LoRaWAN vs Satellite
 
-These options solve different problems. The right choice depends on coverage confidence, site density, power limits, maintenance expectations, and whether the deployment can support additional local infrastructure.
+These options solve different problems. The right choice depends on coverage confidence, site density, power limits, maintenance expectations, and whether the deployment can support additional local infrastructure. This is one of the highest-value field-connectivity decisions because the network path often determines service model, hardware footprint, site survivability, and lifetime operating cost.
 
-## Cellular is usually strongest when
+## Where cellular is strongest
 
-- Public coverage is credible at the site.
-- Moderate bandwidth and straightforward deployment matter.
-- The team wants fewer local network components to own.
+Cellular is usually the best fit when:
 
-## LoRaWAN is usually strongest when
+- public coverage is credible at the site;
+- moderate bandwidth and straightforward deployment matter;
+- the team wants fewer local network components to own;
+- scaling across many distributed sites is more important than building a private field network.
 
-- Asset density supports a local wireless network design.
-- Low power and broad sensor distribution matter.
-- The team can support gateway placement and network management.
+Cellular often wins on simplicity, but only when coverage confidence is real rather than assumed.
 
-## Satellite is usually strongest when
+## Where LoRaWAN is strongest
 
-- Coverage confidence matters more than bandwidth cost.
-- Remote access is rare and failure is expensive.
-- The site profile makes terrestrial assumptions risky.
+LoRaWAN tends to matter when:
+
+- asset density supports a local wireless network design;
+- low power and broad sensor distribution are central requirements;
+- the organization can support gateway placement and network management;
+- the architecture benefits from private or semi-private site control.
+
+LoRaWAN is rarely the universal answer. It is most valuable when the site pattern justifies the added network layer.
+
+## Where satellite is strongest
+
+Satellite is usually strongest when:
+
+- coverage confidence matters more than bandwidth cost;
+- site access is difficult and communication failure is expensive;
+- terrestrial assumptions are too risky;
+- the project values availability over transport efficiency.
+
+Satellite often becomes attractive only after teams stop treating coverage uncertainty as a minor detail.
+
+## The question buyers should really ask
+
+The most useful decision question is not "which network is best?" It is:
+
+- how often does the site need to communicate;
+- how much data actually matters;
+- what happens when communication drops;
+- who owns the network infrastructure after install.
+
+Those questions tie the network path to operations instead of marketing claims.
+
+## Common mistakes
+
+Teams often go wrong when they:
+
+- pick LoRaWAN for a sparse site with no real gateway strategy;
+- assume cellular coverage is stable because a phone worked once on-site;
+- underestimate the service-cost tradeoff of satellite;
+- treat the network path as separate from power, enclosure, and maintenance design.
+
+In field deployments, the network is only one part of a survivable architecture.
 
 ## Related paths
 
@@ -36,8 +86,13 @@ These options solve different problems. The right choice depends on coverage con
 		description="See how site type changes the practical meaning of coverage, serviceability, and uptime."
 	/>
 	<LinkCard
+		title="Industrial telemetry gateways"
+		href="/product-families/industrial-telemetry-gateways/"
+		description="Backhaul choice reshapes what the gateway has to do locally."
+	/>
+	<LinkCard
 		title="Site survivability planning"
 		href="/reliability/site-survivability-planning/"
-		description="Network choice only works when the full field architecture can survive maintenance and environment pressures."
+		description="The best network path is the one whose failure profile fits the site's tolerance for interruption."
 	/>
 </div>

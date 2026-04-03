@@ -37,6 +37,20 @@ export const collections = {
 					.optional(),
 				commercialIntent: z.enum(['low', 'medium', 'high']).optional(),
 				reviewCadence: z.string().optional(),
+				primaryKeyword: z.string().optional(),
+				searchIntent: z.enum(['learn', 'compare', 'select', 'design', 'deploy']).optional(),
+				decisionStage: z
+					.enum([
+						'problem-aware',
+						'solution-aware',
+						'vendor-aware',
+						'shortlist',
+						'implementation',
+						'operations',
+					])
+					.optional(),
+				targetRoles: z.array(z.string()).optional(),
+				contentStatus: z.enum(['seed', 'growing', 'cornerstone']).optional(),
 			}),
 		}),
 	}),

@@ -272,3 +272,42 @@ body {
 		grid-template-columns: 1fr;
 	}
 }
+
+.reference-signals {
+	display: grid;
+	gap: 0.85rem;
+	margin-top: 1.5rem;
+	padding: 1rem 1.05rem;
+	border-radius: 1rem;
+	border: 1px solid color-mix(in srgb, var(--sl-color-accent) 16%, var(--sl-color-hairline));
+	background: color-mix(in srgb, var(--site-panel) 88%, transparent);
+}
+
+.reference-signals h2 {
+	margin: 0;
+	font-size: 0.8rem;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--sl-color-accent-high);
+}
+
+.reference-signals dl {
+	display: grid;
+	gap: 0.75rem;
+	margin: 0;
+}
+
+.reference-signals dt {
+	font-size: 0.72rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--sl-color-gray-3);
+}
+
+.reference-signals dd {
+	margin: 0.2rem 0 0;
+	font-size: 0.9rem;
+	line-height: 1.5;
+	color: var(--sl-color-gray-2);
+}
