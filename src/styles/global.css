@@ -13,6 +13,7 @@
 ::backdrop {
 	--sl-font: 'IBM Plex Sans';
 	--sl-font-mono: 'IBM Plex Mono';
+	--site-right-rail-width: clamp(18.5rem, 19vw, 22rem);
 	--sl-color-accent-low: hsl(196, 76%, 12%);
 	--sl-color-accent: hsl(196, 86%, 63%);
 	--sl-color-accent-high: hsl(40, 88%, 81%);
@@ -333,4 +334,37 @@ body {
 	min-width: 0;
 	overflow-wrap: anywhere;
 	word-break: break-word;
+}
+
+@media (min-width: 72rem) {
+	.right-sidebar-container {
+		flex: 0 0 var(--site-right-rail-width);
+		width: var(--site-right-rail-width);
+		min-width: var(--site-right-rail-width);
+	}
+
+	.right-sidebar {
+		width: var(--site-right-rail-width);
+	}
+
+	.main-pane,
+	[data-has-sidebar][data-has-toc] .main-pane {
+		flex: 1 1 auto;
+		width: auto;
+		min-width: 0;
+	}
+
+	.right-sidebar-panel__inner {
+		box-sizing: border-box;
+		width: 100%;
+		max-width: var(--site-right-rail-width);
+		padding-inline: 1rem;
+		padding-bottom: 2rem;
+	}
+
+	.right-sidebar-panel__inner :is(nav, ul, li, a, span) {
+		min-width: 0;
+		overflow-wrap: anywhere;
+		word-break: break-word;
+	}
 }
