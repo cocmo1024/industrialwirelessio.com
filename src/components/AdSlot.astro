@@ -11,7 +11,7 @@ interface Props {
 const { zone, headline, sizes, audience, note, compact = false } = Astro.props;
 ---
 
-<section class:list={['ad-slot', compact && 'ad-slot--compact']}>
+<section class:list={['ad-slot', compact && 'ad-slot--compact']} data-slot-zone={zone}>
 	<div class="ad-slot__meta">
 		<span class="ad-slot__eyebrow">Reserved placement</span>
 		<span class="ad-slot__zone">{zone}</span>

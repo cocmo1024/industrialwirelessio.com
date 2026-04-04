@@ -4,6 +4,7 @@ import TableOfContents from 'virtual:starlight/components/TableOfContents';
 import AdSlot from './AdSlot.astro';
 import ReferenceSignals from './ReferenceSignals.astro';
 import { getAdPlan } from '../utils/ad-config';
+import { adPreviewEnabled } from '../utils/ad-runtime.mjs';
 
 const route = Astro.locals.starlightRoute;
 const plan = getAdPlan(route.id, route.entry?.data);
@@ -21,19 +22,27 @@ const plan = getAdPlan(route.id, route.entry?.data);
 	<div class="right-sidebar-panel__inner">
 		{route.toc && <TableOfContents />}
 		<ReferenceSignals />
-		<section class="ad-rail">
-			<h2>Commercial Layout</h2>
-			<p>{plan.summary}</p>
-			<div class="ad-rail__stack">
-				{plan.rail.map((slot) => <AdSlot {...slot} compact />)}
-			</div>
-			<p class="ad-rail__links">
-				<a href="/advertising/">Advertising</a>
-				<span aria-hidden="true"> / </span>
-				<a href="/affiliate-disclosure/">Affiliate Disclosure</a>
-				<span aria-hidden="true"> / </span>
-				<a href="/editorial-policy/">Editorial Policy</a>
-			</p>
-		</section>
+		{
+			adPreviewEnabled && (
+				<section
+					class="ad-rail"
+					data-ad-profile={route.entry?.data?.adProfile ?? 'unassigned'}
+					data-commercial-intent={route.entry?.data?.commercialIntent ?? 'unknown'}
+				>
+					<h2>Commercial Layout</h2>
+					<p>{plan.summary}</p>
+					<div class="ad-rail__stack">
+						{plan.rail.map((slot) => <AdSlot {...slot} compact />)}
+					</div>
+					<p class="ad-rail__links">
+						<a href="/advertising/">Advertising</a>
+						<span aria-hidden="true"> / </span>
+						<a href="/affiliate-disclosure/">Affiliate Disclosure</a>
+						<span aria-hidden="true"> / </span>
+						<a href="/editorial-policy/">Editorial Policy</a>
+					</p>
+				</section>
+			)
+		}
 	</div>
 </div>

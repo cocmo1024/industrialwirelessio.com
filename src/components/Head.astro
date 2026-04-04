@@ -1,0 +1,61 @@
+---
+import { buildSeo } from '../utils/seo.mjs';
+import { siteMeta } from '../utils/site-meta.mjs';
+
+const route = Astro.locals.starlightRoute;
+const seo = buildSeo(route, Astro.url);
+
+const filteredHead = route.head.filter((entry) => {
+	if (entry.tag !== 'meta' || !entry.attrs) return true;
+	return entry.attrs.property !== 'og:type' && entry.attrs.property !== 'og:locale';
+});
+
+---
+
+{filteredHead.map(({ tag: Tag, attrs, content }) => <Tag {...attrs} set:html={content} />)}
+<link rel="manifest" href="/site.webmanifest" />
+<link rel="alternate" type="application/rss+xml" title={`${seo.siteName} RSS Feed`} href="/rss.xml" />
+<link rel="apple-touch-icon" sizes="180x180" href={siteMeta.appleTouchIconPath} />
+<link rel="icon" type="image/png" sizes="192x192" href={siteMeta.icon192Path} />
+<meta name="theme-color" content={seo.themeColor} />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
+<meta name="robots" content={seo.robots} />
+<meta name="googlebot" content={seo.robots} />
+<meta name="application-name" content={seo.siteName} />
+<meta name="apple-mobile-web-app-title" content={seo.siteName} />
+<meta name="author" content={seo.siteName} />
+<meta property="og:type" content={seo.ogType} />
+<meta property="og:locale" content={seo.ogLocale} />
+<meta property="og:image" content={seo.imageUrl} />
+<meta property="og:image:secure_url" content={seo.imageUrl} />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content={String(seo.imageWidth)} />
+<meta property="og:image:height" content={String(seo.imageHeight)} />
+<meta property="og:image:alt" content={seo.imageAlt} />
+<meta name="twitter:title" content={seo.title} />
+<meta name="twitter:description" content={seo.description} />
+<meta name="twitter:image" content={seo.imageUrl} />
+<meta name="twitter:image:alt" content={seo.imageAlt} />
+{seo.modifiedTime && <meta property="og:updated_time" content={seo.modifiedTime} />}
+{seo.articleSection && <meta property="article:section" content={seo.articleSection} />}
+{seo.modifiedTime && seo.ogType === 'article' && (
+	<meta property="article:modified_time" content={seo.modifiedTime} />
+)}
+{import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION && (
+	<meta
+		name="google-site-verification"
+		content={import.meta.env.PUBLIC_GOOGLE_SITE_VERIFICATION}
+	/>
+)}
+{import.meta.env.PUBLIC_BING_SITE_VERIFICATION && (
+	<meta name="msvalidate.01" content={import.meta.env.PUBLIC_BING_SITE_VERIFICATION} />
+)}
+{import.meta.env.PUBLIC_YANDEX_SITE_VERIFICATION && (
+	<meta
+		name="yandex-verification"
+		content={import.meta.env.PUBLIC_YANDEX_SITE_VERIFICATION}
+	/>
+)}
+{seo.adProfile && <meta name="ad-profile" content={seo.adProfile} />}
+{seo.commercialIntent && <meta name="commercial-intent" content={seo.commercialIntent} />}
+<script type="application/ld+json" is:inline set:html={JSON.stringify(seo.structuredData)} />

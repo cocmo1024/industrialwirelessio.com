@@ -1,0 +1,40 @@
+export const siteMeta = {
+	name: 'Industrial Wireless I/O',
+	shortName: 'Industrial Wireless I/O',
+	domain: 'industrialwirelessio.com',
+	siteUrl: 'https://industrialwirelessio.com',
+	description:
+		'Field-oriented reference system for remote telemetry, industrial wireless architecture, network paths, and site reliability.',
+	tagline:
+		'Remote telemetry, field connectivity, network path choices, and reliability planning organized for real deployments.',
+	email: 'cqq365@gmail.com',
+	languageTag: 'en-US',
+	ogLocale: 'en_US',
+	themeColor: '#2c7e98',
+	backgroundColor: '#effafc',
+	faviconPath: '/favicon.svg',
+	ogImagePath: '/social-card.png',
+	ogImageAlt:
+		'Industrial Wireless I/O social share card for telemetry architecture, network paths, and field reliability.',
+	icon192Path: '/icon-192.png',
+	icon512Path: '/icon-512.png',
+	appleTouchIconPath: '/apple-touch-icon.png',
+	repoUrl: 'https://github.com/cocmo1024/industrialwirelessio.com',
+	indexNowKey: 'a435a92c-80e4-4570-9d7f-96304231a2f2',
+	keywords: [
+		'industrial wireless io',
+		'remote telemetry',
+		'industrial networking',
+		'field connectivity',
+		'telemetry gateways',
+	],
+	sectionLabels: {
+		applications: 'Applications',
+		'product-families': 'Product Families',
+		vendors: 'Vendors',
+		'network-paths': 'Network Paths',
+		protocols: 'Protocols',
+		hardware: 'Hardware',
+		reliability: 'Reliability',
+	},
+};

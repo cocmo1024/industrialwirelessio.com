@@ -9,6 +9,7 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "indexnow": "node ./scripts/indexnow-submit.mjs",
     "cf:dev": "npm run build && wrangler dev",
     "cf:deploy": "wrangler deploy",
     "cf:typegen": "wrangler types"
