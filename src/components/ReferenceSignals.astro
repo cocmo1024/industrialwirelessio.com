@@ -1,5 +1,10 @@
 ---
 type RouteData = Record<string, unknown>;
+type Signal = {
+	label: string;
+	value: string | string[];
+	list?: boolean;
+};
 
 const route = Astro.locals.starlightRoute;
 const data = (route.entry?.data ?? {}) as RouteData;
@@ -45,18 +50,27 @@ const updateTriggers =
 		: [];
 
 const signals = [
-	typeof data.problemSolved === 'string' && ['Problem Solved', data.problemSolved],
-	typeof data.readerTakeaway === 'string' && ['Reader Outcome', data.readerTakeaway],
-	typeof data.primaryKeyword === 'string' && ['Primary Keyword', data.primaryKeyword],
-	typeof data.searchIntent === 'string' && ['Search Intent', intentLabels[data.searchIntent] ?? data.searchIntent],
-	typeof data.decisionStage === 'string' && ['Decision Stage', stageLabels[data.decisionStage] ?? data.decisionStage],
-	roles.length > 0 && ['Target Roles', roles.join(', ')],
-	keyQuestions.length > 0 && ['Key Questions', keyQuestions.join(' / ')],
-	notFor.length > 0 && ['Poor Fit', notFor.join(' / ')],
-	typeof data.contentStatus === 'string' && ['Content Status', statusLabels[data.contentStatus] ?? data.contentStatus],
-	typeof data.reviewCadence === 'string' && ['Review Cadence', data.reviewCadence],
-	updateTriggers.length > 0 && ['Update Triggers', updateTriggers.join(' / ')],
-].filter(Boolean) as [string, string][];
+	typeof data.problemSolved === 'string' && { label: 'Problem Solved', value: data.problemSolved },
+	typeof data.readerTakeaway === 'string' && { label: 'Reader Outcome', value: data.readerTakeaway },
+	typeof data.primaryKeyword === 'string' && { label: 'Primary Keyword', value: data.primaryKeyword },
+	typeof data.searchIntent === 'string' && {
+		label: 'Search Intent',
+		value: intentLabels[data.searchIntent] ?? data.searchIntent,
+	},
+	typeof data.decisionStage === 'string' && {
+		label: 'Decision Stage',
+		value: stageLabels[data.decisionStage] ?? data.decisionStage,
+	},
+	roles.length > 0 && { label: 'Target Roles', value: roles, list: true },
+	keyQuestions.length > 0 && { label: 'Key Questions', value: keyQuestions, list: true },
+	notFor.length > 0 && { label: 'Poor Fit', value: notFor, list: true },
+	typeof data.contentStatus === 'string' && {
+		label: 'Content Status',
+		value: statusLabels[data.contentStatus] ?? data.contentStatus,
+	},
+	typeof data.reviewCadence === 'string' && { label: 'Review Cadence', value: data.reviewCadence },
+	updateTriggers.length > 0 && { label: 'Update Triggers', value: updateTriggers, list: true },
+].filter(Boolean) as Signal[];
 ---
 
 {
@@ -64,10 +78,24 @@ const signals = [
 		<section class="reference-signals">
 			<h2>Reference Signals</h2>
 			<dl>
-				{signals.map(([label, value]) => (
+				{signals.map(({ label, value, list }) => (
 					<div>
 						<dt>{label}</dt>
-						<dd>{value}</dd>
+						<dd>
+							{
+								list && Array.isArray(value) ? (
+									<ul class="reference-signals__list">
+										{value.map((item) => (
+											<li>{item}</li>
+										))}
+									</ul>
+								) : (
+									<p class="reference-signals__text">
+										{Array.isArray(value) ? value.join(', ') : value}
+									</p>
+								)
+							}
+						</dd>
 					</div>
 				))}
 			</dl>
