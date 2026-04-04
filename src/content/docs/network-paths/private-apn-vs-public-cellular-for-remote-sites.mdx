@@ -13,7 +13,21 @@ targetRoles:
   - Utility engineers
   - OT network leads
   - Integrators
-contentStatus: seed
+contentStatus: cornerstone
+problemSolved: How to decide whether a private APN is worth the added monthly cost and network-management complexity for remote telemetry fleets, or whether disciplined public cellular is enough.
+readerTakeaway: You should leave with a simple cost model for public cellular versus private APN-style management, a better sense of when fleet size justifies private routing, and a clearer view of which field problems APN choice will not solve.
+keyQuestions:
+  - When is public cellular already sufficient for remote telemetry?
+  - At what fleet size or operating burden does a private APN or private gateway start to make financial and operational sense?
+  - Which failures are caused by site design rather than by APN choice?
+notFor:
+  - Enterprise IT WAN projects that are not tied to remote telemetry or field assets
+  - Sites whose primary problem is weak power, poor antennas, or noisy reporting behavior
+  - Teams expecting private APN language to substitute for real operations design
+updateTriggers:
+  - Changes in published IoT SIM pricing or private wireless gateway pricing
+  - New carrier-management features that alter the public-versus-private tradeoff
+  - New remote telemetry deployment lessons on fleet management and addressing
 ---
 
 import { LinkCard } from '@astrojs/starlight/components';
@@ -22,42 +36,105 @@ import { LinkCard } from '@astrojs/starlight/components';
 
 Many remote telemetry projects eventually ask whether a private APN is necessary. The right answer is rarely ideological. What matters is whether the added operating model improves segmentation, addressing, and support enough to justify the extra coordination. For some fleets it absolutely does. For others it adds complexity without solving the real field problem.
 
-## Which layer this decision belongs to
+## Quick answer
 
-This is a network-operations decision, not a substitute for good site design. A private APN can shape:
+Public cellular is enough for many telemetry fleets, especially when the sites are low-data, outbound-only, and operationally simple. A private APN or private gateway becomes more attractive when the fleet is large enough that addressing consistency, device grouping, route control, or carrier management now creates a real support burden. If your actual problem is poor signal, bad antennas, weak power, or noisy telemetry behavior, changing the APN model will not fix it.
 
-- addressing and routing consistency;
-- network isolation preferences;
-- visibility into device connectivity across a fleet;
-- how the remote communications layer is managed operationally.
+## Public pricing snapshot checked April 4, 2026
 
-It does not compensate for weak power design, poor antenna placement, or the wrong field hardware.
+| Public plan or component | Published price snapshot | Why it matters |
+| --- | --- | --- |
+| [Hologram self-service pricing](https://www.hologram.io/pricing/) | $3 SIM, $1 monthly recurring charge, and $0.03 per MB | Simple public cellular cost benchmark for low-data fleets |
+| [Telnyx IoT pricing](https://telnyx.com/pricing/iot-data-plans) | $1 SIM, $2 monthly recurring charge, and usage from $0.078 per MB for the first 100 MB | Another public benchmark for managed IoT SIM economics |
+| [Telnyx private wireless gateway](https://support.telnyx.com/en/articles/11409065-mission-control-portal-private-gateway) | $100 per month for 0-100 SIMs, $250 for 101-500 SIMs | A direct public anchor for the premium you pay for private gateway control |
+| [Digi IX10-00G4 industrial router on DigiKey](https://www.digikey.com/en/products/detail/digi/IX10-00G4/13278039) | $419.00 | A reminder that the field hardware layer is separate from the APN decision |
+
+These public prices are useful because they let you stop discussing private APN in vague terms. You can estimate whether the extra network control is actually material at your fleet size.
+
+## A simple cost way to think about it
+
+Suppose a remote site uses about 20 MB per month:
+
+- Hologram public cellular is about $1.60 in usage plus the $1 monthly recurring charge;
+- Telnyx public cellular is about $3.56 including the $2 monthly recurring charge at the published first-tier rate.
+
+Now layer in the Telnyx private wireless gateway:
+
+- at 10 sites, the $100 monthly gateway is effectively **$10 per site per month** before base plan and usage;
+- at 50 sites, it is **$2 per site per month**;
+- at 100 sites, it is **$1 per site per month**.
+
+That math does not decide the architecture by itself, but it does reveal when private control is operationally meaningful versus just cosmetically "more industrial."
 
 ## When public cellular is enough
 
-Public cellular is often enough when:
+Public cellular is usually enough when:
 
 - the telemetry footprint is modest;
-- the project mostly needs dependable outbound visibility and alarms;
-- the support team values simplicity over custom network control;
-- device management and security needs are already well bounded.
+- the project mostly needs outbound alarms and status visibility;
+- the support team values simple provisioning and simple replacement;
+- device management and network security needs are already bounded by the application design.
 
-Many remote sites succeed perfectly well with public cellular plus disciplined device and application design.
+Many remote sites succeed perfectly well with public cellular plus disciplined telemetry behavior. This is especially true when the real engineering work is still about power, antenna placement, surge protection, and meaningful alarms.
 
-## When a private APN becomes valuable
+## When private APN or private gateway becomes valuable
 
-A private APN becomes more attractive when:
+Private control becomes more attractive when:
 
 - the deployment spans a meaningful fleet of remote assets;
-- network segmentation and addressing need to be more controlled;
-- operations teams want stronger consistency across carriers or geographies;
-- the support model benefits from clearer remote-network ownership.
+- the team needs stronger addressing consistency across geographies or carriers;
+- operations wants clearer network ownership for troubleshooting;
+- there is value in grouping, isolating, or centrally managing traffic paths more deliberately.
 
-In these cases, the added coordination can create a cleaner long-term operating boundary.
+This is often a fleet-management decision, not a single-site decision.
 
-## Common field mistake
+## What private APN does not solve
 
-The common mistake is adopting a private APN because it sounds more industrial or more secure by default. If the real failure pattern is poor coverage, weak antennas, unstable power, or bad telemetry behavior during outages, the APN choice will not fix the field layer.
+It does not solve:
+
+- weak RF coverage;
+- poor antenna placement;
+- unstable site power;
+- oversized data chatter;
+- bad alarm logic;
+- field hardware that is difficult to replace.
+
+This is the key discipline point. If your sites are operationally weak, private APN will simply give you a more managed way to observe a weak design.
+
+## The hidden cost most teams ignore
+
+The hidden cost is not just the gateway fee. It is the extra network-management responsibility:
+
+- SIM grouping and routing decisions;
+- addressing and access design;
+- documentation for replacements and troubleshooting;
+- dependence on the specific private network operating model.
+
+That burden can be worthwhile, but only when the fleet is large enough or critical enough to justify it.
+
+## A better decision sequence
+
+Use this order:
+
+1. confirm that cellular is the right backhaul family at all;
+2. stabilize site power, antennas, and telemetry behavior;
+3. estimate public-plan cost at realistic data volumes;
+4. estimate private-gateway premium at actual fleet size;
+5. adopt private control only if operations will truly use the added network consistency.
+
+This sequence keeps the project from paying for network sophistication before the field layer is healthy.
+
+## Implementation checklist
+
+The private-versus-public decision is ready when:
+
+- average monthly site data volume is known from a realistic reporting model;
+- the fleet size is large enough to test per-site overhead honestly;
+- the team has named the operational benefit expected from private control;
+- the field hardware and antenna design are already credible;
+- the organization understands that APN choice is not a replacement for better alarm and buffering design.
+
+If those points are missing, stay simpler for longer.
 
 ## Compare next
 
@@ -65,12 +142,12 @@ The common mistake is adopting a private APN because it sounds more industrial o
 	<LinkCard
 		title="Cellular vs LoRaWAN vs satellite"
 		href="/network-paths/cellular-vs-lorawan-vs-satellite/"
-		description="Choose the family of backhaul first, then refine the cellular operating model."
+		description="Choose the backhaul family first, then refine how the cellular fleet should be managed."
 	/>
 	<LinkCard
 		title="Lift stations and sewer network telemetry"
 		href="/applications/lift-stations-and-sewer-network-telemetry/"
-		description="See how the network-path decision behaves in a real remote utility application."
+		description="See how this choice behaves in a real remote utility application."
 	/>
 	<LinkCard
 		title="Industrial telemetry gateways"
@@ -78,8 +155,8 @@ The common mistake is adopting a private APN because it sounds more industrial o
 		description="Match the network-path model to the device class that actually owns the field boundary."
 	/>
 	<LinkCard
-		title="Solar, battery, and low-power planning"
-		href="/reliability/solar-battery-and-low-power-site-planning/"
-		description="Validate the backhaul choice against the site power budget and maintenance model."
+		title="Carrier failover and dual-path design"
+		href="/network-paths/carrier-failover-and-dual-path-design-for-remote-sites/"
+		description="Do not pay for redundancy before you know whether the single-path operating model is healthy."
 	/>
 </div>
