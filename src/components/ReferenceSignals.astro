@@ -31,14 +31,31 @@ const roles =
 	Array.isArray(data.targetRoles) && data.targetRoles.every((role) => typeof role === 'string')
 		? data.targetRoles
 		: [];
+const keyQuestions =
+	Array.isArray(data.keyQuestions) && data.keyQuestions.every((item) => typeof item === 'string')
+		? data.keyQuestions
+		: [];
+const notFor =
+	Array.isArray(data.notFor) && data.notFor.every((item) => typeof item === 'string')
+		? data.notFor
+		: [];
+const updateTriggers =
+	Array.isArray(data.updateTriggers) && data.updateTriggers.every((item) => typeof item === 'string')
+		? data.updateTriggers
+		: [];
 
 const signals = [
+	typeof data.problemSolved === 'string' && ['Problem Solved', data.problemSolved],
+	typeof data.readerTakeaway === 'string' && ['Reader Outcome', data.readerTakeaway],
 	typeof data.primaryKeyword === 'string' && ['Primary Keyword', data.primaryKeyword],
 	typeof data.searchIntent === 'string' && ['Search Intent', intentLabels[data.searchIntent] ?? data.searchIntent],
 	typeof data.decisionStage === 'string' && ['Decision Stage', stageLabels[data.decisionStage] ?? data.decisionStage],
 	roles.length > 0 && ['Target Roles', roles.join(', ')],
+	keyQuestions.length > 0 && ['Key Questions', keyQuestions.join(' / ')],
+	notFor.length > 0 && ['Poor Fit', notFor.join(' / ')],
 	typeof data.contentStatus === 'string' && ['Content Status', statusLabels[data.contentStatus] ?? data.contentStatus],
 	typeof data.reviewCadence === 'string' && ['Review Cadence', data.reviewCadence],
+	updateTriggers.length > 0 && ['Update Triggers', updateTriggers.join(' / ')],
 ].filter(Boolean) as [string, string][];
 ---
 
