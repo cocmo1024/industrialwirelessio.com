@@ -1,0 +1,179 @@
+---
+title: Private 5G vs LTE for Industrial Telemetry
+description: A practical comparison for telemetry teams deciding when private 5G is actually justified over disciplined LTE for industrial monitoring, alarms, and remote-site data collection.
+referenceType: network-path
+adProfile: network-path
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: private 5g vs lte industrial telemetry
+searchIntent: compare
+decisionStage: shortlist
+targetRoles:
+  - Telemetry architects
+  - OT network leads
+  - Utility engineers
+  - System integrators
+contentStatus: cornerstone
+problemSolved: How to decide whether industrial telemetry really needs private 5G or whether LTE remains the healthier operating model for fixed remote assets and distributed monitoring sites.
+readerTakeaway: You should leave with a simple decision rule tied to site density, mobility, latency, coverage risk, and public LTE cost anchors instead of treating 5G as the default next step.
+keyQuestions:
+  - When is LTE already the correct backhaul for telemetry?
+  - What site conditions actually justify private 5G instead of public cellular?
+  - Which field problems will private 5G not solve?
+notFor:
+  - Campus mobile robot or machine-control networks that are not primarily telemetry workloads
+  - Projects whose real constraint is weak power, bad antenna placement, or poor alarm design
+  - Teams expecting private 5G language to remove the need for fleet operations discipline
+updateTriggers:
+  - Material changes in public IoT cellular pricing
+  - New industrial private 5G product releases that change deployment economics
+  - Shifts in how fixed industrial telemetry fleets are commonly segmented and managed
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Private 5G vs LTE for Industrial Telemetry
+
+Private 5G is one of the most visible current themes in industrial networking, but telemetry teams should be careful not to inherit assumptions from factory mobility or low-latency control use cases. Most remote telemetry workloads are fixed-site, low-bandwidth, tolerance-heavy systems. That means the default backhaul is still often LTE or another established cellular operating model. Private 5G becomes interesting when the network problem is truly changing, not simply because the market is excited.
+
+## Quick answer
+
+For fixed industrial telemetry, LTE remains the better default in many deployments because it is mature, widely available, easy to provision, and economically transparent. Private 5G becomes more defensible when the environment needs a tightly managed local wireless domain, stronger ownership over network behavior, or site conditions that make public-carrier dependence too limiting. If the actual problem is poor power, bad antennas, oversized reporting, or weak exception handling, private 5G will not save the architecture.
+
+## Why this matters now
+
+Phoenix Contact and other industrial vendors are clearly pushing industrial 5G hardware and related architecture. That is a real signal. It means private 5G is moving from lab curiosity into more realistic industrial discussions. The durable question is still the same one telemetry teams have always had to answer:
+
+**What is the simplest network path that can reliably support the field operating model?**
+
+## Public LTE cost snapshot checked April 4, 2026
+
+These public prices help anchor the default-case economics:
+
+| Public listing | Published price snapshot | Why it matters |
+| --- | --- | --- |
+| [Hologram pricing](https://www.hologram.io/pricing/) | $3 per SIM, $1 monthly recurring charge, and $0.03 per MB | Useful public reference for simple managed cellular telemetry economics |
+| [Telnyx IoT SIM pricing](https://support.telnyx.com/en/articles/3296669-iot-sim-card-pricing/) | $2 per SIM per month and $0.078 per MB for the first 100 MB | Another public anchor for low-data industrial fleets |
+| [Phoenix Contact TC ROUTER 5004T-5G EU](https://www.phoenixcontact.com/en-pc/products/router-tc-router-5004t-5g-eu-1439475) | Product capabilities are public, but pricing is typically distributor or quote based | Useful reminder that private-5G-class field gear often introduces less public price transparency than LTE telemetry stacks |
+
+These numbers do not settle the architecture by themselves. They do make one thing obvious: LTE economics are often easier to understand and model during early telemetry planning.
+
+## When LTE is usually the healthier answer
+
+LTE is usually the better fit when:
+
+- sites are geographically dispersed;
+- data volumes are modest;
+- the telemetry workload is mostly alarming, trending, and store-and-forward reporting;
+- the team needs broad coverage and simple replacement logistics;
+- latency sensitivity is low compared with uptime and serviceability.
+
+That covers a large share of water, wastewater, utility, and remote industrial monitoring projects.
+
+## When private 5G starts to make sense
+
+Private 5G becomes more interesting when the deployment has one or more of these conditions:
+
+- a defined industrial campus or bounded site where the operator wants local network control;
+- denser device populations or traffic patterns that exceed the simplicity of public LTE planning;
+- stronger segmentation, performance, or sovereignty requirements at the local wireless layer;
+- a real operational team that can support the added network complexity.
+
+In other words, private 5G is more often a site-wide network strategy than a simple telemetry modem upgrade.
+
+## What private 5G does not fix
+
+It does not fix:
+
+- bad antenna placement;
+- insufficient surge protection;
+- weak backup power;
+- noisy report-by-exception logic;
+- oversized polling intervals;
+- poor buffering and retry behavior.
+
+This matters because many teams discuss 5G before they have stabilized the field layer. That usually creates a more impressive architecture diagram without creating a healthier telemetry system.
+
+## The practical boundary for fixed remote assets
+
+For sparse remote assets such as pump stations, lift stations, remote tank farms, and environmental monitoring points, the main priority is often:
+
+- reliable field power;
+- enough signal margin;
+- bounded data usage;
+- strong store-and-forward behavior;
+- quick replacement when hardware fails.
+
+Those priorities usually align better with disciplined LTE than with a private 5G program.
+
+## Where the current market signal is still useful
+
+Private 5G is still worth paying attention to because it clarifies future architecture in certain industrial environments:
+
+- high-density industrial campuses;
+- sites that want more local control over wireless behavior;
+- deployments where broader industrial networking and telemetry are converging;
+- organizations already maturing beyond simple per-site modem management.
+
+That is the healthy way to read the trend: not as "everything should become 5G," but as "some telemetry environments are now maturing into a different network problem."
+
+## A better decision sequence
+
+Use this order:
+
+1. define whether the telemetry environment is fixed remote, bounded campus, or mixed;
+2. prove the field hardware, power, and antenna design;
+3. model realistic data volume and uptime requirements;
+4. price the LTE operating model honestly;
+5. only then evaluate whether private 5G solves a real network-control problem.
+
+This sequence keeps the project grounded in field reality.
+
+## Failure modes to avoid
+
+The most common mistakes are:
+
+- comparing private 5G to LTE before the site profile is clear;
+- assuming "newer wireless" means "better telemetry";
+- hiding field-design problems behind a network upgrade;
+- ignoring the support burden of a more customized wireless stack;
+- paying for private-network sophistication without a real use for it.
+
+These errors create expensive architecture with little gain in telemetry value.
+
+## Implementation checklist
+
+The 5G-versus-LTE decision is ready when:
+
+- the deployment environment is clearly bounded and described;
+- average and peak data behavior is understood;
+- field survivability design is credible;
+- the team can name the operational benefit expected from private 5G;
+- LTE has been evaluated as a real baseline, not as a throwaway option.
+
+If those conditions are not true yet, the better next step is usually to strengthen the LTE telemetry design rather than broaden the wireless stack.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Private APN vs public cellular for remote sites"
+		href="/network-paths/private-apn-vs-public-cellular-for-remote-sites/"
+		description="Stay in the simpler cellular family first before you widen the comparison to private 5G."
+	/>
+	<LinkCard
+		title="Cellular vs LoRaWAN vs satellite"
+		href="/network-paths/cellular-vs-lorawan-vs-satellite/"
+		description="Choose the backhaul family before you decide how much wireless control the site really needs."
+	/>
+	<LinkCard
+		title="Carrier failover and dual-path design"
+		href="/network-paths/carrier-failover-and-dual-path-design-for-remote-sites/"
+		description="Redundancy and path discipline often matter earlier than a move to private 5G."
+	/>
+	<LinkCard
+		title="Remote pump stations and water sites"
+		href="/applications/remote-pump-stations-and-water-sites/"
+		description="Pressure-test the network-path decision in a real fixed-site telemetry application."
+	/>
+</div>
