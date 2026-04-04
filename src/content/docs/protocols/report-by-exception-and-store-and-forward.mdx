@@ -13,7 +13,21 @@ targetRoles:
   - Utility engineers
   - Remote monitoring teams
   - Integrators
-contentStatus: seed
+contentStatus: cornerstone
+problemSolved: How to design telemetry behavior so remote sites send meaningful events, survive link loss, and avoid wasting power and operator attention on low-value chatter.
+readerTakeaway: You should leave with a concrete way to think about exception reporting, outage buffering, and connectivity cost using public SIM and gateway pricing instead of intuition.
+keyQuestions:
+  - When should a remote site report immediately and when should it buffer and wait?
+  - How do public SIM and gateway costs change the design tradeoff between noisy polling and event-driven telemetry?
+  - What store-and-forward behavior is enough for field reality without overengineering the site?
+notFor:
+  - Stable on-premise industrial networks with abundant bandwidth and staffed local operations
+  - Systems that need continuous high-frequency streaming by design
+  - Teams trying to solve weak alarm design only by changing the reporting interval
+updateTriggers:
+  - Public pricing changes in IoT SIM plans or telemetry gateway hardware
+  - New deployment lessons about outage handling and field buffering
+  - Changes in common remote telemetry device capabilities
 ---
 
 import { LinkCard } from '@astrojs/starlight/components';
@@ -21,6 +35,36 @@ import { LinkCard } from '@astrojs/starlight/components';
 # Report by Exception and Store-and-Forward
 
 Remote telemetry systems often work better when they transmit less, not more. In field deployments with constrained power, unstable backhaul, and sparse maintenance windows, aggressive polling can create noise and fragile behavior. Report-by-exception and store-and-forward patterns exist because remote sites need to stay useful when communications are imperfect.
+
+## Quick answer
+
+Report immediately when the site crosses an operationally meaningful boundary. Buffer when the change is useful but not urgent, or when the link is unavailable. The goal is not low traffic for its own sake. The goal is preserving the events that matter while keeping the site inexpensive, understandable, and resilient during outages.
+
+## Public price snapshot checked April 4, 2026
+
+These current public prices help ground the decision:
+
+| Public listing or plan | Published price snapshot | Why it matters |
+| --- | --- | --- |
+| [Hologram self-service pricing](https://www.hologram.io/pricing/) | $3 per SIM, $1 monthly recurring charge, and $0.03 per MB | Low-data telemetry can be very inexpensive when behavior is disciplined |
+| [Telnyx IoT pricing](https://telnyx.com/pricing/wireless-pricing/) | $1 per SIM, $2 monthly recurring charge, and $0.078 per MB for the first 100 MB in Zone 1 | Another public benchmark for the cost of remote cellular traffic |
+| [Digi IX10-00G4 on DigiKey](https://www.digikey.com/en/product-highlight/d/digi-intl/digi-ix10-industrial-router) | $419.00 | A durable industrial cellular boundary does not have to start at a very high capital cost |
+| [Banner DXM1200-X2 on DigiKey](https://www.digikey.com/en/products/detail/banner-engineering-corporation/DXM1200-X2/24397556) | $637.00 | Telemetry gateways with stronger local logic and aggregation are still moderate relative to field service cost |
+
+These prices matter because they reveal the real design question. Monthly data is often cheap enough that teams should not obsess over every kilobyte. But low-value chatter still creates three problems:
+
+- it wastes power and radio time;
+- it hides important events inside noise;
+- it encourages lazy alarm design.
+
+## A simple traffic sanity check
+
+At 20 MB per month on one site:
+
+- Hologram is roughly $1.60 in usage plus the $1 MRC;
+- Telnyx is roughly $3.56 including the $2 MRC at the published first-tier rate.
+
+That does not mean traffic discipline is irrelevant. It means the real value of report-by-exception is not only saving carrier cost. It is preserving battery life, link quality, and operator attention for the moments that matter.
 
 ## Which layer this decision belongs to
 
@@ -31,57 +75,92 @@ This is less about a named protocol and more about telemetry behavior. The key q
 - links are temporarily unavailable;
 - operators need confidence that important events were not lost.
 
-Those decisions shape device choice, buffering needs, and alarm strategy.
+Those choices shape device class, buffering needs, alarm strategy, and serviceability.
 
-## Typical fit
+## When exception-driven behavior is the right answer
 
-These patterns are a good fit when:
+These patterns are usually strongest when:
 
 - the site mainly needs alarm visibility and trend snapshots;
-- the power budget rewards low-traffic communications;
+- power or bandwidth constraints are real;
 - backhaul quality is variable;
-- operators care more about seeing meaningful changes than constant chatter.
+- operators care more about meaningful change than constant noise.
 
-This is why remote utilities, tanks, and scattered assets often benefit from exception-driven behavior.
+This is why remote utilities, tanks, pump stations, and scattered assets often benefit from exception-driven behavior.
 
-## Common field mistake
+## What should be sent immediately
 
-A frequent mistake is designing remote telemetry as if the link were a stable on-premise network. Constant polling can waste power, increase cost, and still fail to preserve the events that matter most when coverage drops.
+The site should usually send immediately when:
 
-The better question is usually: what must arrive immediately, what can be buffered, and what can wait.
+- a high-priority alarm activates;
+- power fails or recovers;
+- a process value crosses a critical threshold;
+- a pump, motor, or controller shifts into a fault state;
+- a buffered outage ends and the system needs to confirm health.
 
-## Hardware and reliability consequences
+Immediate traffic is for events that change operator decisions.
 
-These behavior choices affect:
+## What should usually be buffered
 
-- whether the device class needs reliable local buffering;
-- how alarm thresholds are configured and tested;
-- battery and solar sizing assumptions;
-- how much field troubleshooting is required after communication interruptions.
+Buffering is usually better for:
 
-They are operational decisions, not just protocol preferences.
+- trend changes that are useful but not urgent;
+- intermediate values during a short outage;
+- data needed for post-event context rather than immediate action;
+- summary batches that support dashboards and reports.
+
+The question is not "Can we send this now?" It is "Does anyone need this now?"
+
+## The field mistake teams keep making
+
+A frequent mistake is designing remote telemetry as if the link were a stable on-premise network. Constant polling can waste power, increase troubleshooting complexity, and still fail to preserve the events that matter most when coverage drops. The better question is:
+
+What must arrive immediately, what can be buffered, and what can wait until the link is healthy again?
+
+## How store-and-forward should be scoped
+
+Store-and-forward is only valuable if the system can answer:
+
+- how much history must survive a communications outage;
+- which records must preserve timestamp accuracy;
+- when buffered traffic should replay;
+- how the site tells operators that history was preserved and later delivered.
+
+If those answers are unclear, the site may technically buffer data without improving operations.
+
+## Implementation checklist
+
+The behavior model is healthy when:
+
+- alarm priorities are defined before transmission rules are finalized;
+- public SIM pricing has been used to estimate realistic recurring cost;
+- the device class supports the required buffering depth;
+- the team knows which events are immediate and which are delayed;
+- the site remains understandable after a communications interruption.
+
+If several of those are vague, the telemetry behavior still needs design work.
 
 ## Compare next
 
 <div class="portal-links">
 	<LinkCard
-		title="Telemetry protocol fit"
-		href="/protocols/telemetry-protocol-fit/"
-		description="Place report behavior inside the larger protocol and message-shape decision."
+		title="Alarm priority and deadband design"
+		href="/protocols/alarm-priority-and-deadband-design-for-remote-telemetry/"
+		description="Refine which changes deserve immediate visibility before tuning traffic behavior."
 	/>
 	<LinkCard
 		title="Industrial telemetry gateways"
 		href="/product-families/industrial-telemetry-gateways/"
-		description="Choose hardware that can buffer and recover cleanly when the field link degrades."
+		description="Choose hardware that can buffer and recover cleanly when the link degrades."
 	/>
 	<LinkCard
 		title="Lift stations and sewer network telemetry"
 		href="/applications/lift-stations-and-sewer-network-telemetry/"
-		description="Apply event-driven telemetry patterns to a remote utility environment."
+		description="Apply event-driven telemetry patterns to a real remote utility environment."
 	/>
 	<LinkCard
 		title="Solar, battery, and low-power planning"
 		href="/reliability/solar-battery-and-low-power-site-planning/"
-		description="Connect telemetry behavior to the actual energy budget at the site."
+		description="Match telemetry behavior to the site's actual energy budget and service model."
 	/>
 </div>
