@@ -1,0 +1,199 @@
+---
+title: Cellular Router Selection for Fixed-Site Telemetry
+description: A field-first guide to choosing industrial cellular routers for fixed telemetry sites without overbuying speed, underbuying survivability, or ignoring the long-run cost of data plans and truck rolls.
+referenceType: hardware
+adProfile: hardware
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: cellular router selection fixed site telemetry
+searchIntent: select
+decisionStage: shortlist
+targetRoles:
+  - OT engineers
+  - Instrumentation engineers
+  - Utility SCADA leads
+  - System integrators
+contentStatus: cornerstone
+problemSolved: How to choose the right industrial cellular router class for fixed telemetry sites, using real site requirements instead of consumer-router habits or 5G marketing.
+readerTakeaway: You should leave with a shortlist method tied to outage tolerance, remote management, antenna and power realities, and current public router plus SIM-plan price anchors.
+keyQuestions:
+  - When is a low-cost LTE router enough for fixed-site telemetry?
+  - What features justify moving into a midrange or premium industrial router?
+  - How should buyers compare router hardware cost against recurring SIM-plan economics and truck-roll risk?
+notFor:
+  - Mobile fleet routing projects where motion and roaming dominate the design
+  - Sites that already have dependable wired backhaul and do not need cellular as primary or backup transport
+  - Projects selecting routers before defining the telemetry traffic profile and remote-support model
+updateTriggers:
+  - Public price changes in common industrial LTE and 5G router classes
+  - Material carrier pricing changes for IoT SIM plans
+  - New vendor releases that shift the entry-level or premium fixed-site router class
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Cellular Router Selection for Fixed-Site Telemetry
+
+Fixed-site telemetry rarely needs the fastest router in the catalog. It needs the router that can keep a remote site visible through bad weather, carrier instability, power events, and long maintenance intervals. Buyers get into trouble when they shop like enterprise IT or consumer broadband teams. Fixed telemetry routers should be selected by survivability, remote support, and service economics first. Raw speed is usually much lower on the list than vendors want it to be.
+
+## Quick answer
+
+Start with the site, not the modem generation. For most fixed telemetry sites, the first decision is whether the site is:
+
+- low-data and low-change;
+- low-data but high-consequence when offline;
+- high-data or high-frequency enough to justify stronger router and plan economics.
+
+If the site only sends modest telemetry, an entry industrial LTE router can be enough. Move up in class when the site truly needs stronger failover, hardened remote management, more local I/O, or higher-bandwidth use cases such as camera-backed validation. Buy 5G only when the workload, not the trend cycle, justifies it.
+
+## Why this matters now
+
+Private 5G, industrial wireless modernization, and edge AI all make cellular connectivity look more glamorous than it really is for fixed telemetry. In practice, many remote water, utility, tank, and environmental sites still send modest data volumes. Their problem is not lack of throughput. Their problem is reliable field connectivity plus recoverable operations when something goes wrong.
+
+## What a fixed-site telemetry router actually has to do
+
+A router for fixed telemetry must usually own more than WAN transport:
+
+- maintain the cellular link across unstable signal conditions;
+- support remote management so the team avoids unnecessary truck rolls;
+- handle VPN, firewall, and segmentation requirements;
+- tolerate field power conditions and environmental stress;
+- integrate with antennas, enclosures, surge protection, and sometimes local serial or Ethernet devices.
+
+That is why the right answer often looks different from the biggest bandwidth number on a brochure.
+
+## Public hardware and service pricing checked April 8, 2026
+
+These are public anchors, not complete site budgets:
+
+| Public source | Published price snapshot | Why it matters |
+| --- | --- | --- |
+| [Teltonika RUT241 industrial cellular router on DigiKey](https://www.digikey.com/en/product-highlight/t/teltonika/rut241-industrial-cellular-routers) | $172.00 | A realistic entry anchor for compact LTE telemetry where the site footprint is modest |
+| [Digi IX10 on DigiKey](https://www.digikey.com/en/products/detail/digi/IX10-00G4/13278039) | $419.00 | A midrange industrial router anchor with a stronger operational posture than entry hardware |
+| [Phoenix Contact FL mGuard 1000 series on DigiKey](https://www.digikey.com/en/product-highlight/p/phoenix-contact/fl-mguard-1000-series) | $694.69 | Security-focused industrial routing quickly moves into a higher price class even before 5G enters the picture |
+| [Teltonika RUTM52 dual 5G router on DigiKey](https://www.digikey.com/en/product-highlight/t/teltonika/rutm52-dual-5g-routers) | $1,100.01 | A reminder that 5G-capable industrial routing is a materially different hardware budget tier |
+| [Hologram self-service IoT pricing](https://www.hologram.io/pricing/) | $0.03/MB, plus $1 monthly recurring per SIM, plus $3 per SIM card | Data-plan economics may exceed the router delta faster than buyers expect |
+| [Telnyx IoT SIM pricing](https://support.telnyx.com/en/articles/3296669-iot-sim-card-pricing) | $2 monthly per SIM, with Zone 1 data tiers from $0.0780/MB down to $0.0125/MB | Recurring carrier cost must be modeled alongside the router, not after it |
+
+The point of this table is not to crown a brand. It is to show that router selection and service-plan selection are one decision, not two unrelated purchases.
+
+## What matters more than throughput
+
+For fixed telemetry, the higher-value shortlist criteria are usually:
+
+- remote management and recoverability;
+- dual-SIM or carrier fallback if the site consequence justifies it;
+- secure tunneling and manageable firewall behavior;
+- external antenna support and realistic cable routing;
+- power-input tolerance and low-voltage behavior;
+- enough local interfaces for the actual site, not the dream architecture.
+
+Sites that ignore those criteria often end up with routers that are cheap to buy and expensive to keep alive.
+
+## When an entry LTE router is enough
+
+An entry router is often sufficient when:
+
+- traffic is mostly low-bandwidth telemetry;
+- the site has one clean upstream path and modest security complexity;
+- remote management is still available;
+- the consequence of a short outage is uncomfortable but not catastrophic;
+- the router is part of a clean physical stack with good antenna, enclosure, and power planning.
+
+This is the right class for many remote monitoring sites that do not need to pretend they are branch offices.
+
+## When the midrange class is the smarter answer
+
+Move up in class when:
+
+- the site is hard to reach, making truck rolls expensive;
+- security or VPN policy is stricter;
+- there is more than one local device or interface to support;
+- the business consequence of a missed telemetry window is meaningful;
+- carrier instability makes better diagnostics and failover options valuable.
+
+The midrange class often pays for itself in fewer service events, not higher headline speed.
+
+## When 5G is actually worth paying for
+
+5G becomes justifiable when:
+
+- the site carries heavier data such as camera-assisted validation or richer edge workloads;
+- lower latency or stronger uplink changes the actual operating model;
+- a premium router reduces a known bottleneck, not a hypothetical future one;
+- the carrier and coverage reality at the site actually supports the 5G plan.
+
+If the traffic is still mostly sparse telemetry, 5G is usually a budget leak disguised as modernization.
+
+## The hidden cost buyers forget
+
+The expensive part of cellular telemetry is often not the router. It is:
+
+- the recurring SIM-plan cost;
+- antenna mistakes that degrade performance for months;
+- poor remote management that turns every issue into a truck roll;
+- power instability that damages equipment or causes silent resets;
+- buying a feature-rich router that nobody is prepared to configure or maintain.
+
+This is why the best fixed-site shortlist is usually built around support burden first.
+
+## A practical shortlist method
+
+Before comparing vendors, answer these questions:
+
+1. What is the site's offline tolerance in hours, not in theory but in business consequence?
+2. How much data does the site really send today and what is the next believable workload?
+3. Does the site require only WAN transport, or also local I/O, security, and diagnostics ownership?
+4. How expensive is a truck roll to this site?
+5. Which is more damaging over two years: paying too much for router class or paying too little for recoverability?
+
+If those answers are not explicit, the router shortlist is too early.
+
+## Where buyers go wrong
+
+The most common selection mistakes are:
+
+- buying by modem generation instead of site requirement;
+- underestimating antenna and power design;
+- treating SIM-plan economics as someone else's problem;
+- assuming a cheap router is cheaper if it causes more field visits;
+- choosing a premium router because "we might need video later."
+
+Those errors all look reasonable during procurement and expensive during operations.
+
+## Implementation checklist
+
+The site is ready to buy when:
+
+- traffic profile and outage tolerance are documented;
+- antenna, power, and enclosure assumptions are already part of the design;
+- remote management and security ownership are assigned;
+- the service-plan economics have been modeled with realistic data behavior;
+- the chosen router class is justified against the next cheaper class in operational terms, not only feature terms.
+
+That is the point where the shortlist becomes credible.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Private APN vs public cellular for remote sites"
+		href="/network-paths/private-apn-vs-public-cellular-for-remote-sites/"
+		description="Use the network path page to decide whether the connectivity model itself justifies a stronger router class."
+	/>
+	<LinkCard
+		title="Carrier failover and dual-path design"
+		href="/network-paths/carrier-failover-and-dual-path-design-for-remote-sites/"
+		description="Move here when outage consequence is high enough to justify redundant connectivity."
+	/>
+	<LinkCard
+		title="Power, enclosures, and antennas"
+		href="/hardware/power-enclosures-and-antennas/"
+		description="Most router problems blamed on the carrier are really physical-layer design failures."
+	/>
+	<LinkCard
+		title="Phoenix Contact field connectivity"
+		href="/vendors/phoenix-contact-field-connectivity/"
+		description="Return to vendor pages only after the fixed-site hardware class is already clear."
+	/>
+</div>
