@@ -1,3 +1,1 @@
-# No authorized advertising sellers have been declared for industrialwirelessio.com yet.
-# Update this file before enabling programmatic advertising or reseller inventory.
-# Contact: cqq365@gmail.com
+google.com, pub-6017297149672924, DIRECT, f08c47fec0942fa0
