@@ -16,9 +16,9 @@ export default defineConfig({
 			lastUpdated: true,
 			social: [
 				{
-					icon: 'github',
-					label: 'GitHub',
-					href: siteMeta.repoUrl,
+					icon: 'x.com',
+					label: 'X',
+					href: 'https://x.com/oocxx_com',
 				},
 			],
 			sidebar: [
