@@ -1,23 +1,148 @@
 ---
 title: Power, Enclosures, and Antennas
 description: A field-first guide to the physical deployment stack behind remote telemetry reliability.
+referenceType: hardware
+adProfile: hardware
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: power enclosures and antennas remote telemetry
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - OT engineers
+  - Instrumentation engineers
+  - Field system integrators
+  - Utility telemetry leads
+contentStatus: cornerstone
+problemSolved: How to design the physical deployment stack for remote telemetry so power, enclosure, and antenna choices support uptime instead of quietly becoming the main failure source.
+readerTakeaway: You should leave with a field-ready checklist for power budget, enclosure survivability, antenna strategy, and service access instead of treating physical-layer design as procurement cleanup after the gateway is chosen.
+keyQuestions:
+  - What should drive power-system sizing for remote telemetry sites?
+  - How do enclosure and antenna choices affect uptime and maintenance burden?
+  - Which physical-layer mistakes create the most expensive field failures after deployment?
+notFor:
+  - Indoor plant networks with stable utility power and no meaningful antenna design problem
+  - Projects that already have a proven remote-site hardware standard
+  - Teams discussing gateway models before defining the physical conditions the hardware must survive
+updateTriggers:
+  - Changes in common remote-site power and battery economics
+  - New field hardware patterns that materially change enclosure or antenna design practice
+  - Broader growth in remote telemetry use cases that raise camera, edge, or cellular power demand
 ---
 
 import { LinkCard } from '@astrojs/starlight/components';
 
 # Power, Enclosures, and Antennas
 
-Many telemetry projects fail in the physical layer long before the logic layer is questioned. Power design, enclosure choice, and antenna planning are not accessories. They are core architecture decisions for remote field deployments.
+Many telemetry projects fail in the physical layer long before the logic layer is questioned. Power design, enclosure choice, and antenna planning are not accessories. They are core architecture decisions for remote field deployments. A good telemetry stack is usually not the one with the most features. It is the one whose physical layer keeps working after heat, moisture, unstable power, weak signal, and missed service intervals have taken their turn.
 
-## Pay close attention to
+## Quick answer
 
-- Power budget stability across weather, load, and service intervals.
-- Enclosure selection relative to moisture, heat, dust, and maintenance access.
-- Antenna placement and cabling decisions that preserve signal quality and survivability.
+Design the physical stack in this order:
 
-## Common oversight
+1. define what the site must power, transmit, and survive;
+2. size the power system for the real duty cycle and worst maintenance interval;
+3. choose the enclosure for environment, heat, ingress, and service access;
+4. plan the antenna path for signal quality and field survivability, not just best-case RSSI.
 
-Treating the gateway as the architecture while leaving power and enclosure design until procurement. In the field, those choices often decide uptime more than the gateway model name.
+If the gateway model is chosen before those answers exist, the project is already making the most expensive kind of shortcut.
+
+## Why this matters now
+
+Remote telemetry systems are carrying more than sparse analog data now. Some sites add cameras, richer diagnostics, or edge logic that raise power demand and make antenna and enclosure mistakes more expensive. At the same time, many deployments still fail for old reasons: undersized batteries, overheated cabinets, moisture ingress, poor antenna grounding, and maintenance plans that assume field visits will happen sooner than they really do.
+
+## Power planning should start with the service interval
+
+The real power question is not "how many watts does the router use?" It is:
+
+- how much energy the whole stack draws across a full cycle;
+- how much the site can recharge under realistic conditions;
+- how long the site must survive between field visits;
+- what happens when temperature reduces battery performance.
+
+Power systems fail when teams size for the sunny week, not the ugly month.
+
+## Public field hardware anchors checked April 9, 2026
+
+These are public anchors, not full site BOMs:
+
+| Public source | Published price snapshot | Why it matters |
+| --- | --- | --- |
+| [Renogy 100Ah LiFePO4 battery](https://www.renogy.com/products/12-8v-100ah-lithium-iron-phosphate-battery/) | $399.99 | Battery sizing is a real budget line, not a minor accessory decision |
+| [Renogy 100W solar panel](https://www.renogy.com/collections/solar-panels/products/100-watt-12-volt-black-division-lightweight-monocrystalline-solar-panel) | $99.99 | Modest panel additions can be cheaper than repeated truck rolls from weak recharge assumptions |
+| [Poynting PUCK-2 antenna](https://poynting.tech/antennas/puck-2/) | Manufacturer pricing varies by region; product is positioned as a compact 2x2 MIMO antenna for LTE/5G and GNSS | Antenna quality and placement often matter more than upgrading the router class |
+
+The message is simple: physical-layer reliability has real recurring cost consequences even when the line items themselves look modest.
+
+## Enclosure choice is an uptime decision
+
+An enclosure should be chosen against:
+
+- ingress exposure;
+- temperature rise under solar load;
+- mounting and cable-entry constraints;
+- corrosion environment;
+- how easy it is to service without damaging the rest of the site.
+
+If those are treated as procurement details, the enclosure becomes the quiet reason the telemetry system ages badly.
+
+## Antenna planning is not a late-stage accessory choice
+
+Good antenna planning requires:
+
+- a realistic mounting position;
+- cable lengths that do not throw away signal gains;
+- surge and grounding thinking that match the site risk;
+- enough physical protection that the antenna survives weather and maintenance activity.
+
+Remote telemetry teams often blame the carrier first when the real problem is antenna design or cabling loss.
+
+## The physical mistakes that hurt most
+
+The most expensive errors are usually:
+
+- underestimating winter or cloudy-season power deficit;
+- using an enclosure that traps heat or moisture;
+- placing the antenna low, shielded, or too far from the cable entry plan;
+- ignoring service access when batteries, surge components, or radios need replacement;
+- building a stack that technically works but is painful to maintain.
+
+These errors all look manageable on day one and expensive by month six.
+
+## How to decide if the stack is site-ready
+
+Ask these questions:
+
+1. What is the longest credible interval between site visits?
+2. What does the full stack draw in normal and stressed conditions?
+3. What happens to battery and charging behavior in the worst local season?
+4. Can the enclosure survive the environment without hiding maintenance pain?
+5. Does the antenna plan preserve both signal quality and survivability?
+
+If those answers are weak, the site is not ready even if the network design looks clean.
+
+## The hidden cost buyers forget
+
+The most expensive field telemetry failure is often not the failed component. It is:
+
+- the missed event or blind site interval;
+- the emergency truck roll;
+- the repeated revisit because the root physical issue was never fixed;
+- the erosion of trust in the telemetry program.
+
+That is why power, enclosures, and antennas deserve first-class design attention.
+
+## Implementation checklist
+
+The physical layer is credible when:
+
+- the power budget includes worst-case recharge and service intervals;
+- the enclosure is chosen for environment and maintenance, not only dimensions;
+- the antenna plan includes mounting, cabling, and protection logic;
+- service access has been designed, not assumed;
+- the physical stack has been reviewed as one system instead of several purchased parts.
+
+That is when the remote site starts to look deployable.
 
 ## Related paths
 
@@ -31,5 +156,10 @@ Treating the gateway as the architecture while leaving power and enclosure desig
 		title="Site survivability planning"
 		href="/reliability/site-survivability-planning/"
 		description="Reliability planning is where physical-layer choices prove whether they are truly deployment ready."
+	/>
+	<LinkCard
+		title="Telemetry data plan budgeting"
+		href="/network-paths/telemetry-data-plan-budgeting-for-remote-sites/"
+		description="Service-plan economics and field hardware design should be evaluated together, not as separate decisions."
 	/>
 </div>

@@ -1,0 +1,169 @@
+---
+title: Telemetry Data Plan Budgeting for Remote Sites
+description: A practical budgeting guide for remote telemetry teams that need to estimate cellular data-plan cost before cameras, reporting cadence, and field exceptions turn a small recurring line item into a design problem.
+referenceType: network-path
+adProfile: network-path
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: telemetry data plan budgeting remote sites
+searchIntent: design
+decisionStage: shortlist
+targetRoles:
+  - OT engineers
+  - Utility telemetry leads
+  - System integrators
+  - Technical buyers
+contentStatus: cornerstone
+problemSolved: How to estimate and budget cellular data-plan cost for remote telemetry sites before the design locks in message rates, buffering behavior, and router choices that make service cost drift.
+readerTakeaway: You should leave with a budgeting model tied to payload size, reporting cadence, outage behavior, and current public SIM-plan pricing instead of treating data cost as an afterthought.
+keyQuestions:
+  - What actually drives remote telemetry data-plan cost?
+  - When do message frequency and store-and-forward behavior become the real source of recurring cost?
+  - How should teams compare low-data telemetry assumptions against richer future workloads like cameras or edge diagnostics?
+notFor:
+  - Sites using only wired backhaul with no cellular service economics
+  - Teams that already have a contracted carrier framework and fixed billing model
+  - Projects with no realistic estimate of telemetry volume or outage behavior
+updateTriggers:
+  - Public changes in IoT SIM pricing or access fees
+  - New workloads that materially raise data volume at remote sites
+  - Changes in common telemetry architectures around exception reporting, buffering, or image transfer
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Telemetry Data Plan Budgeting for Remote Sites
+
+Data-plan cost usually looks harmless at the start of a remote telemetry project because the expected traffic is small. Then the architecture evolves: reporting gets more frequent, alarms carry more context, buffering and replay create bursts, diagnostics become richer, maybe a camera appears, and suddenly the recurring carrier line item is part of the design problem. The right time to budget data is before the telemetry pattern is locked in, not after procurement.
+
+## Quick answer
+
+Budget remote telemetry data plans from **behavior**, not from generic provider examples. The largest drivers are:
+
+- how often the site publishes;
+- how large the payloads are;
+- whether the site stores and forwards after outages;
+- whether richer data such as images or diagnostics are added later.
+
+Most low-data telemetry sites can stay inexpensive. The surprise comes from hidden multipliers, not the baseline plan.
+
+## Why this matters now
+
+Remote telemetry stacks are broadening. More sites want better diagnostics, edge logic, and sometimes visual validation. At the same time, public IoT SIM pricing makes cellular look easy to budget. The problem is not that providers hide the rates. The problem is that teams often underestimate how architecture choices create the bill.
+
+## Public IoT SIM pricing checked April 9, 2026
+
+These are public pricing anchors, not negotiated enterprise plans:
+
+| Public pricing source | Published price snapshot | Why it matters |
+| --- | --- | --- |
+| [Hologram pricing](https://www.hologram.io/pricing/) | $0.03 per MB, plus $1 monthly recurring per SIM, plus $3 per SIM card | A simple anchor for low-volume remote telemetry economics |
+| [Telnyx IoT SIM pricing](https://support.telnyx.com/en/articles/3296669-iot-sim-card-pricing) | $2 monthly per SIM, with Zone 1 data tiers from $0.0780/MB down to $0.0125/MB | Useful for modeling how usage tiers and access fees combine over time |
+
+The important point is that recurring access fees and usage fees must both be modeled. Many teams remember one and forget the other.
+
+## What really drives data cost
+
+Data cost is mostly driven by:
+
+- payload size;
+- message frequency;
+- number of devices or stations;
+- replay bursts after outages;
+- firmware, diagnostic, or image-transfer events;
+- how noisy the design is when nothing important is happening.
+
+That last point matters more than people think. Inefficient telemetry is often expensive because it is chatty, not because it is rich.
+
+## A practical budgeting model
+
+Estimate monthly cost in this order:
+
+1. average payload size;
+2. average messages per hour or day;
+3. normal monthly data volume;
+4. outage replay volume;
+5. exception traffic such as alarms, config changes, diagnostics, or image snapshots.
+
+Then add access fees and multiply by site count. This produces a much more realistic budget than a single "MB per month" guess.
+
+## Where teams under-budget most often
+
+The common mistakes are:
+
+- forgetting retries and replay after outages;
+- adding metadata or diagnostics to every message without reviewing payload growth;
+- assuming images or richer edge exports will be rare forever;
+- budgeting a single site correctly but ignoring multiplier effects across dozens or hundreds of sites.
+
+These mistakes do not look serious in a pilot. They become serious in rollout.
+
+## Exception reporting often saves more than plan shopping
+
+Teams often search for a cheaper SIM before they optimize:
+
+- deadbands;
+- report-by-exception logic;
+- store-and-forward behavior;
+- alarm priority and payload design.
+
+Those changes often reduce cost more cleanly than carrier shopping because they improve the architecture itself.
+
+## When higher data cost is justified
+
+Higher recurring cost is usually acceptable when it buys:
+
+- fewer truck rolls;
+- more reliable detection of meaningful events;
+- faster troubleshooting;
+- stronger operational visibility at high-consequence sites.
+
+The mistake is not paying for data. The mistake is paying for avoidable noise.
+
+## A practical guardrail
+
+Before the design is signed off, the team should be able to answer:
+
+1. What is the normal monthly data budget per site?
+2. What event or behavior could double it?
+3. What is the largest credible replay burst after an outage?
+4. Which future workload would change the site from low-data telemetry into a different cost class?
+
+If those answers are unknown, the data plan is not really budgeted yet.
+
+## Implementation checklist
+
+The budget is credible when:
+
+- baseline and exception traffic are both estimated;
+- access fees and usage fees are modeled together;
+- outage and replay behavior are included;
+- the design includes controls to reduce useless traffic;
+- the team knows which future features would change the cost class.
+
+That is the point where data-plan budgeting becomes part of architecture, not only procurement.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Private APN vs public cellular"
+		href="/network-paths/private-apn-vs-public-cellular-for-remote-sites/"
+		description="Carrier economics make more sense when the connectivity model itself is clear."
+	/>
+	<LinkCard
+		title="Cellular router selection"
+		href="/hardware/cellular-router-selection-for-fixed-site-telemetry/"
+		description="Router class and service-plan economics should be compared together."
+	/>
+	<LinkCard
+		title="Report by exception and store and forward"
+		href="/protocols/report-by-exception-and-store-and-forward/"
+		description="Message behavior and replay design often decide the recurring bill more than the carrier rate card."
+	/>
+	<LinkCard
+		title="Remote tank level telemetry"
+		href="/applications/remote-tank-level-telemetry-for-water-and-wastewater/"
+		description="Use a real telemetry application to estimate whether the payload and event model stay in the low-data class."
+	/>
+</div>

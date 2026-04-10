@@ -91,7 +91,10 @@ function buildOrganizationNode() {
 		'@id': `${siteMeta.siteUrl}/#organization`,
 		name: siteMeta.name,
 		url: `${siteMeta.siteUrl}/`,
+		description: siteMeta.description,
 		email: siteMeta.email,
+		sameAs: [siteMeta.repoUrl],
+		knowsAbout: siteMeta.keywords,
 		logo: {
 			'@type': 'ImageObject',
 			url: toAbsoluteUrl(siteMeta.icon512Path),
@@ -140,6 +143,19 @@ export function buildSeo(route, currentUrl) {
 		width: 1200,
 		height: 630,
 	};
+	const authorNode = {
+		'@type': 'Organization',
+		'@id': `${siteMeta.siteUrl}/#organization`,
+		name: siteMeta.name,
+		url: `${siteMeta.siteUrl}/`,
+	};
+	const publisherNode = {
+		'@type': 'Organization',
+		'@id': `${siteMeta.siteUrl}/#organization`,
+		name: siteMeta.name,
+		url: `${siteMeta.siteUrl}/`,
+		logo: imageObject,
+	};
 
 	const pageType =
 		pageKind === 'home'
@@ -161,10 +177,11 @@ export function buildSeo(route, currentUrl) {
 					url: canonicalUrl,
 					inLanguage: siteMeta.languageTag,
 					mainEntityOfPage: canonicalUrl,
-					author: { '@id': `${siteMeta.siteUrl}/#organization` },
-					publisher: { '@id': `${siteMeta.siteUrl}/#organization` },
+					author: [authorNode],
+					publisher: publisherNode,
 					image: imageObject,
 					isPartOf: { '@id': `${siteMeta.siteUrl}/#website` },
+					isAccessibleForFree: true,
 					...(articleSection ? { articleSection } : {}),
 					...(primaryKeyword
 						? {

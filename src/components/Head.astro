@@ -24,7 +24,9 @@ const filteredHead = route.head.filter((entry) => {
 <meta name="application-name" content={seo.siteName} />
 <meta name="apple-mobile-web-app-title" content={seo.siteName} />
 <meta name="author" content={seo.siteName} />
+<meta name="creator" content={seo.siteName} />
 <meta property="og:type" content={seo.ogType} />
+<meta property="og:site_name" content={seo.siteName} />
 <meta property="og:locale" content={seo.ogLocale} />
 <meta property="og:image" content={seo.imageUrl} />
 <meta property="og:image:secure_url" content={seo.imageUrl} />
@@ -34,6 +36,7 @@ const filteredHead = route.head.filter((entry) => {
 <meta property="og:image:alt" content={seo.imageAlt} />
 <meta name="twitter:title" content={seo.title} />
 <meta name="twitter:description" content={seo.description} />
+<meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:image" content={seo.imageUrl} />
 <meta name="twitter:image:alt" content={seo.imageAlt} />
 {seo.modifiedTime && <meta property="og:updated_time" content={seo.modifiedTime} />}
