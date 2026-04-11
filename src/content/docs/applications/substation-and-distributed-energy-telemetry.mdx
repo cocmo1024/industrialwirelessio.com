@@ -1,0 +1,141 @@
+---
+title: Substation and Distributed Energy Telemetry
+description: A practical guide for remote telemetry around substations and distributed energy assets where field survivability, event clarity, and service burden shape the architecture.
+referenceType: application
+adProfile: application
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: substation and distributed energy telemetry
+searchIntent: design
+decisionStage: solution-aware
+targetRoles:
+  - Utility engineers
+  - Energy telemetry designers
+  - Integrators
+  - Operations teams
+contentStatus: growing
+problemSolved: How to design telemetry for substations and distributed energy assets so remote visibility, event response, and site survivability remain dependable across field constraints.
+readerTakeaway: You should leave with a field architecture for distributed energy telemetry tied to event criticality, outage resilience, and maintainable remote operations.
+keyQuestions:
+  - What telemetry architecture fits substations and distributed energy assets best?
+  - How should teams separate critical events from lower-value remote data?
+  - What design mistakes make remote energy telemetry expensive to maintain?
+notFor:
+  - Sites with full local staffing and strong wired enterprise infrastructure
+  - Projects centered on protection or control redesign rather than telemetry architecture
+  - Teams willing to accept frequent field dispatches as normal operating practice
+updateTriggers:
+  - Changes in utility or distributed-energy telemetry operating patterns
+  - New field lessons on network survivability and remote event handling
+  - Shifts in remote energy asset communication architectures
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Substation and Distributed Energy Telemetry
+
+Substations and distributed energy sites need remote visibility that stays useful under real field constraints. The challenge is not only communications. It is the combination of event criticality, site survivability, and support burden across assets that may be sparse, weather-exposed, and expensive to visit.
+
+## Quick answer
+
+The best designs start by separating:
+
+1. the small set of critical remote events that drive action;
+2. the broader operating data that supports planning and diagnosis;
+3. the physical and communications stack needed to keep the site visible under harsh field conditions.
+
+That usually produces a simpler, more durable telemetry model than trying to move every possible point the same way.
+
+## Why this application is different
+
+Distributed energy and substation environments often combine:
+
+- outage-sensitive assets;
+- uneven field access;
+- high consequences for missed alarms;
+- pressure to reduce service visits while increasing visibility.
+
+That makes reliability, alarm discipline, and supportability central design choices, not afterthoughts.
+
+## What data should come first
+
+The first remote telemetry layer should usually answer:
+
+| Question | Why it matters |
+| --- | --- |
+| Is the asset available and in the expected operating state? | Supports basic operational confidence |
+| Did an event occur that needs human action? | Drives dispatch or escalation decisions |
+| Is communications loss itself meaningful right now? | Prevents blind spots during critical periods |
+| Can the team assess site health without visiting? | Reduces avoidable truck rolls |
+
+That is usually enough to define the first durable architecture.
+
+## The architecture that usually holds up
+
+For many remote energy assets, the durable pattern is:
+
+- local control stays local;
+- telemetry is scoped around action-driving events and a few health indicators;
+- buffering and store-and-forward behavior are explicit;
+- the power, enclosure, and surge design are treated as part of the telemetry stack;
+- the network path is chosen around confidence, not theoretical performance.
+
+This is why good field telemetry architecture often looks conservative. Conservative designs survive.
+
+## Common failure modes
+
+These projects usually disappoint when:
+
+- the design assumes communications are always available;
+- alarm priority is weak;
+- too much low-value data obscures critical events;
+- physical deployment details are treated as procurement details rather than system design;
+- support ownership across operations and field teams is vague.
+
+The result is a site that is connected but not operationally dependable.
+
+## When more architecture is justified
+
+Broader telemetry and data reuse become more defensible when:
+
+- the action-driving event model is already trusted;
+- communications behavior under field stress is understood;
+- power and survivability planning are proven;
+- the support team can manage the stack without repeated specialist intervention.
+
+Until then, simpler architectures usually create more real value.
+
+## Implementation checklist
+
+Before broadening the site stack, confirm that:
+
+- critical events are explicitly defined;
+- communications loss behavior is understood;
+- the site remains useful during imperfect coverage;
+- the physical deployment stack has been reviewed with the same rigor as the network choice;
+- support ownership is explicit after go-live.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Cellular vs LoRaWAN vs satellite"
+		href="/network-paths/cellular-vs-lorawan-vs-satellite/"
+		description="Match the energy-site architecture to terrain, outage tolerance, and support model."
+	/>
+	<LinkCard
+		title="Private APN vs public cellular"
+		href="/network-paths/private-apn-vs-public-cellular-for-remote-sites/"
+		description="Decide whether the fleet and security model justify a more managed cellular approach."
+	/>
+	<LinkCard
+		title="Power, enclosures, and antennas"
+		href="/hardware/power-enclosures-and-antennas/"
+		description="Treat the physical deployment stack as a first-class part of the telemetry architecture."
+	/>
+	<LinkCard
+		title="Network outage playbooks"
+		href="/reliability/network-outage-playbooks-for-unattended-sites/"
+		description="Design for what the team should do when the site disappears at the worst possible time."
+	/>
+</div>

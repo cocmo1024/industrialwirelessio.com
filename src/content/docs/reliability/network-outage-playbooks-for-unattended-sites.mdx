@@ -1,0 +1,157 @@
+---
+title: Network Outage Playbooks for Unattended Sites
+description: A practical guide for designing outage response and telemetry behavior at remote unattended sites so communications loss does not turn into operational confusion.
+referenceType: reliability
+adProfile: reliability
+commercialIntent: medium
+reviewCadence: Quarterly review
+primaryKeyword: network outage playbooks for unattended sites
+searchIntent: deploy
+decisionStage: operations
+targetRoles:
+  - Telemetry operations teams
+  - Utility engineers
+  - Integrators
+  - Reliability leads
+contentStatus: growing
+problemSolved: What operating playbook and telemetry behavior unattended sites need so network outages are handled predictably instead of creating blind dispatches and missed events.
+readerTakeaway: You should leave with an outage-response model tied to event priority, buffering behavior, service ownership, and remote-site architecture.
+keyQuestions:
+  - What should happen when an unattended telemetry site drops offline?
+  - Which events should buffer, escalate, or trigger dispatch during a network outage?
+  - How do teams reduce false urgency without normalizing real blind spots?
+notFor:
+  - Fully staffed sites where local operators can diagnose most events immediately
+  - Projects focused on initial site connectivity rather than operating response
+  - Teams that treat every outage as identical regardless of site criticality
+updateTriggers:
+  - New field lessons on remote-site outage response
+  - Changes in telemetry buffering and remote alerting practices
+  - Shifts in network architecture for unattended industrial sites
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Network Outage Playbooks for Unattended Sites
+
+Remote telemetry sites do not fail only when hardware breaks. They also fail when the operations team has no clear playbook for communications loss. A site that disappears without a structured response model creates confusion, noisy escalation, and unnecessary dispatches. The goal is not to pretend outages never happen. The goal is to decide in advance what the system and the team should do when they do.
+
+## Quick answer
+
+Every unattended telemetry site should have an outage playbook that answers:
+
+1. what loss-of-communications means for that site type;
+2. which events should escalate immediately versus buffer;
+3. when dispatch is required and when it is premature;
+4. who owns each step of the response.
+
+Without those answers, even a technically solid telemetry stack becomes operationally messy.
+
+## Why this matters
+
+At unattended sites, communications loss can mean very different things:
+
+- a carrier issue with no immediate asset problem;
+- a power problem that does affect the asset;
+- an enclosure, antenna, or field-device failure;
+- an outage during a period when visibility is operationally critical.
+
+The remote team needs a playbook that separates those cases instead of treating them as one generic alarm.
+
+## What the playbook should define
+
+The best outage playbooks usually define:
+
+| Area | What should be explicit |
+| --- | --- |
+| Site criticality | Which sites justify immediate action and which do not |
+| Buffering behavior | What data is retained and replayed after recovery |
+| Alarm logic | Which communications alarms are urgent and which are contextual |
+| Dispatch rules | When a site visit is required versus deferred |
+| Ownership | Who reviews, escalates, and closes the event |
+
+That structure is what turns an outage from a surprise into a managed operating condition.
+
+## The main operating mistake
+
+The most common mistake is treating communications loss as a purely technical event. It is an operating event. The correct response depends on:
+
+- what the site is doing;
+- whether the asset is critical right now;
+- whether local buffering exists;
+- whether recent alarms or trends suggest a broader problem;
+- how expensive it is to dispatch immediately.
+
+Without that context, the team either overreacts or normalizes real blind spots.
+
+## How the telemetry stack should behave
+
+The design should explicitly support outage operations:
+
+- store and forward where possible;
+- local alarm prioritization if backhaul drops;
+- clear heartbeat or freshness rules;
+- visible differentiation between site-health loss and asset-health alarms;
+- recovery behavior that is understandable after the link returns.
+
+This is one reason field telemetry architecture and operating playbooks cannot be separated.
+
+## What sites need stricter playbooks
+
+Stricter outage handling is justified when:
+
+- the site supports critical water, energy, or environmental service;
+- outages can mask urgent field conditions;
+- site access is slow or expensive;
+- there is no local operator to validate status.
+
+Lower-criticality sites can accept longer observation windows and more buffered recovery.
+
+## Common failure modes
+
+Outage response usually goes wrong when:
+
+- all comms-loss alarms are treated the same;
+- the system provides no clear buffering confidence;
+- dispatch happens before the team understands site criticality;
+- outage events are not reviewed afterward for pattern learning;
+- ownership between operations, IT, and field teams is unclear.
+
+The result is more truck rolls and less confidence.
+
+## Implementation checklist
+
+Before calling the site operationally ready, confirm that:
+
+- outage rules differ by site criticality;
+- buffering and replay behavior are understood;
+- dispatch thresholds are documented;
+- alarm ownership is explicit;
+- post-outage review is part of normal operations.
+
+If those points are weak, the telemetry system is still incomplete.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Site survivability planning"
+		href="/reliability/site-survivability-planning/"
+		description="Use broader survivability planning to reduce how often outage playbooks need to activate."
+	/>
+	<LinkCard
+		title="Carrier failover and dual-path design"
+		href="/network-paths/carrier-failover-and-dual-path-design-for-remote-sites/"
+		description="Decide when architecture changes are justified instead of only refining response procedures."
+	/>
+	<LinkCard
+		title="Remote generator and fuel tank telemetry"
+		href="/applications/remote-generator-and-fuel-tank-telemetry-for-critical-sites/"
+		description="Apply outage-response logic to one of the site types where visibility matters most during disruption."
+	/>
+	<LinkCard
+		title="Remote pump stations and water sites"
+		href="/applications/remote-pump-stations-and-water-sites/"
+		description="Use a core water-telemetry page to connect outage response back to field architecture."
+	/>
+</div>

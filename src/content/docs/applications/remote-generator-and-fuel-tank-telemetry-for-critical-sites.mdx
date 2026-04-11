@@ -1,0 +1,151 @@
+---
+title: Remote Generator and Fuel Tank Telemetry for Critical Sites
+description: A practical guide for designing telemetry around standby generators and fuel assets where outage visibility, fuel assurance, and truck-roll reduction matter more than generic IoT features.
+referenceType: application
+adProfile: application
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: remote generator and fuel tank telemetry for critical sites
+searchIntent: design
+decisionStage: solution-aware
+targetRoles:
+  - Facility engineers
+  - Telemetry designers
+  - Critical-site operators
+  - Integrators
+contentStatus: cornerstone
+problemSolved: How to design remote telemetry for generators and fuel systems so outage readiness, fuel visibility, and serviceability remain dependable at critical unattended sites.
+readerTakeaway: You should leave with a generator-and-fuel telemetry architecture tied to outage behavior, alarm priorities, power assumptions, and field support reality.
+keyQuestions:
+  - What telemetry architecture works best for generators and fuel systems at critical remote sites?
+  - Which alarms and measurements actually matter during outage conditions?
+  - How should teams design the site so it stays useful when power and communications are stressed at the same time?
+notFor:
+  - Staffed sites with strong wired infrastructure and local operators always present
+  - Projects focused on local generator control redesign rather than remote visibility
+  - Teams willing to tolerate repeated manual fuel checks and outage uncertainty
+updateTriggers:
+  - New guidance on generator remote monitoring and alarm prioritization
+  - Shifts in cellular and remote-site service patterns for critical facilities
+  - New field lessons on outage survivability and dual-power telemetry behavior
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Remote Generator and Fuel Tank Telemetry for Critical Sites
+
+Generator telemetry becomes operationally important exactly when everything around the site is under stress. Power conditions are unstable, operators need clear visibility quickly, and field access can be delayed. That is why generator and fuel telemetry should be designed around outage usefulness, not around a long feature list.
+
+## Quick answer
+
+The healthiest design usually separates three jobs:
+
+1. local control stays with the generator and site controls;
+2. telemetry focuses on availability, alarm clarity, runtime context, and fuel assurance;
+3. the remote stack is designed to remain useful when communications and power quality are both under pressure.
+
+That usually leads to a small, rugged telemetry boundary with disciplined alarms, careful power design, and a network path chosen for dependable outage visibility rather than nominal bandwidth.
+
+## What this page is for
+
+Use this page when the site needs:
+
+- remote visibility into standby generator readiness;
+- fuel-level and runtime context for distributed critical assets;
+- fewer truck rolls for manual status checks;
+- clearer alarms during outages and failover events.
+
+## What data matters most
+
+Critical-site generator telemetry should usually prioritize:
+
+| Signal or event | Why it matters |
+| --- | --- |
+| Generator available / unavailable | Confirms real outage readiness |
+| Running status and transition events | Shows whether backup power actually engaged |
+| Fuel level and abnormal consumption | Prevents fuel surprises during extended events |
+| Alarm summary and critical fault status | Gives operators a usable remote triage picture |
+| Runtime and exercise history | Helps maintenance and readiness planning |
+
+Many other values are possible, but these are the ones that tend to change action.
+
+## What makes this application different
+
+Generator telemetry is different from generic remote monitoring because:
+
+- the most important events happen during power stress;
+- the site may lose normal communications when the data matters most;
+- field teams need clear triage, not diagnostic overload;
+- fuel data and runtime context directly affect operational readiness.
+
+That means the design should emphasize resilience and clarity over capability density.
+
+## The remote architecture that usually works
+
+The durable pattern often looks like this:
+
+- local generator controller owns machine logic;
+- a gateway or RTU-class boundary collects the remote telemetry points;
+- alarm and event priorities are simplified for remote action;
+- site power and battery behavior are sized for outage scenarios;
+- cellular or dual-path communications are chosen around confidence during disruption.
+
+The stack should be easy to support under bad conditions, not just impressive under normal ones.
+
+## Common mistakes
+
+The most expensive failures usually come from:
+
+- collecting too many low-value signals and obscuring the critical ones;
+- weak fuel-level validation;
+- assuming the site network behaves normally during outages;
+- underestimating backup power needs for the telemetry path itself;
+- no clear escalation model for alarm response.
+
+When this happens, the site appears connected but still fails the actual job of readiness assurance.
+
+## Alarm design matters more than dashboards
+
+The remote team usually needs a short, disciplined view:
+
+- readiness alarms that require action;
+- running and transfer state confirmation;
+- fuel concerns that affect service or dispatch decisions;
+- communications loss that is interpreted in outage context.
+
+If alarms are noisy or ambiguous, remote visibility becomes a burden instead of an advantage.
+
+## Implementation checklist
+
+Before expanding this pattern to more sites, confirm that:
+
+- the critical generator and fuel states are clearly defined;
+- telemetry remains powered during the outage scenarios that matter;
+- the network path has realistic outage confidence;
+- fuel data is calibrated and operationally trusted;
+- alarm ownership and escalation are explicit.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Telemetry data plan budgeting"
+		href="/network-paths/telemetry-data-plan-budgeting-for-remote-sites/"
+		description="Model recurring network cost once the generator telemetry profile is defined."
+	/>
+	<LinkCard
+		title="Cellular router selection for fixed-site telemetry"
+		href="/hardware/cellular-router-selection-for-fixed-site-telemetry/"
+		description="Choose the router class that fits supportability and outage confidence."
+	/>
+	<LinkCard
+		title="Site survivability planning"
+		href="/reliability/site-survivability-planning/"
+		description="Pressure-test whether the whole site stack survives the conditions it is meant to monitor."
+	/>
+	<LinkCard
+		title="Carrier failover and dual-path design"
+		href="/network-paths/carrier-failover-and-dual-path-design-for-remote-sites/"
+		description="Decide whether critical backup-power sites justify more than one communications path."
+	/>
+</div>
