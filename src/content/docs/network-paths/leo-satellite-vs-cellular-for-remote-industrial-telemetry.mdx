@@ -1,0 +1,174 @@
+---
+title: LEO satellite vs cellular for remote industrial telemetry
+description: How to decide when remote telemetry should stay on cellular and when low-earth-orbit satellite becomes the healthier path for industrial sites.
+referenceType: network-path
+adProfile: network-path
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: satellite vs cellular for remote telemetry
+searchIntent: compare
+decisionStage: shortlist
+targetRoles:
+  - Telemetry architects
+  - Utility engineers
+  - OT network leads
+  - System integrators
+contentStatus: growing
+problemSolved: How to choose between cellular and LEO satellite for remote industrial telemetry without treating satellite as a universal upgrade for every hard-to-reach site.
+readerTakeaway: You should leave with a field-driven rule for when cellular still wins, when LEO satellite earns its cost and power burden, and which site conditions should decide the path.
+keyQuestions:
+  - When is cellular still the right answer for remote telemetry?
+  - What site conditions actually justify LEO satellite?
+  - Which non-network issues get mistaken for a satellite problem?
+notFor:
+  - Maritime or aviation connectivity programs
+  - Mobile broadband programs not centered on telemetry
+  - Teams with no remote-site field constraints or uptime requirements defined
+updateTriggers:
+  - Starlink or other LEO business-plan changes that alter fixed-site economics
+  - Material changes in industrial IoT cellular pricing
+  - Wider industrial adoption patterns for LEO at fixed remote sites
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# LEO satellite vs cellular for remote industrial telemetry
+
+LEO satellite is now a real option for remote industrial sites, not just a last-resort talking point. That creates a tempting narrative: if coverage is painful, add satellite and move on. The field reality is stricter. Most telemetry fleets still want the simplest maintainable path, and that is often cellular. LEO satellite becomes valuable when the site is remote enough, coverage is poor enough, or business continuity is important enough that the added power, hardware, and service burden is justified.
+
+## Quick answer
+
+Use **cellular** as the default when coverage is acceptable, data volumes are moderate, and the site can be serviced through a standard industrial router footprint. Use **LEO satellite** when the site is remote, carrier coverage is unreliable or absent, and the telemetry system has enough operational value to justify higher equipment, power, and service complexity. Do not choose satellite to cover for weak enclosure, antenna, or power design.
+
+## Why this matters now
+
+Starlink is explicitly marketing fixed-site business connectivity, remote IoT monitoring, and backup networking to businesses. That means LEO is now part of mainstream remote architecture conversations. The durable question is still the same:
+
+**Which path gives the site the best uptime for the least long-run operating burden?**
+
+## Official signals checked April 11, 2026
+
+| Official source | Current signal | Why it matters |
+| --- | --- | --- |
+| [Starlink Business](https://www.starlink.com/business) | Starlink markets business connectivity for fixed sites, IoT monitoring, and remote locations through Priority plans | LEO is now a credible remote-site option for industrial monitoring, not only consumer broadband |
+| [Hologram pricing](https://www.hologram.io/pricing/) | Public IoT cellular pricing remains transparent and low-friction for modest telemetry loads | Cellular still has a major simplicity and economics advantage for many fleets |
+| [Telnyx IoT SIM pricing](https://support.telnyx.com/en/articles/3296669-iot-sim-card-pricing/) | Public SIM and usage-based pricing remains straightforward for industrial telemetry modeling | Cellular budgeting is easier to estimate early, which matters in large remote fleets |
+
+## When cellular still wins
+
+Cellular is usually the healthier path when:
+
+- coverage exists and is stable enough,
+- the telemetry workload is modest,
+- power is limited,
+- the site needs low-touch replacement logistics,
+- and the architecture values fleet simplicity over maximum reach.
+
+This covers a large share of water, wastewater, agriculture, environmental, and distributed industrial monitoring.
+
+## When LEO satellite becomes the better answer
+
+Satellite becomes more defensible when:
+
+- the site is outside reliable carrier coverage,
+- the business cost of telemetry blind spots is high,
+- fixed-site install is feasible with a clear sky view,
+- and the power system can support the extra load.
+
+This is where LEO stops being expensive insurance and becomes the real primary path.
+
+## What satellite does not fix
+
+Satellite does not fix:
+
+- poor power design,
+- bad environmental sealing,
+- weak local buffering,
+- noisy field I/O,
+- or reporting logic that wastes bandwidth.
+
+If the site still fails for those reasons, LEO simply gives the system a more expensive path to transmit bad behavior.
+
+## The real tradeoff is operating burden
+
+The network comparison is not only about coverage. It is about:
+
+- hardware footprint,
+- power budget,
+- mounting and sky visibility,
+- service-plan economics,
+- and field replacement complexity.
+
+Cellular wins when simplicity matters most. LEO wins when reach and resilience matter enough to justify the larger footprint.
+
+## The best-fit cellular cases
+
+Cellular stays strong for:
+
+- pump stations with acceptable carrier service,
+- metering and environmental sites with low data usage,
+- distributed fleets where truck rolls must stay simple,
+- and sites where a compact router class is preferable to a larger terminal footprint.
+
+That is why satellite should be treated as a field exception until the site proves otherwise.
+
+## The best-fit LEO cases
+
+LEO is strongest for:
+
+- remote mines,
+- isolated utility infrastructure,
+- sparse environmental sites far beyond carrier reach,
+- and fixed installations where the system value is high enough to justify the larger power and service model.
+
+It can also work as a backup path, but only when failover design and operating cost are justified.
+
+## A practical decision test
+
+Choose cellular if:
+
+1. coverage exists with acceptable uptime,
+2. the site needs low-power, low-footprint hardware,
+3. and fleet-wide simplicity matters more than maximum geographic reach.
+
+Choose LEO if:
+
+1. cellular coverage is the real blocker,
+2. the site can physically support the install and power draw,
+3. and the monitored asset is valuable enough that higher recurring cost is justified.
+
+## Implementation checklist
+
+The path is defensible when:
+
+- coverage is measured instead of assumed,
+- power and mounting design are documented,
+- local buffering is part of the site design,
+- and the team can explain why the simpler path is not enough.
+
+That is when the network decision becomes field engineering instead of connectivity fashion.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Cellular vs LoRaWAN vs satellite"
+		href="/network-paths/cellular-vs-lorawan-vs-satellite/"
+		description="Use the broader backhaul comparison before narrowing the decision to only satellite versus cellular."
+	/>
+	<LinkCard
+		title="Telemetry data-plan budgeting"
+		href="/network-paths/telemetry-data-plan-budgeting-for-remote-sites/"
+		description="Recurring service cost should be modeled before the site falls in love with a more complex network path."
+	/>
+	<LinkCard
+		title="Private APN vs public cellular"
+		href="/network-paths/private-apn-vs-public-cellular-for-remote-sites/"
+		description="Stay inside the cellular family first if the real question is control and segmentation rather than coverage."
+	/>
+	<LinkCard
+		title="Remote pump stations and water sites"
+		href="/applications/remote-pump-stations-and-water-sites/"
+		description="Pressure-test the network decision in a real fixed-site telemetry use case."
+	/>
+</div>
