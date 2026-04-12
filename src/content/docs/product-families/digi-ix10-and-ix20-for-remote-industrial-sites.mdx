@@ -1,0 +1,149 @@
+---
+title: Digi IX10 and IX20 for remote industrial sites
+description: A practical guide to where Digi IX10 and IX20-class industrial routers fit in remote telemetry, unattended sites, and serviceable field connectivity.
+referenceType: product-family
+adProfile: product-family
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: digi ix10 ix20 remote industrial sites
+searchIntent: select
+decisionStage: shortlist
+targetRoles:
+  - SCADA engineers
+  - Utility OT leads
+  - Telemetry integrators
+  - Technical buyers
+contentStatus: growing
+problemSolved: How to decide when Digi IX10 or IX20-class industrial routers fit a remote telemetry site, and when the site really needs a different connectivity class or stronger hardware stack.
+readerTakeaway: You should leave with a clear view of where Digi IX10/IX20-class routers shine in remote monitoring, what kind of field stack they support well, and what should push the project toward a different router or network-path choice.
+keyQuestions:
+  - What types of remote sites fit Digi IX10 or IX20-class routers well?
+  - When is this class enough without moving into a heavier industrial router tier?
+  - What field conditions should push the design toward stronger redundancy or a different path?
+notFor:
+  - High-bandwidth mobile fleet connectivity projects
+  - Sites that already require multi-service edge workloads beyond a router's healthy role
+  - Readers looking for a pure reseller or SKU listing page
+updateTriggers:
+  - Major Digi IX family changes that shift remote-site positioning
+  - New carrier, SIM, or remote management patterns affecting fixed industrial site economics
+  - Material changes in remote-site security, failover, or telemetry data patterns
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Digi IX10 and IX20 for remote industrial sites
+
+Digi's IX family keeps showing up in remote industrial telemetry because it sits in a useful middle ground. It is not a consumer router dressed in an industrial box, and it is not automatically the heaviest possible remote networking answer either. That makes IX10 and IX20-style products attractive for sites where the real goal is durable visibility, manageable remote support, and a router class that does not collapse under unattended field conditions.
+
+## Quick answer
+
+IX10 and IX20-class routers fit best when a site needs **serviceable industrial cellular connectivity**, credible remote management, and a cleaner operational posture than low-end hardware offers. They are often a strong answer for utility, environmental, fuel, tank, and distributed equipment sites where the telemetry load is moderate but the cost of field failure is real.
+
+## Why this family matters
+
+Remote telemetry sites usually do not fail because the brochure promised too little bandwidth. They fail because:
+
+- no one can recover the router remotely;
+- carrier behavior is unstable;
+- power conditions are rough;
+- the field stack was underspecified;
+- truck rolls are too expensive.
+
+That is why the IX family matters. Its value is less about raw modem marketing and more about field-operational survivability.
+
+## What this router class is good at
+
+IX10 and IX20-style products are usually strongest when the site needs:
+
+- dependable cellular backhaul;
+- industrial management posture;
+- remote-service viability;
+- moderate local integration without turning the router into an edge-compute platform;
+- better lifecycle discipline than low-cost compact routers provide.
+
+This makes them credible for fixed telemetry sites where the communication layer must stay simple enough to support but strong enough to survive unattended operation.
+
+## The official anchor
+
+Digi positions IX10 directly as an industrial cellular router for critical industrial connectivity:
+
+- [Digi IX10 Industrial Cellular Router](https://www.digi.com/products/networking/cellular-routers/industrial/digi-ix10)
+- [Digi router family comparison](https://hub.digi.com/dp/path%3D/marketing/asset/router-product-feature-comparison)
+
+Those pages matter because they reflect the family's continuing role in utilities, renewable energy, manufacturing, and distributed remote applications rather than a short-lived product novelty.
+
+## When this class is a strong fit
+
+This class usually makes sense when:
+
+- the site is fixed, unattended, and operationally meaningful;
+- the data profile is still moderate telemetry, not camera-heavy broadband by default;
+- remote management quality is worth paying for;
+- truck-roll avoidance is part of the business case;
+- the router is part of a disciplined field stack that includes antennas, surge strategy, enclosure design, and power planning.
+
+That is where a midrange industrial router family often beats both low-end LTE hardware and overbuilt 5G ambition.
+
+## When this class is not enough
+
+Move beyond this class when:
+
+- the site consequence justifies heavier redundancy and dual-path design;
+- the data load is materially higher than telemetry plus modest diagnostics;
+- the deployment requires a stronger local application role than a router should own;
+- regulatory, security, or segmentation needs materially exceed the site's current router posture.
+
+This is where teams should ask whether the network path is changing, not just the SKU.
+
+## Why it remains commercially strong search traffic
+
+Searches around Digi IX hardware are rarely generic. They usually come from teams already deciding:
+
+- whether a site deserves a low-end or midrange router;
+- whether field support burden is under control;
+- whether the site can stay on cellular or needs a higher-reliability design;
+- whether the hardware class is credible for the intended rollout.
+
+That is the kind of industrial traffic that often monetizes better than broad awareness content.
+
+## The hidden cost buyers forget
+
+The real cost is not only the router. It is:
+
+- the remote-management stack;
+- SIM and carrier behavior over time;
+- antenna placement and signal quality;
+- how often someone must drive to the site;
+- whether the router is a clean part of the field architecture or an accidental dumping ground for extra responsibilities.
+
+That is why a "cheaper" router can still be the more expensive decision over two years.
+
+## A practical shortlist rule
+
+Shortlist Digi IX10/IX20-class hardware when the site needs better field-operational discipline than compact low-end routers offer, but does not yet justify a broader redesign of the entire connectivity architecture. If the site is more demanding than that, change the architecture decision first rather than pretending the next router tier alone will save it.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Cellular router selection for fixed-site telemetry"
+		href="/hardware/cellular-router-selection-for-fixed-site-telemetry/"
+		description="Use this to pressure-test whether the Digi IX class is the right router tier at all."
+	/>
+	<LinkCard
+		title="Telemetry data-plan budgeting"
+		href="/network-paths/telemetry-data-plan-budgeting-for-remote-sites/"
+		description="Router class and recurring carrier economics should be modeled together."
+	/>
+	<LinkCard
+		title="Carrier failover and dual-path design"
+		href="/network-paths/carrier-failover-and-dual-path-design-for-remote-sites/"
+		description="Move here when outage consequence starts demanding more than a clean single-router architecture."
+	/>
+	<LinkCard
+		title="Remote generator and fuel tank telemetry"
+		href="/applications/remote-generator-and-fuel-tank-telemetry-for-critical-sites/"
+		description="A strong application path for fixed-site cellular hardware that must stay visible under service pressure."
+	/>
+</div>

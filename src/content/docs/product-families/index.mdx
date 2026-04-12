@@ -7,6 +7,47 @@ commercialIntent: high
 reviewCadence: Quarterly review
 ---
 
+import { LinkCard, Steps } from '@astrojs/starlight/components';
+
 # Product Families
 
 Product-family pages explain where each hardware category belongs in the field architecture. The goal is to reduce confusion between devices that may look similar in marketing materials but behave differently in deployment reality.
+
+## Core paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Industrial telemetry gateways"
+		href="/product-families/industrial-telemetry-gateways/"
+		description="Use the category page to separate gateway roles from router, RTU, and remote-I/O assumptions."
+	/>
+	<LinkCard
+		title="Digi IX10 and IX20"
+		href="/product-families/digi-ix10-and-ix20-for-remote-industrial-sites/"
+		description="A high-intent page for one of the most durable industrial router families in unattended site work."
+	/>
+	<LinkCard
+		title="Phoenix Contact TC Router"
+		href="/product-families/phoenix-contact-tc-router-for-unattended-telemetry-sites/"
+		description="A classic remote-connectivity family for secure cellular telemetry and remote access."
+	/>
+	<LinkCard
+		title="Siemens SCALANCE M"
+		href="/product-families/siemens-scalance-m-for-industrial-remote-access-and-telemetry/"
+		description="A strong vendor-aligned product-family page for Siemens-heavy remote communication estates."
+	/>
+	<LinkCard
+		title="Wireless remote I/O and RTU modules"
+		href="/product-families/wireless-remote-io-and-rtu-modules/"
+		description="Return to the broader field hardware class when the product-family fit is still unclear."
+	/>
+</div>
+
+## How to use product-family pages
+
+<Steps>
+	1. Start with the remote asset and outage consequence.
+	2. Narrow the network path before comparing router families.
+	3. Use product-family pages to understand where classic hardware lines really fit.
+	4. Finish with reliability and hardware-stack pages to confirm the site can survive the field.
+</Steps>
