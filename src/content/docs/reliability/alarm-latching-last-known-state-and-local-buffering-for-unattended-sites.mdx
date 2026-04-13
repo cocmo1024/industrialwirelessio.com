@@ -1,0 +1,134 @@
+---
+title: Alarm Latching, Last-Known State, and Local Buffering for Unattended Sites
+description: A practical guide for unattended telemetry sites where temporary link loss should not erase the operating story the remote team needs.
+referenceType: reliability
+adProfile: reliability
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: alarm latching last known state and local buffering for unattended sites
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Remote operations managers
+  - Telemetry architects
+  - Field reliability engineers
+  - Integrators
+contentStatus: cornerstone
+problemSolved: How to design alarm latching, last-known-state behavior, and local buffering so unattended sites remain understandable when communications are imperfect.
+readerTakeaway: You should leave with a reliability model for preserving operational context during link interruptions instead of letting the site go informationally blank.
+keyQuestions:
+  - What should unattended sites remember locally when the primary link is lost?
+  - When is alarm latching necessary for useful remote operations?
+  - How much local buffering is enough before complexity outweighs value?
+notFor:
+  - Fully staffed sites with immediate local diagnosis available
+  - Low-consequence monitoring points where temporary blindness is acceptable
+  - Architectures expecting local memory alone to replace clear operating playbooks
+updateTriggers:
+  - New field lessons on telemetry continuity and outage behavior
+  - Changes in common buffering and event-retention patterns for unattended sites
+  - New remote operations practices for handling intermittent communications
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Alarm Latching, Last-Known State, and Local Buffering for Unattended Sites
+
+When a remote site loses communications, two failures often happen at once. The link is gone, and the operating story disappears with it. Operators no longer know which alarm came first, whether the last reported state was stable, or whether the site continued doing the expected thing after the signal vanished. For unattended telemetry, preserving that local story is a major part of reliability.
+
+## Quick answer
+
+Sites usually need stronger local continuity when:
+
+- dispatch is expensive or slow;
+- alarms drive time-sensitive response;
+- intermittent communications are normal rather than rare;
+- the difference between "link lost" and "site abnormal" matters operationally.
+
+In those environments, local buffering, alarm latching, and last-known-state logic often create more real resilience than another layer of dashboard polish.
+
+## What this page is for
+
+Use this page when the team needs:
+
+- better continuity of information during link loss;
+- a practical way to preserve alarm and state context locally;
+- guidance on what should be latched versus what can be reconstructed later;
+- a reliability model that helps remote operators act with confidence.
+
+## What should be preserved locally
+
+| Local continuity element | Why it matters |
+| --- | --- |
+| Last known operating state | Gives operators a baseline before the site went dark |
+| Latched critical alarms | Prevents important events from disappearing during intermittent links |
+| Time-ordered buffer of recent transitions | Helps reconstruct what happened before and during communications loss |
+| Key health indicators | Shows whether the site likely remained stable or degraded |
+
+That set is usually enough to preserve the site's operational story.
+
+## When alarm latching matters most
+
+Alarm latching becomes important when:
+
+- the site may briefly regain and lose communications repeatedly;
+- the alarm condition could clear before operators see it remotely;
+- dispatch decisions depend on whether the event truly happened;
+- remote staff need a durable indication that a critical state occurred.
+
+Without latching, intermittent links can make serious sites look calmer than they really were.
+
+## How much buffering is enough
+
+The goal is not infinite retention. The goal is enough local history to:
+
+- reconstruct the most recent meaningful transitions;
+- understand the order of alarm, recovery, and link-loss events;
+- preserve action-driving evidence until the remote system catches up.
+
+More buffering is only useful if the operations team can actually use it.
+
+## Common failure modes
+
+These sites usually become frustrating when:
+
+- link loss wipes away the site's recent event history;
+- alarms are not latched and disappear during intermittent coverage;
+- the remote team cannot tell whether the site failed or only the link failed;
+- buffering exists but the operational workflow never references it.
+
+The result is repeated uncertainty and avoidable dispatches.
+
+## Implementation checklist
+
+Before finalizing the reliability model, confirm that:
+
+- the site preserves the minimum state and alarm story needed for remote action;
+- critical alarms remain visible after intermittent outages;
+- the remote team can interpret buffered events without guessing;
+- buffering and latching are tied to real operating decisions, not only theoretical completeness.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Out-of-band management and local fallback"
+		href="/reliability/out-of-band-management-and-local-fallback-for-unattended-sites/"
+		description="Use a related page to connect continuity logic with the broader fallback model."
+	/>
+	<LinkCard
+		title="Network outage playbooks for unattended sites"
+		href="/reliability/network-outage-playbooks-for-unattended-sites/"
+		description="Tie local continuity behavior back to what remote teams should actually do during outages."
+	/>
+	<LinkCard
+		title="Remote cabinet DC power distribution"
+		href="/hardware/remote-cabinet-dc-power-distribution-fusing-and-battery-isolation/"
+		description="Make sure the cabinet hardware can support the local continuity behavior the site needs."
+	/>
+	<LinkCard
+		title="Wellhead and chemical injection site telemetry"
+		href="/applications/wellhead-and-chemical-injection-site-telemetry-for-unattended-oil-and-gas-assets/"
+		description="Apply continuity logic to a remote asset class where intermittent communications are common and consequential."
+	/>
+</div>

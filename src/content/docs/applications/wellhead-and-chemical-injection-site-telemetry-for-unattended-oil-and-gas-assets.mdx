@@ -1,0 +1,137 @@
+---
+title: Wellhead and Chemical Injection Site Telemetry for Unattended Oil and Gas Assets
+description: A practical guide for telemetry at unattended wellheads and chemical injection sites where sparse access, low-power constraints, and alarm credibility define the architecture.
+referenceType: application
+adProfile: application
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: wellhead and chemical injection site telemetry for unattended oil and gas assets
+searchIntent: design
+decisionStage: solution-aware
+targetRoles:
+  - Field operations engineers
+  - Telemetry architects
+  - Integrators
+  - Remote asset managers
+contentStatus: cornerstone
+problemSolved: How to design telemetry for unattended wellhead and chemical injection assets so alarms, local buffering, and field support remain practical under remote operating conditions.
+readerTakeaway: You should leave with a site telemetry model tied to action-driving alarms, power limits, intermittent connectivity, and maintainable field operations.
+keyQuestions:
+  - What telemetry belongs first at unattended wellhead and chemical injection sites?
+  - How should teams separate critical alarms from low-value remote data?
+  - What design mistakes make oil and gas remote telemetry costly to support?
+notFor:
+  - Fully staffed sites with stable wired infrastructure
+  - Programs focused on redesigning local control logic rather than remote telemetry
+  - Teams willing to accept repeated dispatches as the normal answer to visibility gaps
+updateTriggers:
+  - New field lessons in remote oil and gas telemetry
+  - Changes in common cabinet, power, and network designs for unattended sites
+  - New operating patterns in chemical injection and wellhead monitoring
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Wellhead and Chemical Injection Site Telemetry for Unattended Oil and Gas Assets
+
+Unattended wellheads and chemical injection sites create a familiar telemetry trap. Teams want more visibility into rates, pressures, tank levels, pump state, power health, and cabinet alarms, but the field conditions rarely support a broad or fragile footprint. The best designs are not the ones that move the most data. They are the ones that make the site understandable and actionable when nobody is nearby.
+
+## Quick answer
+
+The healthiest first architecture usually prioritizes:
+
+- a small set of action-driving process and site-health signals;
+- local behavior that remains safe and understandable during link loss;
+- conservative power and enclosure design;
+- alarm logic that helps operations decide whether dispatch is necessary.
+
+That is usually far more valuable than building a deep but weak telemetry stack.
+
+## What this page is for
+
+Use this page when the team needs:
+
+- a practical telemetry model for remote oil and gas field sites;
+- guidance on what data matters first for unattended assets;
+- a site architecture that balances visibility with supportability;
+- a first phase that avoids over-instrumenting low-value points.
+
+## What data should come first
+
+| Data group | Why it matters |
+| --- | --- |
+| Production or injection status | Confirms whether the site is doing the core job expected |
+| Critical pressure, level, or flow indicators | Supports early detection of meaningful deviations |
+| Power and cabinet health | Explains whether the telemetry path itself is trustworthy |
+| Communications state and buffering behavior | Prevents blind spots from turning into confusion |
+| Access, tamper, or environmental alarms | Protects field assumptions and maintenance planning |
+
+That short list often supports most real decisions.
+
+## Why these sites are easy to overbuild
+
+Remote oil and gas telemetry usually goes wrong when:
+
+- teams treat every site like a mini control room;
+- the power budget is treated as flexible when it is not;
+- communications assumptions are based on best-case conditions;
+- local fallback is weak or undefined;
+- alarm volume grows faster than operator confidence.
+
+The stronger architecture is usually narrower and more deliberate.
+
+## What a durable site footprint looks like
+
+A durable wellhead or injection-site design usually includes:
+
+- a small, explicit action model for alarms and exceptions;
+- buffering during temporary link loss;
+- hardware selected around cabinet, power, and service realities;
+- a clear distinction between must-know data and nice-to-have data.
+
+That keeps the site operationally useful rather than technically impressive.
+
+## Common failure modes
+
+These deployments often disappoint when:
+
+- non-critical telemetry crowds out meaningful alarms;
+- the cabinet power model is too optimistic;
+- dispatch logic is unclear during communications loss;
+- field teams inherit a stack they did not help design;
+- the site depends on perfect connectivity to stay understandable.
+
+## Implementation checklist
+
+Before expanding the site footprint, confirm that:
+
+- the critical alarm and process model is intentionally small;
+- local fallback and buffering behavior are defined;
+- power and enclosure constraints were reviewed as system requirements;
+- the operations team knows what should trigger a dispatch;
+- post-commissioning field ownership is clear.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Pipeline cathodic protection and remote cabinet telemetry"
+		href="/applications/pipeline-cathodic-protection-and-remote-cabinet-telemetry/"
+		description="Use a related cabinet page to compare remote oil and gas sites with other high-consequence unattended field footprints."
+	/>
+	<LinkCard
+		title="Remote generator and fuel tank telemetry"
+		href="/applications/remote-generator-and-fuel-tank-telemetry-for-critical-sites/"
+		description="Compare critical-site telemetry patterns where dispatch economics and outage risk also dominate."
+	/>
+	<LinkCard
+		title="Out-of-band management and local fallback"
+		href="/reliability/out-of-band-management-and-local-fallback-for-unattended-sites/"
+		description="Pressure-test whether local autonomy and secondary access are strong enough for the site."
+	/>
+	<LinkCard
+		title="Remote cabinet DC power distribution"
+		href="/hardware/remote-cabinet-dc-power-distribution-fusing-and-battery-isolation/"
+		description="Carry the application decision into a more durable cabinet power and service model."
+	/>
+</div>
