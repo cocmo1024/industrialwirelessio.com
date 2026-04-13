@@ -1,0 +1,151 @@
+---
+title: Antenna Cable Loss and Mounted Height for Remote Telemetry
+description: A practical guide for remote telemetry projects where antenna choice, feedline loss, and mounted height quietly determine whether the site is dependable.
+referenceType: hardware
+adProfile: hardware
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: antenna cable loss and mounted height for remote telemetry
+searchIntent: select
+decisionStage: shortlist
+targetRoles:
+  - Telemetry designers
+  - Field engineers
+  - Integrators
+  - Remote operations teams
+contentStatus: cornerstone
+problemSolved: How to design antenna mounting, cable runs, and height decisions for remote telemetry so the physical layer improves site reliability instead of silently undermining it.
+readerTakeaway: You should leave with a practical antenna-planning model tied to cable loss, mounting height, access burden, and field survivability.
+keyQuestions:
+  - When does extra antenna height help enough to justify the mounting complexity?
+  - How much cable loss quietly destroys an otherwise reasonable remote telemetry design?
+  - What physical-layer choices create long-term service burden at unattended sites?
+notFor:
+  - Indoor or very short-run sites where antenna placement is trivial
+  - Projects centered on detailed RF engineering across complex multi-radio systems
+  - Teams that can already guarantee strong coverage at the mounting point without any site tradeoffs
+updateTriggers:
+  - New field lessons on antenna and feedline planning for remote telemetry
+  - Changes in common deployment patterns for fixed-site cellular and remote telemetry hardware
+  - New survivability or maintenance issues tied to antenna installation choices
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Antenna Cable Loss and Mounted Height for Remote Telemetry
+
+Remote telemetry teams often spend more time comparing routers than comparing the antenna path that will decide whether the site is actually stable. A mediocre router with a disciplined antenna installation can outperform a better router attached to a long lossy cable run, poor mounting point, or hard-to-service mast. The physical path between radio and air is part of the system. If it is weak, everything upstream becomes harder to trust.
+
+## Quick answer
+
+The basic rule is simple: extra antenna height only helps if the gain from placement is not erased by cable loss, mounting difficulty, and maintenance risk. A shorter, cleaner cable run at a decent mounting point is often better than a taller installation with avoidable loss and miserable service access. Remote telemetry hardware should be designed for survivability and support, not only signal optimism.
+
+## What this page is for
+
+Use this page when the site needs:
+
+- a practical antenna-planning method for fixed telemetry deployments;
+- guidance on when cable loss outweighs higher mounting;
+- a way to compare rooftop, pole, mast, or cabinet-adjacent mounting choices;
+- hardware decisions tied to maintenance and field access, not only signal bars.
+
+## The three decisions that matter most
+
+Most remote telemetry antenna planning reduces to three questions:
+
+| Decision | Why it matters |
+| --- | --- |
+| Where can the antenna see acceptable coverage? | Drives baseline link confidence |
+| How much cable loss sits between the radio and antenna? | Determines whether the better view is still worth it |
+| How difficult is the installation to inspect and service later? | Controls long-term field cost |
+
+Teams often do the first and ignore the other two.
+
+## When extra height is worth it
+
+Higher mounting is usually justified when:
+
+- nearby obstructions or terrain materially improve with elevation;
+- the site suffers from unstable signal quality rather than only low nominal strength;
+- the added mounting point is still safe and supportable;
+- the cable run can stay disciplined enough that the signal gain survives.
+
+It is much less compelling when the site is already usable at lower height and the extra mast only increases service burden.
+
+## Where cable loss quietly ruins good decisions
+
+Cable loss becomes dangerous when:
+
+- the antenna run is much longer than the team first planned;
+- connectors, transitions, and weather exposure accumulate at several points;
+- the radio is mounted far from the best antenna location for convenience;
+- the site relies on marginal coverage, so each avoidable dB matters.
+
+This is why antenna decisions should be made with the full path in view, not only with a preferred mounting point.
+
+## Maintenance is part of RF design
+
+The strongest remote sites are not the ones with the most heroic mast. They are the ones where:
+
+- the antenna can be inspected without unreasonable effort;
+- cables and connectors are protected and documented;
+- replacement can happen without a full specialty crew every time;
+- the installation is understandable to the next technician, not only the original integrator.
+
+That is what keeps a remote link dependable over years rather than weeks.
+
+## Common failure modes
+
+These installations usually disappoint when:
+
+- the antenna is mounted high for optimism rather than evidence;
+- cable loss is treated as a small theoretical issue;
+- connector count and weather exposure grow without discipline;
+- the antenna is placed where service is painful and therefore delayed;
+- the physical-layer design is separated from the ongoing support model.
+
+The result is a link that looks engineered but behaves inconsistently in the field.
+
+## What a good site review should prove
+
+Before finalizing the antenna design, the team should prove that:
+
+- the mounting point materially improves the link compared with simpler alternatives;
+- the cable path is short and disciplined enough to preserve that gain;
+- inspection and replacement are realistic under the site's access conditions;
+- the physical installation can survive weather and routine service.
+
+## Implementation checklist
+
+Before freezing the hardware plan, confirm that:
+
+- the chosen mounting height was justified by observed site conditions;
+- cable type, length, and connectors were reviewed as a system;
+- service access is acceptable for the site's maintenance model;
+- antenna placement and cable protection are documented for future field work;
+- the hardware decision still makes sense after maintenance burden is included.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Power, enclosures, and antennas"
+		href="/hardware/power-enclosures-and-antennas/"
+		description="Connect antenna planning back to the broader physical stack at the site."
+	/>
+	<LinkCard
+		title="Cellular router selection for fixed-site telemetry"
+		href="/hardware/cellular-router-selection-for-fixed-site-telemetry/"
+		description="Do not choose the router class in isolation from the antenna and mounting plan."
+	/>
+	<LinkCard
+		title="LEO satellite vs cellular for remote telemetry"
+		href="/network-paths/leo-satellite-vs-cellular-for-remote-industrial-telemetry/"
+		description="Revisit the backhaul choice if the physical-layer burden starts to look unreasonable."
+	/>
+	<LinkCard
+		title="Site survivability planning"
+		href="/reliability/site-survivability-planning/"
+		description="Pressure-test the antenna design against long-term field survivability and service access."
+	/>
+</div>

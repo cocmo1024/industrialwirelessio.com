@@ -1,0 +1,151 @@
+---
+title: Pipeline Cathodic Protection and Remote Cabinet Telemetry
+description: A practical guide for telemetry around pipeline cathodic protection and remote field cabinets where sparse access, power constraints, and alarm credibility matter more than broad data ambition.
+referenceType: application
+adProfile: application
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: pipeline cathodic protection and remote cabinet telemetry
+searchIntent: design
+decisionStage: solution-aware
+targetRoles:
+  - Pipeline integrity engineers
+  - Remote telemetry designers
+  - Integrators
+  - Field operations teams
+contentStatus: cornerstone
+problemSolved: How to design telemetry for cathodic protection and remote field cabinets so the site remains visible, actionable, and supportable without treating every cabinet like a full remote station.
+readerTakeaway: You should leave with a cabinet-level telemetry model tied to alarm credibility, power limits, field access, and maintainable remote architecture.
+keyQuestions:
+  - What telemetry belongs in cathodic protection and remote cabinet monitoring first?
+  - How should teams separate action-driving alarms from lower-value cabinet data?
+  - What field design mistakes make remote cabinet telemetry expensive to maintain?
+notFor:
+  - Fully staffed sites with strong local SCADA and wired infrastructure
+  - Programs centered on redesigning control or protection systems rather than remote telemetry
+  - Teams willing to tolerate repeated field visits as the normal answer to cabinet visibility gaps
+updateTriggers:
+  - New field lessons on pipeline and cabinet telemetry deployments
+  - Changes in common communications and power architectures for unattended cabinets
+  - New operating patterns in cathodic protection monitoring and remote alarm workflows
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Pipeline Cathodic Protection and Remote Cabinet Telemetry
+
+Remote pipeline cabinets are easy to over-instrument and still leave operational gaps. Teams want more visibility into rectifiers, power health, alarms, cabinet access, and communications behavior, but many cabinets have limited power, sparse service access, and a very small set of events that actually change field action. The practical goal is not to build a miniature control room at every cabinet. It is to make the site actionable from a distance while keeping the footprint supportable.
+
+## Quick answer
+
+The strongest first architecture usually focuses on:
+
+- a small set of action-driving cathodic protection and cabinet-health signals;
+- communications behavior that stays understandable during weak coverage;
+- power and enclosure design treated as part of the telemetry system;
+- local fallback and buffering where field visits are costly.
+
+That creates more value than trying to move every possible analog and status point from day one.
+
+## What this page is for
+
+Use this page when the team needs:
+
+- better visibility into remote cathodic protection cabinets or similar field enclosures;
+- a telemetry footprint that supports integrity and operations teams without constant dispatches;
+- a realistic first phase for remote cabinet monitoring;
+- architecture guidance tied to cabinet access, power, and service burden.
+
+## What data should come first
+
+The first telemetry layer usually needs to answer a short list of questions:
+
+| Cabinet question | Why it matters |
+| --- | --- |
+| Is the site powered and communicating normally? | Establishes whether the cabinet is reachable and trustworthy |
+| Are the key CP or rectifier indicators within expected range? | Supports integrity review and alarm response |
+| Did a meaningful alarm or abnormal state occur? | Drives actual field action |
+| Did cabinet access, tamper, or environmental limits become a problem? | Protects asset and service assumptions |
+
+Those signals often create most of the real operational value.
+
+## Why remote cabinets fail as telemetry projects
+
+They often fail because the design assumes:
+
+- cabinet power is generous enough for a broader stack;
+- every signal is equally valuable;
+- communications loss is just an annoyance instead of a central design condition;
+- field crews can always visit quickly if something drifts.
+
+Remote cabinet telemetry needs a stricter definition of what matters.
+
+## The architecture that usually holds up
+
+For many pipeline cabinet deployments, the durable pattern is:
+
+- local sensing scoped to integrity-relevant and operations-relevant points;
+- edge buffering for intermittent coverage;
+- conservative power design and environmental protection;
+- simple, credible alarm logic;
+- explicit fallback when the link disappears.
+
+That architecture survives field reality better than ambitious but support-heavy designs.
+
+## When more telemetry is justified
+
+Broader data collection makes sense when:
+
+- the core alarm model already works;
+- the site power budget and enclosure space support it;
+- the communications path is predictable enough;
+- the field team can explain why more data will change action rather than only expand visibility.
+
+Without those conditions, wider telemetry often produces more maintenance than value.
+
+## Common failure modes
+
+These cabinet projects most often disappoint when:
+
+- alarm thresholds are weak and trust erodes quickly;
+- communications loss behavior is undefined;
+- enclosure, surge, and grounding details are treated as procurement details;
+- every cabinet is treated as though it needs the same footprint regardless of field importance;
+- there is no local strategy for what happens between telemetry intervals or during outages.
+
+The result is connected cabinets that still trigger avoidable truck rolls.
+
+## Implementation checklist
+
+Before expanding cabinet telemetry, confirm that:
+
+- the alarm model is intentionally small and action-driven;
+- communications loss is handled explicitly;
+- power and enclosure constraints were reviewed as system requirements;
+- the site can remain safe and understandable during link gaps;
+- field ownership after commissioning is explicit.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Substation and distributed energy telemetry"
+		href="/applications/substation-and-distributed-energy-telemetry/"
+		description="Use a related energy-asset page to compare cabinet telemetry against broader remote infrastructure patterns."
+	/>
+	<LinkCard
+		title="Cellular router selection for fixed-site telemetry"
+		href="/hardware/cellular-router-selection-for-fixed-site-telemetry/"
+		description="Choose the router class only after the cabinet duty cycle and support expectations are stable."
+	/>
+	<LinkCard
+		title="Network outage playbooks for unattended sites"
+		href="/reliability/network-outage-playbooks-for-unattended-sites/"
+		description="Define what the remote operations team should actually do when a cabinet stops reporting."
+	/>
+	<LinkCard
+		title="Power, enclosures, and antennas"
+		href="/hardware/power-enclosures-and-antennas/"
+		description="Treat the physical cabinet stack as part of telemetry reliability instead of an afterthought."
+	/>
+</div>

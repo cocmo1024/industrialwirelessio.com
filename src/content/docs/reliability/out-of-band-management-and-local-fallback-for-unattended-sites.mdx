@@ -1,0 +1,149 @@
+---
+title: Out-of-Band Management and Local Fallback for Unattended Sites
+description: A practical guide for unattended telemetry sites where link loss should not turn a manageable outage into a blind field emergency.
+referenceType: reliability
+adProfile: reliability
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: out of band management and local fallback for unattended sites
+searchIntent: select
+decisionStage: shortlist
+targetRoles:
+  - Remote operations managers
+  - Telemetry architects
+  - Field reliability engineers
+  - Integrators
+contentStatus: cornerstone
+problemSolved: How to decide whether unattended sites need out-of-band management, local fallback behavior, or both so loss of the primary link does not erase operational control.
+readerTakeaway: You should leave with a fallback design model tied to outage consequence, local autonomy, and the support burden of remote sites.
+keyQuestions:
+  - When should unattended sites have out-of-band access instead of only a primary telemetry path?
+  - What local fallback behavior is worth implementing before dispatch becomes necessary?
+  - How do teams balance resilience benefits against added complexity and maintenance burden?
+notFor:
+  - Fully staffed sites where local recovery is always available quickly
+  - Simple monitoring points where temporary blindness has low consequence
+  - Projects expecting one fallback path to eliminate the need for field operating discipline
+updateTriggers:
+  - New remote-site reliability lessons on fallback and recovery
+  - Changes in common operating patterns for unattended telemetry fleets
+  - New approaches to local autonomy and secondary access in fixed-site telemetry
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Out-of-Band Management and Local Fallback for Unattended Sites
+
+Many remote telemetry designs assume the primary link is the site. When that link disappears, the operations team loses visibility, recovery options narrow, and the site becomes a dispatch problem. For unattended assets, that is often too fragile. The right answer is not always a second network path. Sometimes it is better local fallback logic. Sometimes it is a small out-of-band access path for diagnostics. The real design question is what failure the team is trying to survive without panic or unnecessary truck rolls.
+
+## Quick answer
+
+Sites usually need stronger fallback when the consequence of blindness is high and local staff are not nearby. The strongest designs separate three things:
+
+- what the site must continue doing locally when the primary link is gone;
+- what limited diagnostics or access are necessary for remote recovery;
+- when a secondary access path is worth the cost and support burden.
+
+That produces a more reliable unattended-site design than simply adding another modem and calling the problem solved.
+
+## What this page is for
+
+Use this page when the team needs:
+
+- a clearer fallback design for remote assets with sparse field access;
+- a way to evaluate whether out-of-band access is justified;
+- guidance on what local autonomy should remain when the network fails;
+- a reliability model that reduces avoidable truck rolls during link loss.
+
+## The first question is outage consequence
+
+Not every unattended site needs the same answer. Start with:
+
+| Outage consequence | What it changes |
+| --- | --- |
+| Temporary blindness is acceptable | Local buffering may be enough |
+| Operators need quick diagnosis during link loss | Out-of-band access becomes more valuable |
+| The site must continue safe behavior locally | Fallback control logic is essential |
+| Communications loss itself is a critical event | Secondary visibility may be justified |
+
+Fallback design should match consequence, not fear.
+
+## When local fallback matters more than secondary access
+
+Local fallback is usually the higher priority when:
+
+- the site must keep operating safely in a degraded state;
+- power, control, or buffering behavior must continue without supervision;
+- dispatch delays are normal;
+- the likely failures are short or moderate link interruptions rather than total site loss.
+
+In those cases, a robust local operating model often creates more value than a sophisticated secondary access path.
+
+## When out-of-band access earns its complexity
+
+Out-of-band access becomes more defensible when:
+
+- the site is high consequence and hard to reach;
+- remote diagnosis materially changes whether dispatch is needed;
+- the operations team has a real procedure for using that access path;
+- the added path can be maintained with the same rigor as the primary stack.
+
+If the team has no operating playbook for secondary access, the extra path can become neglected complexity.
+
+## Common failure modes
+
+These architectures usually disappoint when:
+
+- the site has two links but no clear local behavior during either outage;
+- the fallback path exists technically but is not operationally governed;
+- out-of-band hardware is installed and then ignored until an emergency;
+- remote recovery expectations exceed what the local site can safely do;
+- the support team cannot explain which path is primary, secondary, or emergency-only.
+
+Then the site becomes more complex without becoming more resilient.
+
+## What a strong fallback review should prove
+
+Before adding a secondary path, the review should prove that:
+
+- the site's minimum safe local behavior is defined;
+- operators know what data is still available during primary-link loss;
+- the benefit of secondary access is tied to a real dispatch or recovery decision;
+- the maintenance burden of the added path is acceptable.
+
+If those conditions are not met, the team should strengthen local fallback first.
+
+## Implementation checklist
+
+Before finalizing the unattended-site reliability model, confirm that:
+
+- the site's local behavior during communications loss is explicit;
+- secondary access, if used, has a defined operating purpose;
+- outage playbooks reference both local fallback and secondary access behavior;
+- the team can maintain the added hardware and credentials over time;
+- the design still looks reasonable after support burden is included.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Network outage playbooks for unattended sites"
+		href="/reliability/network-outage-playbooks-for-unattended-sites/"
+		description="Connect the fallback design to the operating response the team will actually use."
+	/>
+	<LinkCard
+		title="Cellular router selection for fixed-site telemetry"
+		href="/hardware/cellular-router-selection-for-fixed-site-telemetry/"
+		description="Choose the router and access footprint only after the fallback model is defined."
+	/>
+	<LinkCard
+		title="Private APN vs public cellular"
+		href="/network-paths/private-apn-vs-public-cellular-for-remote-sites/"
+		description="Pressure-test whether the fleet and access model justify more managed network behavior."
+	/>
+	<LinkCard
+		title="Pipeline cathodic protection and remote cabinet telemetry"
+		href="/applications/pipeline-cathodic-protection-and-remote-cabinet-telemetry/"
+		description="Use a field application page to see how fallback requirements differ by remote asset type."
+	/>
+</div>
