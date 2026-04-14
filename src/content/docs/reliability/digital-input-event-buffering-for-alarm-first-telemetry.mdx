@@ -1,0 +1,69 @@
+---
+title: Digital-input event buffering for alarm-first telemetry
+description: How to buffer digital alarm and event inputs locally so intermittent links do not erase the event story at unattended remote sites.
+referenceType: reliability
+adProfile: reliability
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: digital input event buffering for alarm first telemetry
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Telemetry designers
+  - Integrators
+  - Remote operations teams
+  - Utility engineers
+contentStatus: growing
+problemSolved: Helps teams design digital-input telemetry that preserves alarm order, time context, and state changes even when communications are intermittent.
+readerTakeaway: You should leave with a practical event-buffering model for alarm-first remote telemetry where link loss must not erase the operational story.
+keyQuestions:
+  - What should be buffered locally for alarm-first telemetry?
+  - How much event detail matters after links fail?
+  - What mistakes make remote alarm telemetry look live while still losing the real event sequence?
+notFor:
+  - Continuous historian-only systems with no discrete remote alarming requirement
+  - Sites where communications are stable enough that local buffering is irrelevant
+updateTriggers:
+  - New field patterns in alarm buffering and local event preservation
+  - Changes in common remote telemetry reliability design
+---
+
+# Digital-input event buffering for alarm-first telemetry
+
+Alarm-first telemetry looks simple until the link becomes unreliable. Sites still show a current alarm state, but the sequence that created the event is gone. Operations can see that something is in alarm and still have no reliable answer for when it changed, what came first, or whether the site recovered and failed again before the link returned.
+
+## Quick answer
+
+Alarm-first telemetry should usually buffer:
+
+- state transitions with timestamps;
+- alarm latching and clear events;
+- link-loss periods;
+- and enough local history to reconstruct the site story after communications recover.
+
+If the system only preserves the latest state, it is not preserving the event story.
+
+## What needs to be buffered
+
+The minimum useful local event buffer usually includes:
+
+- digital input transition time;
+- alarm asserted and alarm cleared time;
+- local power or communications status changes that affect interpretation;
+- a short retained queue large enough to survive realistic outage windows.
+
+That is the difference between a site that is merely connected and a site that is operationally trustworthy.
+
+## Why current state is not enough
+
+Current state is weak because many high-value remote questions are sequence questions:
+
+- Did the pump fault before the low-pressure alarm?
+- Did the intrusion event happen during a link outage?
+- Did the generator recover and fail again before dispatch saw it?
+
+Without buffered transitions, those questions cannot be answered confidently.
+
+## The common design error
+
+The common error is assuming alarm visibility and event fidelity are the same thing. They are not. A system can send current alarms reliably and still lose the order, duration, or repetition of the event sequence that operations needs later.
