@@ -1,0 +1,95 @@
+---
+title: Cabinet grounding, bonding, and surge current paths for remote sites
+description: How to think about grounding, bonding, and surge current paths in remote telemetry cabinets so field failures are reduced before they become invisible intermittent problems.
+referenceType: hardware
+adProfile: hardware
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: cabinet grounding bonding and surge current paths for remote sites
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Field engineers
+  - Telemetry designers
+  - Integrators
+  - Remote operations teams
+contentStatus: growing
+problemSolved: Helps teams design cabinet grounding and bonding with a clearer view of surge current paths, noise problems, and field serviceability at unattended sites.
+readerTakeaway: You should leave with a practical model for how grounding and bonding decisions influence surge behavior, signal quality, and long-term field reliability.
+keyQuestions:
+  - What should be bonded inside a remote telemetry cabinet?
+  - How do surge current paths affect cabinet layout and protection choices?
+  - What grounding mistakes cause intermittent, hard-to-diagnose field problems?
+notFor:
+  - Detailed electrical code interpretation for every jurisdiction
+  - Indoor control rooms with stable building infrastructure
+updateTriggers:
+  - New field lessons in cabinet grounding and surge behavior
+  - Changes in common remote-site protection and bonding practice
+---
+
+# Cabinet grounding, bonding, and surge current paths for remote sites
+
+Remote telemetry failures are often blamed on radios, controllers, or power supplies when the deeper problem is poor grounding and bonding. The cabinet still works some of the time, so the weakness hides inside intermittent resets, noisy inputs, damaged interfaces, and strange failures after weather events. That is why grounding should be treated as part of the architecture, not a leftover installer detail.
+
+## Quick answer
+
+Good cabinet grounding and bonding should:
+
+- create clear, low-ambiguity paths for surge energy;
+- reduce differences in potential between bonded cabinet elements;
+- keep signal and power wiring from sharing bad return behavior;
+- and remain inspectable by field technicians.
+
+The goal is not only code compliance. It is predictable electrical behavior in harsh field conditions.
+
+## What teams usually miss
+
+The common mistake is treating grounding as a checkbox instead of a current-path design problem. Teams ask whether grounding exists, not:
+
+- where surge current will try to go;
+- which bonded metal parts can float unexpectedly;
+- whether cable shields and cabinet hardware interact cleanly;
+- or how the cabinet will behave after repeated weather exposure.
+
+Those are the questions that change reliability.
+
+## What a practical design should consider
+
+| Design area | Why it matters |
+| --- | --- |
+| Cabinet bonding points | Keeps doors, backplates, and hardware from behaving like isolated metal islands |
+| Surge current path | Determines whether energy moves predictably or through sensitive equipment |
+| Cable entry and shield treatment | Influences both surge behavior and noise performance |
+| Service access | Prevents later maintenance from quietly breaking the intended protection scheme |
+
+This is why grounding belongs in the physical-layer design review, not just the installation checklist.
+
+## Common field problems
+
+Weak grounding practice often produces:
+
+- unexplained communication drops after storms;
+- analog or digital noise that seems random;
+- repeated interface failures on remote I/O or modem ports;
+- and cabinets that technically pass installation but age badly.
+
+These problems are expensive because they are hard to trace.
+
+## What good practice looks like
+
+Strong remote-site cabinets usually show:
+
+- intentional bonding between major metal elements;
+- surge protection whose path makes sense in the cabinet layout;
+- separation between noisy power paths and sensitive signal paths where practical;
+- and a grounding scheme that technicians can inspect without guesswork.
+
+That is usually more valuable than adding more devices after failures start.
+
+## What to read next
+
+- [Remote cabinet DC power distribution, fusing, and battery isolation](/hardware/remote-cabinet-dc-power-distribution-fusing-and-battery-isolation/)
+- [Remote cabinet environment control, heaters, vents, and condensation risk](/hardware/remote-cabinet-environment-control-heaters-vents-and-condensation-risk/)
+- [Out-of-band management and local fallback for unattended sites](/reliability/out-of-band-management-and-local-fallback-for-unattended-sites/)
+

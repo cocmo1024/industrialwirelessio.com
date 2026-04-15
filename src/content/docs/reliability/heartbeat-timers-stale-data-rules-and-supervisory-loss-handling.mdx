@@ -1,0 +1,95 @@
+---
+title: Heartbeat timers, stale-data rules, and supervisory loss handling
+description: How to define heartbeat timing, stale-data rules, and supervisory loss behavior so unattended telemetry sites do not look healthy after the operating story is already missing.
+referenceType: reliability
+adProfile: reliability
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: heartbeat timers stale data rules and supervisory loss handling
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Remote operations managers
+  - Telemetry architects
+  - Field reliability engineers
+  - Integrators
+contentStatus: growing
+problemSolved: Helps teams define heartbeat timing and stale-data behavior so remote operators can distinguish healthy silence from degraded visibility and act accordingly.
+readerTakeaway: You should leave with a practical model for heartbeat intervals, stale-data thresholds, and supervisory loss rules at unattended sites.
+keyQuestions:
+  - How often should unattended sites report heartbeat status?
+  - When should data be treated as stale versus merely quiet?
+  - What makes supervisory loss handling too noisy or too weak to support operations?
+notFor:
+  - High-bandwidth continuous telemetry systems where stale-data logic is already inherent in the process
+  - Staffed sites where local diagnosis is immediate and cheap
+updateTriggers:
+  - New field lessons in supervisory loss handling and heartbeat design
+  - Changes in common telemetry practice for stale-data and heartbeat thresholds
+---
+
+# Heartbeat timers, stale-data rules, and supervisory loss handling
+
+Unattended telemetry systems often fail in a subtle way: the site stops telling a trustworthy story, but the supervisory layer still looks calm. Operators see the last reported values and assume the asset is quiet, when in reality the information is old, the link is unstable, or the site is only partially visible. Heartbeat and stale-data rules are what separate genuine calm from blind optimism.
+
+## Quick answer
+
+Good heartbeat design should:
+
+- reflect how quickly the site needs loss-of-visibility awareness;
+- distinguish between event silence and communications silence;
+- and drive a supervisory response that matches the consequence of being blind.
+
+The goal is not simply frequent heartbeats. It is operationally credible loss detection.
+
+## Why stale-data rules matter
+
+Data does not become useless at the same instant for every site. A slow-moving asset may tolerate older values longer than an alarm-first site. What matters is whether the operator can still make a sound decision from the current view.
+
+That is why stale-data logic should be tied to:
+
+- process consequence;
+- asset volatility;
+- dispatch cost;
+- and the site's fallback behavior during link loss.
+
+## Common mistakes
+
+Teams usually get poor results when they:
+
+- set one heartbeat interval for every site class;
+- treat stale data as only a dashboard decoration;
+- raise alarms so often that operators start ignoring supervisory loss;
+- or wait too long to declare degraded visibility on high-consequence assets.
+
+The result is either alert fatigue or false confidence.
+
+## A practical design model
+
+| Element | What it should do |
+| --- | --- |
+| Heartbeat timer | Confirm the site and path are still alive on a meaningful cadence |
+| Stale-data threshold | Mark when displayed values should no longer be trusted for action |
+| Supervisory-loss alarm | Escalate when visibility loss changes operational risk materially |
+| Recovery rule | Define how the system clears and how operators confirm normal visibility is restored |
+
+This combination gives remote teams a clearer operating picture.
+
+## How to choose intervals
+
+Start with the question: how bad is it if this site disappears without anyone noticing for 5 minutes, 30 minutes, or 4 hours?
+
+That answer should shape:
+
+- heartbeat frequency;
+- stale-data display logic;
+- and when the site moves from "quiet" to "loss of supervision."
+
+The interval should be driven by consequence, not habit.
+
+## What to read next
+
+- [Alarm latching, last-known state, and local buffering for unattended sites](/reliability/alarm-latching-last-known-state-and-local-buffering-for-unattended-sites/)
+- [Digital-input event buffering for alarm-first telemetry](/reliability/digital-input-event-buffering-for-alarm-first-telemetry/)
+- [Stormwater and flood-control site telemetry for unattended assets](/applications/stormwater-and-flood-control-site-telemetry-for-unattended-assets/)
+

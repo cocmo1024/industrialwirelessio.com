@@ -1,0 +1,95 @@
+---
+title: Stormwater and flood-control site telemetry for unattended assets
+description: How to design telemetry for stormwater lift stations, drainage structures, and flood-control assets where event timing and site survivability matter more than constant bandwidth.
+referenceType: application
+adProfile: application
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: stormwater and flood control site telemetry for unattended assets
+searchIntent: design
+decisionStage: solution-aware
+targetRoles:
+  - Water utility engineers
+  - Field telemetry designers
+  - Remote operations managers
+  - Integrators
+contentStatus: growing
+problemSolved: Helps teams design telemetry for stormwater and flood-control assets where intermittent events, sparse access, and weather exposure create different priorities than ordinary remote monitoring.
+readerTakeaway: You should leave with a clearer model for event-first telemetry, local resilience, and field hardware design at unattended stormwater and flood-control sites.
+keyQuestions:
+  - What matters most at stormwater and flood-control telemetry sites?
+  - How should event capture differ from ordinary periodic telemetry?
+  - What makes these unattended sites fail during the weather conditions that matter most?
+notFor:
+  - Indoor pumping equipment in staffed facilities
+  - Sites where short event loss has little operational consequence
+updateTriggers:
+  - New field lessons in stormwater and flood-control telemetry
+  - Changes in common remote monitoring practice for event-driven water infrastructure
+---
+
+# Stormwater and flood-control site telemetry for unattended assets
+
+Stormwater and flood-control telemetry is not just another remote pump-station problem. The most important periods are often the least forgiving: storms, high inflow, blocked drainage, and stressed communications. That means the design should favor event credibility, local survivability, and post-event reconstruction over steady-state dashboard elegance.
+
+## Quick answer
+
+These sites usually need:
+
+- trusted local event capture during communications instability;
+- input logic that can preserve alarm order and last-known state;
+- cabinet and power design that survives wet, dirty, temperature-swing environments;
+- and a monitoring model built around exceptions, not only periodic sampling.
+
+If the site loses the event story during the storm, the system failed at the moment it mattered most.
+
+## What makes this application different
+
+Compared with ordinary telemetry, stormwater and flood-control sites care more about:
+
+- high-consequence short-duration events;
+- environmental exposure during the worst operating window;
+- dispatch prioritization when many sites alarm together;
+- and the ability to reconstruct what happened after the event passes.
+
+That changes both the data model and the field design.
+
+## What the telemetry should capture
+
+At minimum, the design should preserve:
+
+- critical level, pressure, flow, or status alarms;
+- pump or gate state transitions;
+- power and communications health during the event;
+- and enough local history to understand what happened if the site drops offline.
+
+Those elements create a useful incident story.
+
+## Common failure modes
+
+The weakest designs usually:
+
+- rely too heavily on periodic polling;
+- treat the link as if it will remain stable during storms;
+- underbuild enclosure and power survivability;
+- or flood operations with alarms that are not prioritized by consequence.
+
+That is how real events turn into noisy, low-confidence monitoring.
+
+## What a strong phase-one architecture looks like
+
+| Design area | What good looks like |
+| --- | --- |
+| Event model | Alarm-first capture with local retention |
+| Hardware | Cabinet, power, and surge design sized for harsh conditions |
+| Communications | Link strategy that assumes intermittent degradation is normal |
+| Operations | Prioritized alarm and dispatch logic, not flat notification lists |
+
+The design should reflect that the most important moments are often the least stable.
+
+## What to read next
+
+- [Booster stations and pressure-zone telemetry for distribution networks](/applications/booster-stations-and-pressure-zone-telemetry-for-distribution-networks/)
+- [Remote cabinet environment control, heaters, vents, and condensation risk](/hardware/remote-cabinet-environment-control-heaters-vents-and-condensation-risk/)
+- [Heartbeat timers, stale-data rules, and supervisory loss handling](/reliability/heartbeat-timers-stale-data-rules-and-supervisory-loss-handling/)
+
