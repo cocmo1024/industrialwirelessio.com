@@ -1,0 +1,146 @@
+---
+title: How often should remote telemetry sites report data?
+description: A practical guide to telemetry reporting intervals for remote industrial sites where the right answer depends on asset behavior, alarm criticality, data-plan cost, and local buffering.
+referenceType: protocol
+adProfile: protocol
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: how often should remote telemetry sites report data
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Telemetry architects
+  - Utility engineers
+  - Remote operations managers
+  - Integrators
+contentStatus: cornerstone
+problemSolved: Helps teams choose remote telemetry reporting intervals that match asset behavior and operational risk instead of defaulting to polling too often or reporting too rarely.
+readerTakeaway: You should leave with a reporting-interval model tied to alarm urgency, process speed, data-plan economics, and local buffering instead of one-size-fits-all update rates.
+keyQuestions:
+  - How often should a remote site send telemetry under normal conditions?
+  - Which events should report immediately rather than on a timer?
+  - How do interval choices affect data-plan cost and operational usefulness?
+notFor:
+  - High-speed closed-loop control systems
+  - Sites with abundant fixed broadband and local operators always present
+updateTriggers:
+  - Changes in common telemetry plan economics
+  - New field patterns for event-driven reporting and buffering
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# How often should remote telemetry sites report data?
+
+Telemetry reporting intervals are often chosen by habit. One team uses five-minute updates because it always has. Another polls every few seconds because no one wants to miss anything. Both patterns can be expensive and operationally weak. The right interval depends on what the asset is doing, what the team needs to know, and what should happen locally before the network gets involved.
+
+## Quick answer
+
+Most remote sites need a mixed reporting model:
+
+- **immediate reporting** for critical alarms and state changes;
+- **periodic reporting** for slow-changing health and process values;
+- **local buffering** for sequence reconstruction and outage continuity.
+
+There is rarely one update interval that fits the whole site.
+
+## What should drive the interval
+
+Choose the interval based on:
+
+| Driver | Why it matters |
+| --- | --- |
+| Asset speed | Slow-changing assets rarely justify fast polling |
+| Alarm urgency | Critical events should not wait for the next scheduled report |
+| Data-plan economics | Over-reporting creates recurring cost without extra value |
+| Local buffering ability | Strong local buffering reduces the need for constant transmission |
+| Dispatch consequences | Some sites need earlier visibility because field response is slow or expensive |
+
+This is why "every site reports every minute" is usually a lazy answer.
+
+## When fast reporting is justified
+
+Faster intervals make sense when:
+
+- the process changes quickly enough to matter operationally;
+- the site supports time-sensitive response;
+- state changes are meaningful and infrequent enough not to flood the link;
+- the cost of late visibility is genuinely high.
+
+That usually fits only a subset of the signals on a remote site.
+
+## When slower reporting is healthier
+
+Longer intervals are often better when:
+
+- the process is slow-moving;
+- values are used for trend and health review, not rapid intervention;
+- the site already reports immediately on alarms;
+- data-plan cost and battery life matter.
+
+This is common for tank levels, ambient measurements, generator health summaries, and long-cycle utilities.
+
+## Why report-by-exception usually wins
+
+Many remote sites work best when they:
+
+- report on state change;
+- send a heartbeat or summary on a timer;
+- buffer detailed transitions locally.
+
+That pattern often gives operators better visibility than constant polling because it preserves the important story without wasting bandwidth on unchanged values.
+
+## Common mistakes
+
+Teams usually get interval design wrong by:
+
+- using the same rate for every signal;
+- treating polling speed as a substitute for local buffering;
+- reporting too often because the dashboard looks calmer with more points;
+- ignoring how much of the site's data is only needed when something changes.
+
+Those choices often raise cost while adding very little operational value.
+
+## A practical interval rule
+
+Ask three questions for each signal:
+
+1. Does the team need to know immediately when this changes?
+2. Does the value move fast enough to justify frequent scheduled updates?
+3. Can local buffering preserve the story better than constant transmission?
+
+If the first answer is no and the third is yes, the interval should usually be longer.
+
+## Implementation checklist
+
+Before fixing the reporting profile, confirm that:
+
+- alarm events are separated from trend values;
+- data-plan and battery constraints are visible;
+- local buffering and event order are handled;
+- the remote team agrees which changes deserve immediate visibility.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Report by exception and store-and-forward"
+		href="/protocols/report-by-exception-and-store-and-forward/"
+		description="Use this to structure event-driven reporting instead of over-polling."
+	/>
+	<LinkCard
+		title="Telemetry data-plan budgeting"
+		href="/network-paths/telemetry-data-plan-budgeting-for-remote-sites/"
+		description="Connect reporting intervals directly to recurring network cost."
+	/>
+	<LinkCard
+		title="Heartbeat timers and stale-data rules"
+		href="/reliability/heartbeat-timers-stale-data-rules-and-supervisory-loss-handling/"
+		description="Define how the remote team interprets silence and delayed updates."
+	/>
+	<LinkCard
+		title="Alarm priority and deadband design"
+		href="/protocols/alarm-priority-and-deadband-design-for-remote-telemetry/"
+		description="Pressure-test which changes deserve immediate transmission."
+	/>
+</div>

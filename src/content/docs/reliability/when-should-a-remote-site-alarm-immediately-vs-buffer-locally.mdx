@@ -1,0 +1,146 @@
+---
+title: When should a remote site alarm immediately vs buffer locally?
+description: A practical guide to separating urgent alarms from locally buffered events so unattended telemetry sites stay actionable without becoming noisy, expensive, or operationally confusing.
+referenceType: reliability
+adProfile: reliability
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: when should a remote site alarm immediately vs buffer locally
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Remote operations managers
+  - Telemetry architects
+  - Field reliability engineers
+  - Integrators
+contentStatus: cornerstone
+problemSolved: Helps teams decide which remote-site conditions should alarm immediately and which should be buffered locally, summarized, or reviewed later.
+readerTakeaway: You should leave with an alarm-separation model that protects response quality without flooding the remote team or wasting scarce field connectivity.
+keyQuestions:
+  - Which site conditions justify immediate alarming?
+  - Which events are better buffered locally and reported later?
+  - How can teams reduce noise without hiding serious field problems?
+notFor:
+  - Staffed sites where local operators can interpret every event in real time
+  - Architectures that expect every site change to be transmitted instantly
+updateTriggers:
+  - New field lessons in alarm management for unattended telemetry
+  - Changes in common remote operations response models
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# When should a remote site alarm immediately vs buffer locally?
+
+Remote telemetry becomes expensive and noisy when every event is treated as urgent. It becomes dangerous when too many events are buffered and serious problems disappear into later review. The right split is operational, not purely technical. It depends on what the remote team can act on, how fast a site can deteriorate, and what should be preserved locally even if the link is imperfect.
+
+## Quick answer
+
+Alarm immediately when:
+
+- a condition creates real response urgency;
+- the site may become unsafe, unavailable, or operationally blind;
+- the difference between now and later materially changes the outcome.
+
+Buffer locally when:
+
+- the event matters for diagnosis but not immediate response;
+- several related transitions need to be preserved in sequence;
+- the site should summarize behavior rather than shout continuously.
+
+The best systems do both.
+
+## What belongs in the immediate alarm lane
+
+Immediate alarm conditions often include:
+
+- critical power loss or battery risk;
+- generator fail-to-start or backup-power failure;
+- flood, overflow, pressure, or integrity conditions with real response consequence;
+- communications-path loss when the site is already in a high-risk operating state;
+- cabinet intrusion or environmental conditions that threaten the telemetry boundary itself.
+
+These are events where delayed visibility changes operations.
+
+## What belongs in the buffered lane
+
+Local buffering is usually better for:
+
+- frequent state chatter;
+- nuisance transitions that only matter in sequence;
+- repeated digital changes around a single fault story;
+- diagnostic events the remote team does not need instantly;
+- timing context that helps later reconstruction.
+
+Without buffering, the remote team gets noise. Without buffering, later diagnostics are also weaker.
+
+## Why the split matters
+
+If everything alarms immediately:
+
+- operators stop trusting the alarm channel;
+- data plans get consumed by noise;
+- serious events get buried in routine chatter.
+
+If too much is only buffered:
+
+- the site can degrade before anyone reacts;
+- dispatch is late;
+- the operations team learns about real failures only after the fact.
+
+Both are forms of poor design.
+
+## A practical triage rule
+
+Classify each event by three questions:
+
+1. Does the event require remote action now?
+2. Does delay materially change the consequence?
+3. Is the value of the event mainly in its sequence with other events?
+
+If the answer to the first two is yes, alarm immediately. If the third is the stronger answer, buffer locally and summarize.
+
+## Common mistakes
+
+Teams often get this wrong by:
+
+- alarming on raw value movement instead of meaningful thresholds;
+- sending every digital transition remotely;
+- buffering critical loss-of-function events because the bandwidth budget is tight;
+- failing to define who responds to each alarm class.
+
+An alarm design without operational ownership is just messaging.
+
+## Implementation checklist
+
+Before finalizing the alarm split, confirm that:
+
+- urgent conditions are defined explicitly;
+- nuisance events are buffered or summarized intentionally;
+- local sequence retention exists where diagnostic value matters;
+- the remote team has clear response expectations for each alarm class.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Alarm priority and deadband design"
+		href="/protocols/alarm-priority-and-deadband-design-for-remote-telemetry/"
+		description="Set the threshold and priority logic before deciding what leaves the site immediately."
+	/>
+	<LinkCard
+		title="Alarm latching, last-known state, and local buffering"
+		href="/reliability/alarm-latching-last-known-state-and-local-buffering-for-unattended-sites/"
+		description="Go deeper on how local continuity preserves the operating story."
+	/>
+	<LinkCard
+		title="Digital-input event buffering"
+		href="/reliability/digital-input-event-buffering-for-alarm-first-telemetry/"
+		description="Structure local event retention for sequences that matter later."
+	/>
+	<LinkCard
+		title="Heartbeat timers and stale-data rules"
+		href="/reliability/heartbeat-timers-stale-data-rules-and-supervisory-loss-handling/"
+		description="Decide how silence, delay, and supervisory loss should appear to remote operations."
+	/>
+</div>
