@@ -36,7 +36,7 @@ import { LinkCard } from '@astrojs/starlight/components';
 
 Remote telemetry systems often work better when they transmit less, not more. In field deployments with constrained power, unstable backhaul, and sparse maintenance windows, aggressive polling can create noise and fragile behavior. Report-by-exception and store-and-forward patterns exist because remote sites need to stay useful when communications are imperfect.
 
-## Quick answer
+## What matters first
 
 Report immediately when the site crosses an operationally meaningful boundary. Buffer when the change is useful but not urgent, or when the link is unavailable. The goal is not low traffic for its own sake. The goal is preserving the events that matter while keeping the site inexpensive, understandable, and resilient during outages.
 

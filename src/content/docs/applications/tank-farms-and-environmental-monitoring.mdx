@@ -1,35 +1,87 @@
 ---
 title: Tank Farms and Environmental Monitoring
-description: A field architecture pattern for telemetry systems that need distributed monitoring, sparse maintenance windows, and dependable alarm visibility.
+description: A practical field architecture guide for tank farms and distributed environmental monitoring where sparse maintenance, alarm confidence, and site survivability dominate the design.
 referenceType: application
 adProfile: application
 commercialIntent: high
 reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Explains how to design telemetry for tank farms and environmental monitoring sites where distance, environmental exposure, and sparse site access drive the real architecture.
+readerTakeaway: You should leave with a clearer idea of what matters most in tank farm telemetry beyond the radio choice, including alarm credibility, cabinet survivability, and serviceability.
+primaryKeyword: tank farm telemetry
+searchIntent: design
+decisionStage: solution-aware
+targetRoles:
+  - Field engineers
+  - Telemetry architects
+  - Utilities and environmental monitoring teams
+keyQuestions:
+  - What usually determines whether tank farm telemetry survives in the field?
+  - Which alarm and reporting patterns make sense for environmental monitoring sites?
+  - Where do teams underestimate cabinet, power, and service constraints?
+notFor:
+  - Small indoor monitoring jobs
+  - Projects looking for consumer IoT guidance
+updateTriggers:
+  - Changes in remote environmental telemetry practices
+  - New field-hardware and alarm-management patterns
 ---
 
 import { LinkCard } from '@astrojs/starlight/components';
 
 # Tank Farms and Environmental Monitoring
 
-These deployments usually depend on wide physical distribution, environmental exposure, and monitoring-first system goals. The architecture has to prioritize reliability, field serviceability, and data confidence over feature density.
+Tank farms and environmental monitoring sites are often treated like simple sensor projects. In practice, they are field survivability projects with sensors attached. Distance, enclosure design, grounding, power continuity, and alarm logic usually decide whether the deployment stays healthy.
 
-## Typical pressures
+## What makes this application different
 
-- Long equipment spacing or difficult access
-- Alarm visibility requirements with limited on-site staffing
-- Power, enclosure, and serviceability constraints that dominate device choice
+Unlike a compact plant-floor installation, these sites often involve:
+
+- widely spaced assets,
+- outdoor exposure,
+- seasonal maintenance access,
+- mixed instrumentation types,
+- and a stronger need for alarm credibility than for rich local user interfaces.
+
+The system has to keep telling the truth even when weather, service windows, or communications quality get worse.
+
+## The architecture usually turns on three decisions
+
+### 1. Alarm-first versus trend-first behavior
+
+Some sites mainly need threshold and exception handling. Others need credible trend history with enough density to explain what happened before the alarm. Confusing those two goals often leads to either excessive data use or weak incident visibility.
+
+### 2. Cabinet survivability
+
+Tank farms and environmental points frequently fail because the cabinet design was treated as packaging instead of as part of the system. Surge exposure, grounding paths, condensation, thermal load, and DC distribution discipline matter at least as much as the gateway model.
+
+### 3. Service model
+
+If a site is visited rarely, then replacement steps, last-known-state behavior, local buffering, and out-of-band diagnostics become part of the architecture rather than an operations afterthought.
+
+## Common design mistakes
+
+- Sampling aggressively without knowing what decisions the data is supposed to support
+- Treating communications loss as a reporting nuisance instead of a supervisory event
+- Picking hardware before cabinet, antenna, and power rules are defined
+- Assuming environmental monitoring points have the same availability and maintenance pattern as staffed industrial sites
 
 ## Compare next
 
 <div class="portal-links">
 	<LinkCard
+		title="Why do remote telemetry sites go offline?"
+		href="/reliability/why-do-remote-telemetry-sites-go-offline/"
+		description="Use this page when site failures are recurring and the root causes likely sit in field reality, not just the carrier."
+	/>
+	<LinkCard
 		title="Industrial telemetry gateways"
 		href="/product-families/industrial-telemetry-gateways/"
-		description="Choose the gateway class before over-optimizing the upstream data path."
+		description="Use this page when the application boundary is clear and the team is ready to narrow the gateway class."
 	/>
 	<LinkCard
 		title="Site survivability planning"
 		href="/reliability/site-survivability-planning/"
-		description="Field conditions often matter more than the radio selection itself."
+		description="Use this page when the design now needs a stronger maintenance and failure-mode review."
 	/>
 </div>

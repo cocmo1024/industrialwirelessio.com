@@ -9,33 +9,6 @@ type Signal = {
 const route = Astro.locals.starlightRoute;
 const data = (route.entry?.data ?? {}) as RouteData;
 
-const intentLabels: Record<string, string> = {
-	learn: 'Learn',
-	compare: 'Compare',
-	select: 'Select',
-	design: 'Design',
-	deploy: 'Deploy',
-};
-
-const stageLabels: Record<string, string> = {
-	'problem-aware': 'Problem Aware',
-	'solution-aware': 'Solution Aware',
-	'vendor-aware': 'Vendor Aware',
-	shortlist: 'Shortlist',
-	implementation: 'Implementation',
-	operations: 'Operations',
-};
-
-const statusLabels: Record<string, string> = {
-	seed: 'Seed',
-	growing: 'Growing',
-	cornerstone: 'Cornerstone',
-};
-
-const roles =
-	Array.isArray(data.targetRoles) && data.targetRoles.every((role) => typeof role === 'string')
-		? data.targetRoles
-		: [];
 const keyQuestions =
 	Array.isArray(data.keyQuestions) && data.keyQuestions.every((item) => typeof item === 'string')
 		? data.keyQuestions
@@ -50,33 +23,18 @@ const updateTriggers =
 		: [];
 
 const signals = [
-	typeof data.problemSolved === 'string' && { label: 'Problem Solved', value: data.problemSolved },
-	typeof data.readerTakeaway === 'string' && { label: 'Reader Outcome', value: data.readerTakeaway },
-	typeof data.primaryKeyword === 'string' && { label: 'Primary Keyword', value: data.primaryKeyword },
-	typeof data.searchIntent === 'string' && {
-		label: 'Search Intent',
-		value: intentLabels[data.searchIntent] ?? data.searchIntent,
-	},
-	typeof data.decisionStage === 'string' && {
-		label: 'Decision Stage',
-		value: stageLabels[data.decisionStage] ?? data.decisionStage,
-	},
-	roles.length > 0 && { label: 'Target Roles', value: roles, list: true },
-	keyQuestions.length > 0 && { label: 'Key Questions', value: keyQuestions, list: true },
-	notFor.length > 0 && { label: 'Poor Fit', value: notFor, list: true },
-	typeof data.contentStatus === 'string' && {
-		label: 'Content Status',
-		value: statusLabels[data.contentStatus] ?? data.contentStatus,
-	},
-	typeof data.reviewCadence === 'string' && { label: 'Review Cadence', value: data.reviewCadence },
-	updateTriggers.length > 0 && { label: 'Update Triggers', value: updateTriggers, list: true },
+	typeof data.problemSolved === 'string' && { label: 'Problem solved', value: data.problemSolved },
+	typeof data.readerTakeaway === 'string' && { label: 'What you leave with', value: data.readerTakeaway },
+	keyQuestions.length > 0 && { label: 'Key questions', value: keyQuestions, list: true },
+	notFor.length > 0 && { label: 'Usually a poor fit', value: notFor, list: true },
+	updateTriggers.length > 0 && { label: 'Worth revisiting when', value: updateTriggers, list: true },
 ].filter(Boolean) as Signal[];
 ---
 
 {
 	signals.length > 0 && (
 		<section class="reference-signals">
-			<h2>Reference Signals</h2>
+			<h2>Page context</h2>
 			<dl>
 				{signals.map(({ label, value, list }) => (
 					<div>

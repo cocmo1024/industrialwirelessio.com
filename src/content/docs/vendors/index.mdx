@@ -1,12 +1,51 @@
 ---
 title: Vendors
-description: Vendor reference pages for industrial telemetry, field connectivity, and remote I/O ecosystems.
-referenceType: vendor
-adProfile: vendor
-commercialIntent: high
-reviewCadence: Quarterly review
+description: Vendor-focused reference pages for remote telemetry, field connectivity, and industrial wireless portfolios compared through real site constraints.
 ---
+
+import { LinkCard, Steps } from '@astrojs/starlight/components';
 
 # Vendors
 
-Vendor pages help readers understand when ecosystem fit matters more than raw feature count. In remote telemetry, support models, integration depth, and product family continuity can matter as much as any single device.
+Vendor pages are useful only when the site, asset, and hardware category are already clear enough to compare real strengths. Otherwise the reader ends up comparing brands with different field assumptions and pretending the choice is objective.
+
+## What vendor pages should answer
+
+- Which parts of the field stack the vendor is strongest in
+- Whether the vendor fits the service model and site conditions
+- How much ecosystem consistency matters after commissioning
+- Where the vendor is merely adjacent to the category being researched
+
+## Core paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Phoenix Contact field connectivity"
+		href="/vendors/phoenix-contact-field-connectivity/"
+		description="Use this page when panel, power, modular field hardware, and telemetry have to work as one field stack."
+	/>
+	<LinkCard
+		title="Siemens remote connectivity"
+		href="/vendors/siemens-remote-connectivity/"
+		description="Use this page when broader automation alignment and lifecycle support may matter more than narrow field modularity."
+	/>
+	<LinkCard
+		title="Applications"
+		href="/applications/"
+		description="Return to the application if the vendor conversation is getting ahead of the asset definition."
+	/>
+	<LinkCard
+		title="Reliability"
+		href="/reliability/"
+		description="Stress-test the vendor choice against cabinet, power, outage, and maintenance reality."
+	/>
+</div>
+
+## Vendor review flow
+
+<Steps>
+	1. Define the asset type, maintenance pattern, and field environment first.
+	2. Confirm the real device class before comparing brands.
+	3. Compare portfolio fit, support posture, and implementation burden.
+	4. Let vendor preference refine the shortlist, not replace the architecture decision.
+</Steps>

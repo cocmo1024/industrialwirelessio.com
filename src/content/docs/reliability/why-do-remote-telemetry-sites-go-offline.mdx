@@ -1,0 +1,90 @@
+---
+title: Why Do Remote Telemetry Sites Go Offline?
+description: A practical failure-analysis guide to why remote telemetry sites disappear, how to classify the cause, and what changes actually improve uptime.
+referenceType: reliability
+adProfile: reliability
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: growing
+problemSolved: Helps teams identify the real causes behind remote telemetry outages instead of blaming every offline event on weak wireless coverage.
+readerTakeaway: You should leave with a more useful outage taxonomy that separates network issues from power, cabinet, grounding, SIM, and local continuity failures.
+primaryKeyword: why do remote telemetry sites go offline
+searchIntent: learn
+decisionStage: operations
+targetRoles:
+  - Telemetry engineers
+  - Field technicians
+  - Utilities operations teams
+keyQuestions:
+  - What are the most common causes of remote telemetry outages?
+  - How should outages be classified so the right corrective action follows?
+  - Which design changes actually reduce repeat offline events?
+notFor:
+  - Consumer IoT troubleshooting
+  - Short-lived lab setups with no field environment
+updateTriggers:
+  - New field reliability patterns
+  - Changes in common remote-site service models
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Why Do Remote Telemetry Sites Go Offline?
+
+Teams often treat an offline telemetry site as a communications problem. In practice, communications are only one part of the failure stack. Many recurring outages start in power, enclosure health, grounding, cabinet wiring, SIM status, or stale supervisory logic that masks what actually happened.
+
+## The most useful outage categories
+
+### 1. Power path failures
+
+Battery issues, solar underperformance, bad fusing, weak DC distribution, charger problems, and wiring mistakes are common causes of site loss. These failures are often mislabeled as network issues because the first visible symptom is simply "the site disappeared."
+
+### 2. Cabinet and environmental failures
+
+Condensation, thermal stress, surge damage, loose terminations, and poor grounding do not always kill the site immediately. They create intermittent instability that is much harder to diagnose after the fact.
+
+### 3. Carrier or backhaul failures
+
+Coverage changes, SIM issues, carrier outages, and signal-path instability are real, but teams often jump here too quickly because it is the most obvious remote explanation.
+
+### 4. Supervisory logic failures
+
+Sometimes the site is still operating locally but the central system declares it lost too slowly, too quickly, or with the wrong alarm behavior. That is a reliability design problem, not just a field outage.
+
+## What a better investigation looks like
+
+Do not ask only "did the modem drop?" Ask:
+
+- Was power stable before the outage?
+- Did local buffers and last-known-state logic behave correctly?
+- Did the cabinet show signs of environmental stress?
+- Did the heartbeat and stale-data rules declare the problem correctly?
+- Did the field visit reveal a root cause outside the network path?
+
+## The fixes that actually reduce repeats
+
+- Cleaner DC power and battery isolation
+- Better grounding, surge control, and enclosure discipline
+- More explicit heartbeat and stale-data policy
+- Out-of-band access or clearer field diagnostics
+- Post-outage analysis that classifies the failure correctly
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Network outage playbooks"
+		href="/reliability/network-outage-playbooks-for-unattended-sites/"
+		description="Use this page when the site can survive outages, but operations still need a better response model."
+	/>
+	<LinkCard
+		title="Cabinet grounding, bonding, and surge paths"
+		href="/hardware/cabinet-grounding-bonding-and-surge-current-paths-for-remote-sites/"
+		description="Use this page when outage analysis points back to the physical layer and cabinet design."
+	/>
+	<LinkCard
+		title="Heartbeat timers, stale-data rules, and supervisory loss"
+		href="/reliability/heartbeat-timers-stale-data-rules-and-supervisory-loss-handling/"
+		description="Use this page when the telemetry site may still be alive locally but the monitoring system is handling visibility badly."
+	/>
+</div>

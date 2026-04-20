@@ -36,7 +36,7 @@ import { LinkCard } from '@astrojs/starlight/components';
 
 Remote pump stations and water sites reward simple, durable architectures. Power can be limited, access windows are sparse, and reliability matters more than feature density. Real buyers are not usually searching for a generic wireless stack. They are asking how to make a remote site visible, supportable, and dependable without creating a maintenance burden the organization cannot absorb.
 
-## Quick answer
+## What matters first
 
 The best remote-site telemetry architectures usually prioritize four things in this order:
 
@@ -80,7 +80,7 @@ For many remote pump and water sites, the durable pattern looks like this:
 | Field controller / RTU / gateway | Collect, buffer, alarm, and translate locally | Maintains usefulness when communications are intermittent |
 | Communications path | Cellular, private APN, or dual-path depending on site criticality | Keeps visibility aligned with real coverage conditions |
 | Alarm and event model | Distinguish urgent, actionable alarms from low-value chatter | Protects operators from alarm fatigue |
-| Power / enclosure / antenna stack | Keep the site survivable in weather, surge, and low-maintenance conditions | Prevents “communications problems” that are actually physical deployment problems |
+| Power / enclosure / antenna stack | Keep the site survivable in weather, surge, and low-maintenance conditions | Prevents “communications problems�?that are actually physical deployment problems |
 
 This architecture is intentionally simple. Simplicity is not a lack of sophistication at remote sites. It is often the design choice that keeps the system supportable.
 
@@ -104,8 +104,7 @@ The backhaul decision should be made from site reality, not technology preferenc
 - **Dual-path design** is justified when the site is operationally critical enough that a single communications path creates unacceptable alarm risk.
 - **LoRaWAN or other low-power paths** can fit some monitoring patterns, but only when the site density, data pattern, and network ownership model are aligned.
 
-The question is not “which network is best.” The question is “which network path fails in the most understandable and recoverable way for this site type?”
-
+The question is not “which network is best.�?The question is “which network path fails in the most understandable and recoverable way for this site type?�?
 ## Common design implications
 
 Pump station and water telemetry designs often benefit from:

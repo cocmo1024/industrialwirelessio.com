@@ -36,7 +36,7 @@ import { LinkCard } from '@astrojs/starlight/components';
 
 Lift-station telemetry is a high-value field-connectivity problem because the cost of weak visibility is immediate. Overflow risk, pump health, wet-well level, power loss, and sparse service windows all push teams toward architectures that are simple, durable, and easy to recover when the site is unattended. Buyers in this category are not looking for novelty. They are looking for timely alarms and enough field truth to avoid unnecessary emergency visits.
 
-## Quick answer
+## What matters first
 
 Most lift-station telemetry systems should start with a conservative design: one durable field controller or telemetry gateway, one cellular path unless the site consequence is unusually high, local alarm handling with event buffering, and very disciplined reporting behavior. The goal is not constant chatter. It is dependable alarm visibility plus enough trend and status data to support operations. If the architecture needs heavy compute, continuous polling, or complex network customization before the first site is live, the design is probably overshooting the job.
 

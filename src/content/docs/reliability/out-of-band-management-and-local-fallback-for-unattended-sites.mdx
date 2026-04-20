@@ -36,7 +36,7 @@ import { LinkCard } from '@astrojs/starlight/components';
 
 Many remote telemetry designs assume the primary link is the site. When that link disappears, the operations team loses visibility, recovery options narrow, and the site becomes a dispatch problem. For unattended assets, that is often too fragile. The right answer is not always a second network path. Sometimes it is better local fallback logic. Sometimes it is a small out-of-band access path for diagnostics. The real design question is what failure the team is trying to survive without panic or unnecessary truck rolls.
 
-## Quick answer
+## What matters first
 
 Sites usually need stronger fallback when the consequence of blindness is high and local staff are not nearby. The strongest designs separate three things:
 
