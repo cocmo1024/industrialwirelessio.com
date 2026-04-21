@@ -20,6 +20,8 @@ export const siteMeta = {
 	icon512Path: '/icon-512.png',
 	appleTouchIconPath: '/apple-touch-icon.png',
 	repoUrl: 'https://github.com/cocmo1024/industrialwirelessio.com',
+	xUrl: 'https://x.com/oocxx_com',
+	sameAs: ['https://x.com/oocxx_com'],
 	indexNowKey: 'a435a92c-80e4-4570-9d7f-96304231a2f2',
 	keywords: [
 		'industrial wireless io',
