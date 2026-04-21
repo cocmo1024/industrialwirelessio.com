@@ -1,0 +1,20 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 900' role='img' aria-labelledby='title desc'>
+  <title>Industrial Wireless I/O search preview</title>
+  <desc>Remote telemetry and cabinets; Network paths and reliability.</desc>
+  <rect width='1200' height='900' rx='52' fill='#f8fbff'/>
+  <rect x='52' y='52' width='1096' height='796' rx='40' fill='white' stroke='#2c7e98' stroke-opacity='0.16'/>
+  <circle cx='194' cy='188' r='86' fill='#2c7e98' fill-opacity='0.12'/>
+  <circle cx='1008' cy='688' r='118' fill='#2c7e98' fill-opacity='0.08'/>
+  <rect x='126' y='132' width='172' height='18' rx='9' fill='#2c7e98' fill-opacity='0.18'/>
+  <text x='126' y='266' fill='#111827' font-family='Arial, sans-serif' font-size='88' font-weight='700'>Industrial Wireless I/O</text>
+  <text x='126' y='352' fill='#334155' font-family='Arial, sans-serif' font-size='36'>Remote telemetry and cabinets</text>
+  <text x='126' y='404' fill='#334155' font-family='Arial, sans-serif' font-size='36'>Network paths and reliability</text>
+  <rect x='126' y='500' width='430' height='176' rx='24' fill='#2c7e98' fill-opacity='0.08' stroke='#2c7e98' stroke-opacity='0.18'/>
+  <text x='160' y='564' fill='#184b5b' font-family='Arial, sans-serif' font-size='24' font-weight='700'>Editorial entities</text>
+  <text x='160' y='610' fill='#334155' font-family='Arial, sans-serif' font-size='24'>Author, editor, review desk</text>
+  <text x='160' y='648' fill='#334155' font-family='Arial, sans-serif' font-size='24'>Publishing principles and snippet control</text>
+  <rect x='612' y='500' width='430' height='176' rx='24' fill='#2c7e98' fill-opacity='0.08' stroke='#2c7e98' stroke-opacity='0.18'/>
+  <text x='646' y='564' fill='#184b5b' font-family='Arial, sans-serif' font-size='24' font-weight='700'>Search-ready content</text>
+  <text x='646' y='610' fill='#334155' font-family='Arial, sans-serif' font-size='24'>Structured data, breadcrumbs,</text>
+  <text x='646' y='648' fill='#334155' font-family='Arial, sans-serif' font-size='24'>high-intent reference clusters</text>
+</svg>

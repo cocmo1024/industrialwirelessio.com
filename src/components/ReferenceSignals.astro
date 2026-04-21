@@ -1,13 +1,49 @@
 ---
+import { siteMeta } from '../utils/site-meta.mjs';
+
 type RouteData = Record<string, unknown>;
+type SignalValue =
+	| { kind: 'text'; value: string }
+	| { kind: 'list'; value: string[] }
+	| { kind: 'link'; label: string; href: string };
 type Signal = {
 	label: string;
-	value: string | string[];
-	list?: boolean;
+	value: SignalValue;
 };
 
 const route = Astro.locals.starlightRoute;
 const data = (route.entry?.data ?? {}) as RouteData;
+const editorialEntities = (siteMeta.editorialEntities ?? {}) as Record<
+	string,
+	{ name: string; path: string; description: string; expertise: string[] }
+>;
+
+function getEntityKey() {
+	if (route.id === 'editorial-desk' || route.id === 'review-desk') return route.id;
+	if (route.id === '404' || route.id === 'index') return undefined;
+	return typeof data.authorKey === 'string' ? data.authorKey : 'editorial-desk';
+}
+
+function getEditorKey() {
+	if (route.id === '404' || route.id === 'index') return undefined;
+	return typeof data.editorKey === 'string' ? data.editorKey : 'review-desk';
+}
+
+function formatDate(value: unknown) {
+	if (!value) return undefined;
+	const parsed = value instanceof Date ? value : new Date(String(value));
+	if (Number.isNaN(parsed.getTime())) return undefined;
+	return new Intl.DateTimeFormat('en', {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+	}).format(parsed);
+}
+
+const authorKey = getEntityKey();
+const editorKey = getEditorKey();
+const author = authorKey ? editorialEntities[authorKey] : undefined;
+const editor = editorKey ? editorialEntities[editorKey] : undefined;
 
 const keyQuestions =
 	Array.isArray(data.keyQuestions) && data.keyQuestions.every((item) => typeof item === 'string')
@@ -22,37 +58,66 @@ const updateTriggers =
 		? data.updateTriggers
 		: [];
 
+const lastReviewed = formatDate(route.lastUpdated ?? data.lastReviewed);
+
 const signals = [
-	typeof data.problemSolved === 'string' && { label: 'Problem solved', value: data.problemSolved },
-	typeof data.readerTakeaway === 'string' && { label: 'What you leave with', value: data.readerTakeaway },
-	keyQuestions.length > 0 && { label: 'Key questions', value: keyQuestions, list: true },
-	notFor.length > 0 && { label: 'Usually a poor fit', value: notFor, list: true },
-	updateTriggers.length > 0 && { label: 'Worth revisiting when', value: updateTriggers, list: true },
+	author && {
+		label: 'Written by',
+		value: { kind: 'link', label: author.name, href: author.path },
+	},
+	editor && {
+		label: 'Edited and reviewed by',
+		value: { kind: 'link', label: editor.name, href: editor.path },
+	},
+	lastReviewed && {
+		label: 'Last substantive update',
+		value: { kind: 'text', value: lastReviewed },
+	},
+	siteMeta.editorialMethodSummary &&
+		route.id !== 'index' &&
+		route.id !== '404' && {
+			label: 'Method',
+			value: { kind: 'text', value: siteMeta.editorialMethodSummary },
+		},
+	typeof data.problemSolved === 'string' && {
+		label: 'Problem solved',
+		value: { kind: 'text', value: data.problemSolved },
+	},
+	typeof data.readerTakeaway === 'string' && {
+		label: 'What you leave with',
+		value: { kind: 'text', value: data.readerTakeaway },
+	},
+	keyQuestions.length > 0 && { label: 'Key questions', value: { kind: 'list', value: keyQuestions } },
+	notFor.length > 0 && { label: 'Usually a poor fit', value: { kind: 'list', value: notFor } },
+	updateTriggers.length > 0 && {
+		label: 'Worth revisiting when',
+		value: { kind: 'list', value: updateTriggers },
+	},
 ].filter(Boolean) as Signal[];
 ---
 
 {
 	signals.length > 0 && (
-		<section class="reference-signals">
+		<section class="reference-signals" data-nosnippet>
 			<h2>Page context</h2>
 			<dl>
-				{signals.map(({ label, value, list }) => (
+				{signals.map(({ label, value }) => (
 					<div>
 						<dt>{label}</dt>
 						<dd>
-							{
-								list && Array.isArray(value) ? (
-									<ul class="reference-signals__list">
-										{value.map((item) => (
-											<li>{item}</li>
-										))}
-									</ul>
-								) : (
-									<p class="reference-signals__text">
-										{Array.isArray(value) ? value.join(', ') : value}
-									</p>
-								)
-							}
+							{value.kind === 'list' ? (
+								<ul class="reference-signals__list">
+									{value.value.map((item) => (
+										<li>{item}</li>
+									))}
+								</ul>
+							) : value.kind === 'link' ? (
+								<p class="reference-signals__text">
+									<a href={value.href}>{value.label}</a>
+								</p>
+							) : (
+								<p class="reference-signals__text">{value.value}</p>
+							)}
 						</dd>
 					</div>
 				))}

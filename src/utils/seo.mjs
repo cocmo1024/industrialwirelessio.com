@@ -9,11 +9,16 @@ const SITE_PAGE_IDS = new Set([
 	'editorial-policy',
 	'advertising',
 	'affiliate-disclosure',
+	'editorial-desk',
+	'review-desk',
+	'tool',
 ]);
 
 const PAGE_TYPE_BY_ID = {
 	about: 'AboutPage',
 	contact: 'ContactPage',
+	'editorial-desk': 'ProfilePage',
+	'review-desk': 'ProfilePage',
 };
 
 const NOINDEX_PAGE_IDS = new Set([
@@ -51,6 +56,7 @@ function getPageKind(route) {
 		return 'not-found';
 	}
 	if (route.id === 'index') return 'home';
+	if (route.id === 'tool' && siteMeta.toolApplication) return 'tool';
 	if (SITE_PAGE_IDS.has(route.id)) {
 		return route.id === 'about' || route.id === 'contact' ? 'foundation' : 'policy';
 	}
@@ -74,6 +80,10 @@ function getPublishedTime(route) {
 		toIsoDate(route.entry?.data?.publishedTime) ??
 		toIsoDate(route.entry?.data?.publishDate)
 	);
+}
+
+function getModifiedTime(route) {
+	return toIsoDate(route.lastUpdated) ?? toIsoDate(route.entry?.data?.lastReviewed);
 }
 
 function getFirstSectionLabel(route) {
@@ -126,9 +136,73 @@ function getTwitterHandle() {
 	}
 }
 
+function getPublishingPrinciplesUrl() {
+	return siteMeta.publishingPrinciplesPath
+		? toAbsoluteUrl(siteMeta.publishingPrinciplesPath)
+		: undefined;
+}
+
+function getEditorialEntity(key) {
+	if (!key) return undefined;
+	const entity = siteMeta.editorialEntities?.[key];
+	if (!entity) return undefined;
+
+	return {
+		key,
+		...entity,
+		url: toAbsoluteUrl(entity.path),
+		id: `${toAbsoluteUrl(entity.path)}#profile`,
+	};
+}
+
+function getDefaultAuthorKey(route, pageKind) {
+	if (route.id === 'editorial-desk' || route.id === 'review-desk') return route.id;
+	if (pageKind === 'content' || pageKind === 'tool') return 'editorial-desk';
+	return undefined;
+}
+
+function getDefaultEditorKey(pageKind) {
+	return pageKind === 'content' || pageKind === 'tool' ? 'review-desk' : undefined;
+}
+
+function getAuthorship(route, pageKind) {
+	const author = getEditorialEntity(route.entry?.data?.authorKey ?? getDefaultAuthorKey(route, pageKind));
+	const editor = getEditorialEntity(route.entry?.data?.editorKey ?? getDefaultEditorKey(pageKind));
+	return { author, editor };
+}
+
+function getRichResultImages() {
+	const fallback = [
+		{
+			path: siteMeta.ogImagePath,
+			width: 1200,
+			height: 630,
+			alt: siteMeta.ogImageAlt,
+		},
+	];
+
+	return Array.isArray(siteMeta.richResultImages) && siteMeta.richResultImages.length
+		? siteMeta.richResultImages
+		: fallback;
+}
+
+function buildImageObjects(canonicalUrl) {
+	return getRichResultImages().map((image, index) => ({
+		'@context': 'https://schema.org',
+		'@type': 'ImageObject',
+		'@id': `${canonicalUrl}#primaryimage-${index + 1}`,
+		url: toAbsoluteUrl(image.path),
+		contentUrl: toAbsoluteUrl(image.path),
+		width: image.width,
+		height: image.height,
+		caption: image.alt ?? siteMeta.ogImageAlt,
+	}));
+}
+
 function buildOrganizationNode() {
 	const logoUrl = toAbsoluteUrl(siteMeta.icon512Path ?? siteMeta.faviconPath);
 	const sameAs = getSameAsUrls();
+	const publishingPrinciples = getPublishingPrinciplesUrl();
 
 	return {
 		'@context': 'https://schema.org',
@@ -142,6 +216,7 @@ function buildOrganizationNode() {
 		description: siteMeta.description,
 		email: siteMeta.email,
 		...(sameAs.length ? { sameAs } : {}),
+		...(publishingPrinciples ? { publishingPrinciples } : {}),
 		knowsAbout: siteMeta.keywords,
 		logo: {
 			'@type': 'ImageObject',
@@ -163,6 +238,8 @@ function buildOrganizationNode() {
 }
 
 function buildWebsiteNode() {
+	const publishingPrinciples = getPublishingPrinciplesUrl();
+
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'WebSite',
@@ -173,39 +250,92 @@ function buildWebsiteNode() {
 		description: siteMeta.description,
 		inLanguage: siteMeta.languageTag,
 		publisher: { '@id': `${siteMeta.siteUrl}/#organization` },
+		...(publishingPrinciples ? { publishingPrinciples } : {}),
+	};
+}
+
+function buildEditorialEntityNode(entity) {
+	if (!entity) return undefined;
+
+	return {
+		'@context': 'https://schema.org',
+		'@type': 'Organization',
+		'@id': entity.id,
+		name: entity.name,
+		description: entity.description,
+		url: entity.url,
+		memberOf: { '@id': `${siteMeta.siteUrl}/#organization` },
+		knowsAbout: entity.expertise,
+		...(getSameAsUrls().length ? { sameAs: getSameAsUrls() } : {}),
+	};
+}
+
+function buildSoftwareApplicationNode(canonicalUrl, author) {
+	const app = siteMeta.toolApplication;
+	if (!app) return undefined;
+
+	const screenshotUrl = toAbsoluteUrl(app.screenshotPath);
+
+	return {
+		'@context': 'https://schema.org',
+		'@type': 'SoftwareApplication',
+		'@id': `${canonicalUrl}#software`,
+		name: app.name,
+		description: app.description,
+		url: app.url,
+		applicationCategory: app.category,
+		operatingSystem: app.operatingSystem,
+		browserRequirements: app.browserRequirements,
+		isAccessibleForFree: true,
+		featureList: app.features,
+		screenshot: {
+			'@type': 'ImageObject',
+			'@id': `${canonicalUrl}#software-screenshot`,
+			url: screenshotUrl,
+			contentUrl: screenshotUrl,
+			width: 1200,
+			height: 675,
+			caption: app.screenshotAlt,
+		},
+		offers: {
+			'@type': 'Offer',
+			price: app.price,
+			priceCurrency: app.priceCurrency,
+			availability: 'https://schema.org/InStock',
+			url: app.url,
+		},
+		publisher: { '@id': `${siteMeta.siteUrl}/#organization` },
+		...(author ? { author: { '@id': author.id } } : {}),
 	};
 }
 
 export function buildSeo(route, currentUrl) {
+	const pageKind = getPageKind(route);
+	const authorship = getAuthorship(route, pageKind);
 	const title = getString(route.entry?.data?.title) ?? siteMeta.name;
 	const description = getString(route.entry?.data?.description) ?? siteMeta.description;
 	const primaryKeyword = getString(route.entry?.data?.primaryKeyword);
-	const pageKind = getPageKind(route);
 	const canonicalUrl = new URL(currentUrl.pathname, `${siteMeta.siteUrl}/`).toString();
 	const articleSection = getFirstSectionLabel(route);
 	const breadcrumbs = buildBreadcrumbs(route, canonicalUrl, title);
 	const publishedTime = getPublishedTime(route);
-	const modifiedTime = toIsoDate(route.lastUpdated);
+	const modifiedTime = getModifiedTime(route);
 	const articleTags = Array.from(
 		new Set([...(primaryKeyword ? [primaryKeyword] : []), ...siteMeta.keywords])
 	).slice(0, 8);
-	const imageId = `${canonicalUrl}#primaryimage`;
-	const imageUrl = toAbsoluteUrl(siteMeta.ogImagePath);
-	const imageObject = {
-		'@type': 'ImageObject',
-		'@id': imageId,
-		url: imageUrl,
-		contentUrl: imageUrl,
-		width: 1200,
-		height: 630,
-		caption: siteMeta.ogImageAlt,
-	};
+	const imageObjects = buildImageObjects(canonicalUrl);
+	const primaryImage = imageObjects[0];
 	const webpageId = `${canonicalUrl}#webpage`;
 	const breadcrumbId = `${canonicalUrl}#breadcrumb`;
+	const currentProfileEntity =
+		route.id === 'editorial-desk' || route.id === 'review-desk'
+			? getEditorialEntity(route.id)
+			: undefined;
 	const pageType =
 		pageKind === 'home' || pageKind === 'section'
 			? 'CollectionPage'
 			: PAGE_TYPE_BY_ID[route.id] ?? 'WebPage';
+	const publishingPrinciples = getPublishingPrinciplesUrl();
 
 	const webpageNode =
 		pageKind === 'not-found'
@@ -219,9 +349,13 @@ export function buildSeo(route, currentUrl) {
 					url: canonicalUrl,
 					inLanguage: siteMeta.languageTag,
 					isPartOf: { '@id': `${siteMeta.siteUrl}/#website` },
-					primaryImageOfPage: { '@id': imageId },
-					about: siteMeta.keywords,
+					primaryImageOfPage: { '@id': primaryImage['@id'] },
+					about: currentProfileEntity?.expertise ?? siteMeta.keywords,
 					...(breadcrumbs.length > 1 ? { breadcrumb: { '@id': breadcrumbId } } : {}),
+					...(authorship.author ? { author: { '@id': authorship.author.id } } : {}),
+					...(authorship.editor ? { editor: { '@id': authorship.editor.id } } : {}),
+					...(currentProfileEntity ? { mainEntity: { '@id': currentProfileEntity.id } } : {}),
+					...(publishingPrinciples ? { publishingPrinciples } : {}),
 					...(modifiedTime ? { dateModified: modifiedTime } : {}),
 				};
 
@@ -236,9 +370,10 @@ export function buildSeo(route, currentUrl) {
 					url: canonicalUrl,
 					inLanguage: siteMeta.languageTag,
 					mainEntityOfPage: { '@id': webpageId },
-					author: { '@id': `${siteMeta.siteUrl}/#organization` },
+					author: authorship.author ? { '@id': authorship.author.id } : { '@id': `${siteMeta.siteUrl}/#organization` },
+					...(authorship.editor ? { editor: { '@id': authorship.editor.id } } : {}),
 					publisher: { '@id': `${siteMeta.siteUrl}/#organization` },
-					image: { '@id': imageId },
+					image: imageObjects.map((image) => ({ '@id': image['@id'] })),
 					isPartOf: { '@id': `${siteMeta.siteUrl}/#website` },
 					isAccessibleForFree: true,
 					about: siteMeta.keywords,
@@ -264,6 +399,17 @@ export function buildSeo(route, currentUrl) {
 				}
 			: undefined;
 
+	const softwareNode =
+		route.id === 'tool' ? buildSoftwareApplicationNode(canonicalUrl, authorship.author) : undefined;
+
+	const entityNodes = Array.from(
+		new Map(
+			[authorship.author, authorship.editor, currentProfileEntity]
+				.filter(Boolean)
+				.map((entity) => [entity.id, buildEditorialEntityNode(entity)])
+		).values()
+	);
+
 	return {
 		title,
 		description,
@@ -272,15 +418,21 @@ export function buildSeo(route, currentUrl) {
 		themeColor: siteMeta.themeColor,
 		ogLocale: siteMeta.ogLocale,
 		ogType: pageKind === 'content' ? 'article' : 'website',
-		imageUrl,
-		imageAlt: siteMeta.ogImageAlt,
-		imageWidth: 1200,
-		imageHeight: 630,
+		imageUrl: primaryImage.url,
+		imageAlt: primaryImage.caption,
+		imageWidth: primaryImage.width,
+		imageHeight: primaryImage.height,
+		imageType: primaryImage.url.endsWith('.svg') ? 'image/svg+xml' : 'image/png',
 		publishedTime,
 		modifiedTime,
 		articleSection,
 		articleTags,
 		twitterSite: getTwitterHandle(),
+		authorName: authorship.author?.name ?? siteMeta.editorialTeamName ?? siteMeta.name,
+		authorUrl: authorship.author?.url,
+		editorName: authorship.editor?.name,
+		editorUrl: authorship.editor?.url,
+		editorialMethodSummary: siteMeta.editorialMethodSummary,
 		robots:
 			pageKind === 'not-found' || NOINDEX_PAGE_IDS.has(route.id)
 				? 'noindex, nofollow, noarchive, max-snippet:0, max-image-preview:none, max-video-preview:0'
@@ -289,9 +441,11 @@ export function buildSeo(route, currentUrl) {
 			buildOrganizationNode(),
 			buildWebsiteNode(),
 			breadcrumbNode,
-			imageObject,
+			...imageObjects,
+			...entityNodes,
 			webpageNode,
 			articleNode,
+			softwareNode,
 		].filter(Boolean),
 	};
 }

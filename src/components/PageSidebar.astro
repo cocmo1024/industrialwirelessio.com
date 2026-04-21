@@ -12,7 +12,7 @@ const plan = getAdPlan(route.id, route.entry?.data);
 
 {
 	route.toc && (
-		<div class="lg:sl-hidden">
+		<div class="lg:sl-hidden" data-nosnippet>
 			<MobileTableOfContents />
 		</div>
 	)
@@ -20,12 +20,17 @@ const plan = getAdPlan(route.id, route.entry?.data);
 
 <div class="right-sidebar-panel sl-hidden lg:sl-block">
 	<div class="right-sidebar-panel__inner">
-		{route.toc && <TableOfContents />}
+		{route.toc && (
+			<div data-nosnippet>
+				<TableOfContents />
+			</div>
+		)}
 		<ReferenceSignals />
 		{
 			adPreviewEnabled && (
 				<section
 					class="ad-rail"
+					data-nosnippet
 					data-ad-profile={route.entry?.data?.adProfile ?? 'unassigned'}
 					data-commercial-intent={route.entry?.data?.commercialIntent ?? 'unknown'}
 				>

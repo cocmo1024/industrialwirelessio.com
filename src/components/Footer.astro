@@ -5,23 +5,28 @@ import Pagination from 'virtual:starlight/components/Pagination';
 import AdSlot from './AdSlot.astro';
 import { getAdPlan } from '../utils/ad-config';
 import { adPreviewEnabled } from '../utils/ad-runtime.mjs';
+import { siteMeta } from '../utils/site-meta.mjs';
 
 const route = Astro.locals.starlightRoute;
 const plan = getAdPlan(route.id, route.entry?.data);
 ---
 
 <footer class="sl-flex">
-	<div class="meta sl-flex">
+	<div class="meta sl-flex" data-nosnippet>
 		<EditLink />
 		<LastUpdated />
 	</div>
 	<Pagination />
-	<section class="footer-commercial">
+	<section class="footer-commercial" data-nosnippet>
 		<div class="footer-commercial__copy">
-			<h2>Commercial transparency</h2>
+			<h2>Editorial and commercial transparency</h2>
 			<p>
 				Future sponsorships, affiliate relationships, and display inventory are intended to remain
 				clearly disclosed and separate from editorial judgment.
+			</p>
+			<p>
+				Maintained by <strong>{siteMeta.editorialTeamName}</strong>. Major pages are reviewed against
+				the editorial method described in the site standards.
 			</p>
 			<p class="footer-commercial__links">
 				<a href="/advertising/">Advertising</a>
@@ -29,11 +34,16 @@ const plan = getAdPlan(route.id, route.entry?.data);
 				<a href="/affiliate-disclosure/">Affiliate Disclosure</a>
 				<span aria-hidden="true"> / </span>
 				<a href="/editorial-policy/">Editorial Policy</a>
+				<span aria-hidden="true"> / </span>
+				<a href="/editorial-desk/">Editorial Desk</a>
+				<span aria-hidden="true"> / </span>
+				<a href="/review-desk/">Review Desk</a>
 			</p>
 		</div>
 		{
 			adPreviewEnabled && (
 				<div
+					data-nosnippet
 					data-ad-profile={route.entry?.data?.adProfile ?? 'unassigned'}
 					data-commercial-intent={route.entry?.data?.commercialIntent ?? 'unknown'}
 				>

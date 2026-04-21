@@ -1,0 +1,17 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 1200' role='img' aria-labelledby='title desc'>
+  <title>Industrial Wireless I/O square search preview</title>
+  <desc>Remote telemetry and cabinets; Network paths and reliability.</desc>
+  <rect width='1200' height='1200' rx='60' fill='#f8fbff'/>
+  <rect x='64' y='64' width='1072' height='1072' rx='48' fill='white' stroke='#2c7e98' stroke-opacity='0.16'/>
+  <circle cx='960' cy='240' r='118' fill='#2c7e98' fill-opacity='0.1'/>
+  <circle cx='208' cy='928' r='136' fill='#2c7e98' fill-opacity='0.08'/>
+  <text x='112' y='258' fill='#111827' font-family='Arial, sans-serif' font-size='84' font-weight='700'>Industrial Wireless I/O</text>
+  <text x='112' y='336' fill='#334155' font-family='Arial, sans-serif' font-size='34'>Remote telemetry and cabinets</text>
+  <text x='112' y='384' fill='#334155' font-family='Arial, sans-serif' font-size='34'>Network paths and reliability</text>
+  <rect x='112' y='476' width='976' height='520' rx='32' fill='#2c7e98' fill-opacity='0.08' stroke='#2c7e98' stroke-opacity='0.18'/>
+  <text x='160' y='562' fill='#184b5b' font-family='Arial, sans-serif' font-size='28' font-weight='700'>Search layer</text>
+  <text x='160' y='620' fill='#334155' font-family='Arial, sans-serif' font-size='30'>Author and editor entities</text>
+  <text x='160' y='672' fill='#334155' font-family='Arial, sans-serif' font-size='30'>Multi-aspect images for rich results</text>
+  <text x='160' y='724' fill='#334155' font-family='Arial, sans-serif' font-size='30'>Publishing principles and no-snippet controls</text>
+  <text x='160' y='776' fill='#334155' font-family='Arial, sans-serif' font-size='30'>High-intent reference pages built for long search life</text>
+</svg>
