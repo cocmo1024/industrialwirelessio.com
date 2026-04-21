@@ -25,34 +25,13 @@ export default defineConfig({
 				{
 					label: 'Reference Areas',
 					items: [
-						{
-							label: 'Applications',
-							autogenerate: { directory: 'applications' },
-						},
-						{
-							label: 'Product Families',
-							autogenerate: { directory: 'product-families' },
-						},
-						{
-							label: 'Vendors',
-							autogenerate: { directory: 'vendors' },
-						},
-						{
-							label: 'Network Paths',
-							autogenerate: { directory: 'network-paths' },
-						},
-						{
-							label: 'Protocols',
-							autogenerate: { directory: 'protocols' },
-						},
-						{
-							label: 'Hardware',
-							autogenerate: { directory: 'hardware' },
-						},
-						{
-							label: 'Reliability',
-							autogenerate: { directory: 'reliability' },
-						},
+						'applications',
+						'product-families',
+						'vendors',
+						'network-paths',
+						'protocols',
+						'hardware',
+						'reliability',
 					],
 				},
 				{
