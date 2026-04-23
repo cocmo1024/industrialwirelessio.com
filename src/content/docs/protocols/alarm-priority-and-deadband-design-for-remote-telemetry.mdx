@@ -13,7 +13,19 @@ targetRoles:
   - Telemetry architects
   - Integrators
   - Remote operations teams
-contentStatus: seed
+contentStatus: growing
+problemSolved: Helps teams decide how to set deadbands, alarm delays, and priority levels so remote telemetry systems stay credible instead of noisy, silent, or expensive to operate.
+readerTakeaway: You should leave with a cleaner rule for which signals deserve immediate alarms, which need deadband and delay, and how to test those settings before they become field noise.
+keyQuestions:
+  - How should deadbands and alarm delays be set on remote telemetry sites?
+  - Which signal types should alarm immediately and which should wait or aggregate?
+  - How do teams avoid noisy alarms without hiding meaningful change?
+notFor:
+  - Building-automation-only alarm tuning
+  - Lab systems with no field bandwidth, battery, or dispatch constraints
+updateTriggers:
+  - New telemetry behavior patterns around report-by-exception and buffering
+  - Changes in common utility and remote-site alarm practices
 ---
 
 import { LinkCard } from '@astrojs/starlight/components';
@@ -22,16 +34,43 @@ import { LinkCard } from '@astrojs/starlight/components';
 
 Many remote telemetry systems are noisy for the wrong reasons and quiet about the things that matter most. Alarm priority and deadband design exist to prevent that. In constrained field environments, communications discipline is part of reliability, not just a dashboard preference.
 
-## Which layer this decision belongs to
+The most common failure is not the absence of alarms. It is the absence of a useful alarm model. A site sends everything, operators stop trusting it, and the next serious event gets buried in normal fluctuation.
 
-This is a telemetry behavior decision that shapes:
+## Where this decision actually lives
+
+This is not only an HMI setting or a SCADA preference. It is a telemetry-behavior decision that shapes:
 
 - which events should be sent immediately;
 - which changes should be filtered or delayed;
 - how much data the site moves under normal conditions;
-- what operators actually see during abnormal conditions.
+- what operators actually see during abnormal conditions;
+- and whether the site burns bandwidth and battery on meaningless movement.
 
 A good design keeps the system useful under stress instead of flooding it with low-value traffic.
+
+## Start with signal classes, not one universal rule
+
+Deadband and delay settings should not be copied across every point. A healthier design separates signals into classes.
+
+### Fast safety or outage indicators
+
+These usually deserve immediate or near-immediate alarm behavior. Examples include:
+
+- loss of mains power;
+- low cabinet voltage;
+- critical pump or compressor trip;
+- intrusion events;
+- or sudden pressure drops beyond a serious threshold.
+
+These are not good candidates for generous deadband because the operating question is urgent.
+
+### Slowly moving analog process values
+
+Tank level, pressure trend, flow, temperature, and similar analog points often need both deadband and persistence. Otherwise the site transmits tiny changes that mean nothing operationally.
+
+### State transitions and digital events
+
+Valve open or closed, pump run or stopped, door open, generator available, or RTU mode change usually do not need analog deadband. They need event credibility, debounce logic where required, and clear priority based on consequence.
 
 ## Typical fit
 
@@ -44,7 +83,7 @@ These patterns matter most when:
 
 Deadband is useful when it suppresses noise. It is harmful when it hides operationally meaningful change.
 
-## Common field mistake
+## The common field mistake
 
 The most common mistake is treating every change as equally important. That leads to:
 
@@ -54,6 +93,69 @@ The most common mistake is treating every change as equally important. That lead
 - poor battery and communications efficiency.
 
 The better model is to define what truly deserves immediate visibility and what can be summarized.
+
+## A practical tuning sequence
+
+Start with these questions:
+
+1. If this point changes, does anyone need to act now?
+2. If not, how much movement is operationally meaningless?
+3. How long should that condition persist before the site treats it as real?
+4. Is the point more useful as an event, a periodic trend, or both?
+
+That sequence usually produces better telemetry behavior than copying alarm rules from a plant historian or a dashboard template.
+
+## What deadband and delay are really doing
+
+Deadband answers: **how much change is worth reporting?**
+
+Alarm delay or persistence answers: **how long should that condition persist before the site treats it as real?**
+
+Those are different controls. Deadband suppresses small movement. Delay suppresses short-lived spikes. A site often needs both.
+
+## Where teams usually overtune
+
+Remote sites often get into trouble when teams:
+
+- set deadbands so wide that operational drift disappears;
+- use one alarm delay for every signal type;
+- classify too many nuisance points as urgent;
+- or copy settings from one site type to another without checking asset behavior.
+
+A lift station, PRS site, wellhead cabinet, and remote tank do not all move the same way. They should not share the same deadband assumptions by default.
+
+## What should alarm immediately?
+
+Immediate or near-immediate alarming is usually reserved for events that change dispatch or safety behavior, such as:
+
+- power loss or battery-critical conditions;
+- communication failure at sites with no safe local continuity;
+- pump trips or generator failure on critical assets;
+- security events;
+- pressure or level excursions that can damage assets or service continuity quickly.
+
+These are expensive enough to justify fast traffic.
+
+## What should usually wait, aggregate, or buffer?
+
+Values that drift gradually or fluctuate normally are usually better handled with:
+
+- deadband plus periodic reporting;
+- report-by-exception with local buffering;
+- or threshold crossing plus persistence.
+
+Examples include normal tank-level movement, modest process pressure variation, or noncritical environmental conditions. The point is to preserve useful telemetry without turning every analog wiggle into alarm traffic.
+
+## How to validate settings before rollout
+
+Before finalizing deadbands and priorities, test:
+
+- whether one day of normal behavior already floods the alarm path;
+- whether known abnormal events still show up quickly enough;
+- whether dispatch teams can explain why a point is urgent or nonurgent;
+- and whether buffered events still preserve the operating story after reconnect.
+
+If the field team cannot explain the tuning logic, the settings are probably too clever or too brittle.
 
 ## Related paths
 
@@ -72,6 +174,11 @@ The better model is to define what truly deserves immediate visibility and what 
 		title="Carrier failover and dual-path design"
 		href="/network-paths/carrier-failover-and-dual-path-design-for-remote-sites/"
 		description="Reduce unnecessary traffic before adding communications redundancy."
+	/>
+	<LinkCard
+		title="How often should remote telemetry sites report data?"
+		href="/protocols/how-often-should-remote-telemetry-sites-report-data/"
+		description="Use this page when the issue is no longer event thresholding alone, but the baseline reporting rhythm for the site."
 	/>
 	<LinkCard
 		title="Solar, battery, and low-power planning"
