@@ -23,13 +23,13 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 
 <CardGrid stagger>
 	<Card title="Applications" icon="open-book">
-		Remote telemetry environments and field deployment contexts organized around asset behavior, maintenance reality, and data goals.
+		Remote telemetry environments organized around asset behavior, maintenance reality, and data goals.
 	</Card>
 	<Card title="Product families" icon="add-document">
 		Gateways, remote I/O, RTU-class hardware, antennas, and edge-adjacent building blocks organized by deployment role.
 	</Card>
 	<Card title="Vendors" icon="open-book">
-		Portfolio-oriented vendor pages that help readers understand where ecosystem fit matters more than spec-sheet breadth.
+		Portfolio-oriented vendor pages where ecosystem fit matters more than spec-sheet breadth.
 	</Card>
 	<Card title="Network paths" icon="random">
 		Cellular, LoRaWAN, satellite, and hybrid backhaul choices framed by terrain, uptime, and operating constraints.
@@ -61,7 +61,7 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 	<LinkCard
 		title="Study vendors"
 		href="/vendors/"
-		description="Use vendor pages to compare ecosystem depth, industrial fit, and portfolio logic without relying on marketing copy."
+		description="Compare ecosystem depth, industrial fit, and portfolio logic without relying on marketing copy."
 	/>
 	<LinkCard
 		title="Compare network paths"
@@ -76,7 +76,7 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 	<LinkCard
 		title="Plan the hardware stack"
 		href="/hardware/"
-		description="Connect gateways, I/O, power, enclosures, and antennas into a site-ready footprint."
+		description="Connect gateways, I/O, power, enclosures, antennas, and service features into a site-ready footprint."
 	/>
 	<LinkCard
 		title="Pressure-test reliability"
@@ -85,133 +85,105 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 	/>
 </div>
 
-## Featured strategic clusters
+## Current priority clusters
+
+The homepage stays curated. New field telemetry pages should enter the appropriate hub first; this page promotes only durable cluster entrances with clear remote-site search intent.
 
 <div class="portal-links">
 	<LinkCard
-		title="Remote water telemetry"
+		title="Remote water and utility telemetry"
 		href="/applications/remote-pump-stations-and-water-sites/"
-		description="A durable application cluster where remote monitoring, site survivability, and network economics converge."
+		description="Pump stations, pressure zones, valves, stormwater, and utility-distribution telemetry where alarm credibility matters."
 	/>
 	<LinkCard
-		title="Generator and fuel telemetry"
+		title="Critical-site generator and fuel telemetry"
 		href="/applications/remote-generator-and-fuel-tank-telemetry-for-critical-sites/"
-		description="A critical-site cluster where outage visibility and fuel assurance create strong recurring operational intent."
+		description="A critical-site cluster around outage visibility, fuel assurance, remote alarming, and service dispatch economics."
 	/>
 	<LinkCard
-		title="Pipeline cabinet telemetry"
+		title="Pipeline and unattended cabinet telemetry"
 		href="/applications/pipeline-cathodic-protection-and-remote-cabinet-telemetry/"
-		description="A durable field-cabinet cluster where sparse access, alarm credibility, and CP visibility create specialized remote telemetry intent."
+		description="Sparse-access sites where cabinet health, CP visibility, event buffering, and alarm credibility define the architecture."
 	/>
 	<LinkCard
-		title="Wellhead and chemical injection telemetry"
+		title="Oil and gas wellhead telemetry"
 		href="/applications/wellhead-and-chemical-injection-site-telemetry-for-unattended-oil-and-gas-assets/"
-		description="A durable remote oil and gas cluster for unattended sites where site health, buffering, and dispatch economics drive architecture."
+		description="Unattended wellhead and chemical-injection sites where buffering, field service, and site health matter more than dashboards."
 	/>
 	<LinkCard
-		title="Booster stations and pressure-zone telemetry"
-		href="/applications/booster-stations-and-pressure-zone-telemetry-for-distribution-networks/"
-		description="A durable water-distribution cluster where pressure stability, pump context, and alarm credibility drive remote telemetry design."
-	/>
-	<LinkCard
-		title="Stormwater and flood-control telemetry"
-		href="/applications/stormwater-and-flood-control-site-telemetry-for-unattended-assets/"
-		description="An event-first water-infrastructure cluster for unattended storm sites where flood response depends on preserving the alarm story under poor conditions."
-	/>
-	<LinkCard
-		title="Valve and pressure-reducing station telemetry"
-		href="/applications/valve-position-and-pressure-reducing-station-telemetry-for-water-and-gas-networks/"
-		description="A durable utility-distribution cluster for remote valve and PRS sites where state sequence and pressure context matter more than raw point count."
-	/>
-	<LinkCard
-		title="Fixed-site cellular architecture"
+		title="Cellular architecture for fixed sites"
 		href="/hardware/cellular-router-selection-for-fixed-site-telemetry/"
-		description="A high-intent cluster around industrial router class, serviceability, and remote-site connectivity decisions."
+		description="Industrial router class, antenna path, serviceability, and remote-site connectivity decisions."
 	/>
 	<LinkCard
-		title="Antenna path and cable-loss planning"
-		href="/hardware/antenna-cable-loss-and-mounted-height-for-remote-telemetry/"
-		description="A physical-layer cluster for the sites where antenna gain, mounting height, and feedline loss decide whether coverage is actually usable."
-	/>
-	<LinkCard
-		title="Cabinet DC power and battery isolation"
-		href="/hardware/remote-cabinet-dc-power-distribution-fusing-and-battery-isolation/"
-		description="A field-hardware cluster for the cabinet power design choices that decide whether unattended sites stay supportable."
-	/>
-	<LinkCard
-		title="What should a remote telemetry cabinet contain?"
+		title="Remote telemetry cabinet design"
 		href="/hardware/what-should-a-remote-telemetry-cabinet-contain/"
-		description="A practical cabinet-design cluster for deciding which field hardware, service features, and protections must exist before the site can be called supportable."
+		description="Cabinet contents, DC power, fusing, battery isolation, grounding, surge paths, environment control, and service access."
 	/>
 	<LinkCard
-		title="Cabinet environment control and condensation risk"
-		href="/hardware/remote-cabinet-environment-control-heaters-vents-and-condensation-risk/"
-		description="A physical-layer cluster for the enclosure heating, ventilation, and moisture-control decisions that quietly decide field reliability."
-	/>
-	<LinkCard
-		title="Cabinet grounding and surge-current paths"
-		href="/hardware/cabinet-grounding-bonding-and-surge-current-paths-for-remote-sites/"
-		description="A physical-layer cluster for the bonding and surge-path decisions that often separate stable field sites from intermittent electrical trouble."
+		title="Antenna path and physical layer"
+		href="/hardware/antenna-cable-loss-and-mounted-height-for-remote-telemetry/"
+		description="Antenna gain, mounted height, feedline loss, grounding, enclosure placement, and coverage decisions that decide usable uptime."
 	/>
 	<LinkCard
 		title="Telemetry data-plan economics"
 		href="/network-paths/telemetry-data-plan-budgeting-for-remote-sites/"
-		description="A recurring-cost cluster built around the real data behaviors that change remote-site cellular economics."
+		description="Reporting intervals, alarm traffic, deadbands, payload size, and cellular cost behavior for remote sites."
 	/>
 	<LinkCard
-		title="How often should remote telemetry sites report data?"
-		href="/protocols/how-often-should-remote-telemetry-sites-report-data/"
-		description="A durable protocol-and-economics cluster for choosing reporting intervals that fit asset behavior, response urgency, and data-plan cost."
-	/>
-	<LinkCard
-		title="Alarm priority and deadband design"
+		title="Alarm behavior and protocol timing"
 		href="/protocols/alarm-priority-and-deadband-design-for-remote-telemetry/"
-		description="A telemetry-behavior cluster for deciding which field signals deserve immediate alarm traffic and which should be delayed, filtered, or buffered."
+		description="Alarm priority, deadband design, reporting intervals, state changes, buffering, and upstream telemetry behavior."
 	/>
 	<LinkCard
-		title="LEO satellite for remote telemetry"
+		title="LEO satellite versus cellular"
 		href="/network-paths/leo-satellite-vs-cellular-for-remote-industrial-telemetry/"
-		description="A current but durable cluster for the fixed remote sites where coverage pressure is finally making LEO a serious telemetry option."
+		description="A current but durable path-selection cluster for sites where coverage pressure makes satellite a real option."
 	/>
 	<LinkCard
-		title="Physical-layer survivability"
-		href="/hardware/power-enclosures-and-antennas/"
-		description="A field stack cluster focused on power, enclosure, antenna, and long-run maintenance reality."
-	/>
-	<LinkCard
-		title="Outage response for unattended sites"
-		href="/reliability/network-outage-playbooks-for-unattended-sites/"
-		description="A field-operations cluster on what the remote team should actually do when the site disappears at the worst possible time."
-	/>
-	<LinkCard
-		title="Local fallback and out-of-band management"
+		title="Local fallback and outage response"
 		href="/reliability/out-of-band-management-and-local-fallback-for-unattended-sites/"
-		description="A resilience cluster for deciding when unattended sites need secondary access paths versus stronger local autonomy."
+		description="Out-of-band access, local autonomy, outage playbooks, and what the team should do when a site disappears."
 	/>
 	<LinkCard
-		title="Local buffering and last-known state"
+		title="Buffering, stale data, and event continuity"
 		href="/reliability/alarm-latching-last-known-state-and-local-buffering-for-unattended-sites/"
-		description="A continuity cluster for preserving the site's alarm and state story when communications are intermittent."
+		description="Last-known state, heartbeat timers, event buffering, immediate alarms, and supervisory-loss rules."
+	/>
+</div>
+
+## High-intent question paths
+
+<div class="portal-links">
+	<LinkCard
+		title="What should a remote telemetry cabinet contain?"
+		href="/hardware/what-should-a-remote-telemetry-cabinet-contain/"
+		description="A practical field checklist for gateways, I/O, power, protection, antenna, and service features."
 	/>
 	<LinkCard
-		title="Digital-input event buffering"
-		href="/reliability/digital-input-event-buffering-for-alarm-first-telemetry/"
-		description="A continuity cluster for preserving alarm sequence and discrete event history when the site can only reconnect later."
+		title="How often should remote telemetry sites report?"
+		href="/protocols/how-often-should-remote-telemetry-sites-report-data/"
+		description="Choose reporting intervals by asset behavior, alarm urgency, battery budget, and data-plan economics."
 	/>
 	<LinkCard
-		title="Heartbeat timers and stale-data rules"
-		href="/reliability/heartbeat-timers-stale-data-rules-and-supervisory-loss-handling/"
-		description="A supervisory-loss cluster for deciding when unattended sites should look quiet, stale, or truly out of view."
-	/>
-	<LinkCard
-		title="Immediate alarms vs local buffering"
+		title="When should a site alarm immediately?"
 		href="/reliability/when-should-a-remote-site-alarm-immediately-vs-buffer-locally/"
-		description="A reliability cluster for deciding what must leave the site now and what should be preserved locally as part of the operating story."
+		description="Decide what must leave the site now and what should be preserved locally for later reconstruction."
 	/>
 	<LinkCard
-		title="Classic remote connectivity product lines"
-		href="/product-families/digi-ix10-and-ix20-for-remote-industrial-sites/"
-		description="Evergreen product-family pages for Digi IX, Phoenix TC Router, and Siemens SCALANCE M in unattended telemetry architecture."
+		title="How should stale data be handled?"
+		href="/reliability/heartbeat-timers-stale-data-rules-and-supervisory-loss-handling/"
+		description="Use heartbeat and stale-data rules to distinguish quiet sites, broken links, and true loss of view."
+	/>
+	<LinkCard
+		title="When is LEO satellite better than cellular?"
+		href="/network-paths/leo-satellite-vs-cellular-for-remote-industrial-telemetry/"
+		description="Compare coverage, install burden, latency, recurring cost, and reliability expectations for remote fixed sites."
+	/>
+	<LinkCard
+		title="How should alarm-first telemetry buffer events?"
+		href="/reliability/digital-input-event-buffering-for-alarm-first-telemetry/"
+		description="Preserve discrete event sequence when the site can only reconnect later."
 	/>
 </div>
 
