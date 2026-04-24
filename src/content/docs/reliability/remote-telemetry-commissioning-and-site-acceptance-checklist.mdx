@@ -1,0 +1,192 @@
+---
+title: Remote Telemetry Commissioning and Site Acceptance Checklist
+description: A field-ready commissioning and site acceptance checklist for remote telemetry systems before unattended operation begins.
+referenceType: reliability
+adProfile: reliability
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: remote telemetry commissioning checklist
+searchIntent: deploy
+decisionStage: implementation
+targetRoles:
+  - Remote telemetry engineers
+  - Utility engineers
+  - Field technicians
+  - System integrators
+contentStatus: cornerstone
+problemSolved: How to prove a remote telemetry site is ready for unattended operation by testing power, cabinet, antenna, protocol, alarm, buffering, fallback, and handoff evidence.
+readerTakeaway: You should leave with a practical site acceptance model for remote telemetry that catches field problems before the truck leaves.
+keyQuestions:
+  - What should be checked before accepting a remote telemetry site?
+  - How should teams test alarms, buffering, stale data, and communications recovery?
+  - What evidence should be captured during commissioning for future troubleshooting?
+notFor:
+  - Lab-only telemetry pilots that will not be installed at unattended sites
+  - Office network monitoring systems without field cabinet, power, or antenna constraints
+updateTriggers:
+  - New field lessons around remote telemetry commissioning, outage behavior, and cabinet reliability
+  - Changes in common cellular, satellite, gateway, and RTU deployment practices
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Remote Telemetry Commissioning and Site Acceptance Checklist
+
+Remote telemetry commissioning is not complete when the dashboard shows live values. A remote site can look normal during installation and still fail the first hot afternoon, storm event, cellular outage, battery sag, or alarm sequence. Site acceptance should prove that the cabinet, power, antenna, protocol behavior, alarm handling, buffering, and support path are ready for unattended operation.
+
+This page is written as a field checklist. It is intentionally more practical than a design overview because most expensive telemetry problems are discovered after the installer has already left.
+
+## Quick answer
+
+Accept a remote telemetry site only after it proves physical survivability, signal quality, protocol correctness, alarm behavior, local buffering, outage recovery, stale-data handling, and maintenance handoff. A live value on a screen is only one acceptance item. The real goal is a site that preserves the operational story when the link, power, weather, or field devices misbehave.
+
+## What site acceptance should prove
+
+| Area | Acceptance question | Evidence to keep |
+| --- | --- | --- |
+| Cabinet and power | Can the cabinet survive expected environment and power variation? | Photos, voltage readings, fuse/breaker map, battery or UPS test |
+| Antenna and backhaul | Is signal quality stable enough for the reporting model? | RSSI/RSRP/SINR or equivalent readings, antenna photos, cable length |
+| Field inputs | Do sensors, contacts, meters, and I/O report the right values? | Point-to-point verification and forced-state test results |
+| Alarms | Do alarm assert, clear, priority, and latching rules work? | Alarm test log with timestamps and upstream screenshots |
+| Buffering | Are events retained during link loss and replayed correctly? | Forced outage test and recovered event sequence |
+| Stale data | Does the system clearly show lost visibility instead of false normal? | Heartbeat and stale-data test |
+| Handoff | Can the support team diagnose and recover the site later? | As-built notes, backups, credentials path, and escalation contacts |
+
+If the project cannot produce evidence in these areas, acceptance is incomplete.
+
+## Pre-power and cabinet checks
+
+Before focusing on software, confirm the physical installation:
+
+- enclosure rating, mounting, door seal, drain or condensation strategy, and sun exposure;
+- grounding and bonding path, surge protection, and cable entry sealing;
+- supply voltage under load and with expected accessories running;
+- fuse or breaker labeling and separation of critical loads;
+- battery, UPS, solar, or backup supply behavior if present;
+- service clearance for replacing gateway, RTU, power supply, antenna cable, and I/O modules;
+- clear cabinet photos with device labels visible.
+
+These checks prevent the common error of accepting a site because the data is live while the cabinet is already set up to fail.
+
+## Antenna and backhaul acceptance
+
+Backhaul acceptance should capture more than "connected." Record:
+
+- carrier or network path used;
+- antenna type, mounting location, height, orientation, and cable route;
+- cable length, connector condition, and any surge protection;
+- signal-quality values from the modem, gateway, or radio;
+- observed reconnect time after a forced disconnect;
+- whether the site can be reached for diagnostics without a truck roll.
+
+For cellular sites, signal strength alone is not enough. Quality and stability matter because poor signal quality can create intermittent behavior that looks like random equipment failure.
+
+## Field signal and protocol verification
+
+Each critical point should be verified from field device to upstream display:
+
+- force a digital input and confirm assert and clear behavior;
+- compare analog value against local instrument or expected simulation;
+- verify pulse or totalizer scaling;
+- confirm unit, range, sign, and decimal behavior;
+- confirm timestamp source and time synchronization;
+- confirm whether quality flags, stale indicators, or bad values are visible upstream.
+
+Do not accept a site based only on normal readings. Normal readings can hide wrong scaling, inverted contacts, deadband errors, and weak timestamp logic.
+
+## Alarm and event tests
+
+Alarm tests should include:
+
+- alarm assert;
+- alarm clear;
+- repeated alarm during a short period;
+- simultaneous or near-simultaneous events;
+- priority handling;
+- latching and acknowledgement behavior;
+- notification or dispatch path if applicable.
+
+The test should answer a practical question: if this alarm happens during unattended operation, will the remote operations team know what happened, when it happened, and whether it cleared?
+
+## Forced outage and buffering test
+
+Every unattended site should have a controlled communications-loss test unless the design explicitly accepts lost data. A practical test is:
+
+1. Confirm normal reporting.
+2. Disconnect or disable the backhaul in a controlled way.
+3. Force one or more meaningful events while the link is down.
+4. Restore communications.
+5. Confirm whether events replay in correct sequence with useful timestamps.
+6. Confirm whether duplicates, stale values, or false normal states appear.
+
+This test exposes whether the site is only live during good conditions or actually resilient enough for remote operation.
+
+## Heartbeat and stale-data handling
+
+Stale-data handling should be visible and unambiguous. The system should make it clear when:
+
+- the field device is offline;
+- the gateway is online but cannot read a device;
+- the site is alive but upstream communication is interrupted;
+- data is old but still displayed;
+- the last known state should not be interpreted as current normal.
+
+False normal is worse than a clear alarm because it delays response.
+
+## Owner handoff checklist
+
+Before leaving the site, confirm:
+
+- as-built cabinet photos are stored;
+- device configuration backups are exported;
+- IP, SIM, VPN, APN, credentials, and certificate ownership is documented securely;
+- replacement device procedure is known;
+- support contacts and escalation path are current;
+- spare parts and consumables are listed;
+- the operations team knows what normal, alarm, stale, and offline states look like.
+
+The site should not depend on the memory of the installer.
+
+## Stop-go criteria
+
+Do not accept the site for unattended operation if:
+
+- critical alarms cannot be forced and verified;
+- stale-data behavior is ambiguous;
+- the site cannot recover cleanly from a forced communications outage;
+- cabinet power or grounding issues remain unresolved;
+- signal quality is unstable and no mitigation plan exists;
+- configuration backups and support ownership are missing;
+- field technicians cannot identify what to check first during a future outage.
+
+These are not paperwork issues. They are the conditions that create expensive repeat site visits.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="What should a remote telemetry cabinet contain?"
+		href="/hardware/what-should-a-remote-telemetry-cabinet-contain/"
+		description="Review the physical cabinet elements that should exist before commissioning starts."
+	/>
+	<LinkCard
+		title="Antenna cable loss and mounted height"
+		href="/hardware/antenna-cable-loss-and-mounted-height-for-remote-telemetry/"
+		description="Pressure-test the antenna and cable choices behind the signal-quality evidence."
+	/>
+	<LinkCard
+		title="Heartbeat timers and stale-data rules"
+		href="/reliability/heartbeat-timers-stale-data-rules-and-supervisory-loss-handling/"
+		description="Define how the system should show lost visibility instead of misleading normal status."
+	/>
+	<LinkCard
+		title="Digital-input event buffering"
+		href="/reliability/digital-input-event-buffering-for-alarm-first-telemetry/"
+		description="Go deeper on preserving alarm sequence during link loss."
+	/>
+	<LinkCard
+		title="Out-of-band management and local fallback"
+		href="/reliability/out-of-band-management-and-local-fallback-for-unattended-sites/"
+		description="Decide when a site needs secondary access or local fallback behavior."
+	/>
+</div>
