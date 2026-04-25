@@ -1,23 +1,97 @@
 ---
 title: Modbus RTU, MQTT, and OPC UA in Telemetry
-description: A practical framework for placing common protocol choices at the right layer of a remote telemetry architecture.
+description: How to place Modbus RTU, MQTT, and OPC UA at the right layer of a remote telemetry system without confusing field protocols with upstream data movement.
 referenceType: protocol
 adProfile: protocol
 commercialIntent: high
 reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Helps teams decide which protocol belongs at the field device layer, gateway layer, and upstream platform layer in remote telemetry.
+readerTakeaway: You should leave with a practical protocol-boundary model for Modbus RTU, MQTT, and OPC UA in unattended-site telemetry.
+primaryKeyword: Modbus RTU MQTT OPC UA telemetry
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Telemetry engineers
+  - Controls engineers
+  - OT architects
+  - System integrators
+keyQuestions:
+  - Where does Modbus RTU belong in telemetry?
+  - When should remote telemetry use MQTT?
+  - When is OPC UA useful for remote sites?
 ---
 
 import { LinkCard } from '@astrojs/starlight/components';
 
 # Modbus RTU, MQTT, and OPC UA in Telemetry
 
-These protocols are often discussed as if they are direct substitutes. In practice, they usually serve different roles in the stack. The correct decision is less about ideology and more about where data originates, where it is reshaped, and what the upstream platform expects.
+Modbus RTU, MQTT, and OPC UA are often discussed as if they are competing answers to one question. In real remote telemetry systems, they usually belong at different layers. Modbus RTU is often closest to legacy field devices. MQTT often fits event-oriented movement across constrained or cloud-connected paths. OPC UA often fits richer industrial interoperability when systems need structured context and stronger integration semantics.
 
-## A useful framing
+The risk is choosing a protocol by popularity instead of by layer. A remote site can use Modbus RTU locally, convert or buffer at a gateway, publish MQTT upstream, and still expose structured data elsewhere through OPC UA. The architecture matters more than the label.
 
-- `Modbus RTU` often lives close to field devices and legacy equipment
-- `MQTT` is often useful for telemetry transport and event-oriented movement
-- `OPC UA` is often useful where richer contextual integration or upstream interoperability matters
+## Quick answer
+
+Use Modbus RTU near field devices when legacy equipment, meters, drives, or simple controllers already speak it. Use MQTT when the telemetry path benefits from lightweight publish-style movement, report-by-exception, and broker-based distribution. Use OPC UA when the upstream environment needs richer context, industrial interoperability, and structured information models. Do not force one protocol to solve every layer.
+
+## Layer model
+
+| Layer | Common protocol fit | What the layer should own |
+| --- | --- | --- |
+| Field device layer | Modbus RTU, vendor serial, discrete/analog I/O | Reading actual site signals and device registers |
+| Local cabinet or gateway layer | Modbus TCP, gateway mapping, local logic, buffering | Polling, translation, deadbands, timestamps, store-and-forward |
+| Transport and event layer | MQTT, HTTPS APIs, brokered telemetry | Efficient upstream movement and event distribution |
+| Supervisory or integration layer | OPC UA, SCADA protocols, historian connectors | Context, naming, system interoperability, operator visibility |
+
+Many failed telemetry projects happen because the team skips the gateway layer and expects the upstream platform to clean up field ambiguity later.
+
+## Modbus RTU strengths and limits
+
+Modbus RTU is durable because it is simple and common. It is useful for:
+
+- meters;
+- analyzers;
+- drives;
+- packaged equipment;
+- legacy controllers;
+- and small remote devices with stable register maps.
+
+Its weakness is context. A register value does not explain whether the signal is stale, noisy, scaled correctly, or meaningful under the current site state. That context usually has to be added by the RTU, gateway, SCADA, or historian layer.
+
+## MQTT strengths and limits
+
+MQTT is attractive in telemetry because it can support efficient publish-style data movement. It fits when:
+
+- the site should report by exception;
+- bandwidth or data-plan discipline matters;
+- several consumers need the same telemetry stream;
+- cloud ingestion or broker-based routing is part of the design;
+- and the team can define topic structure, payload contracts, and retained-message behavior.
+
+MQTT becomes weak when teams treat it as magic structure. A broker does not fix bad signal naming, weak event logic, poor timestamps, or unclear ownership of units and state.
+
+## OPC UA strengths and limits
+
+OPC UA can be useful when the system needs richer industrial context, not just lightweight transport. It often fits:
+
+- plant-level integration;
+- supervisory systems;
+- structured equipment models;
+- vendor-neutral interoperability;
+- and environments where OT systems already expect OPC UA.
+
+For small remote telemetry sites, OPC UA may be heavier than necessary unless there is a clear consumer that benefits from it.
+
+## Protocol decision checklist
+
+Before choosing the stack, answer:
+
+1. Which devices must be read locally?
+2. Where will scaling, units, naming, and bad-quality handling be applied?
+3. What happens during network loss?
+4. Which system is the first trustworthy consumer of the data?
+5. Does the upstream platform need events, current state, history, or structured equipment context?
+6. Who will troubleshoot protocol failures at 2 a.m.?
 
 ## Compare next
 
@@ -28,8 +102,18 @@ These protocols are often discussed as if they are direct substitutes. In practi
 		description="Step back and decide which layer of the system should own translation and data shaping."
 	/>
 	<LinkCard
+		title="Report-by-exception and store-and-forward"
+		href="/protocols/report-by-exception-and-store-and-forward/"
+		description="Use this when protocol choice is really about network cost, buffering, and event behavior."
+	/>
+	<LinkCard
 		title="Industrial telemetry gateways"
 		href="/product-families/industrial-telemetry-gateways/"
 		description="Protocol debates usually become easier once the gateway role is defined."
+	/>
+	<LinkCard
+		title="How often should remote telemetry sites report data?"
+		href="/protocols/how-often-should-remote-telemetry-sites-report-data/"
+		description="Use this when the next decision is reporting interval rather than protocol label."
 	/>
 </div>

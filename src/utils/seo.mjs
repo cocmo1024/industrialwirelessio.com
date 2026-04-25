@@ -68,6 +68,25 @@ function getString(value) {
 	return typeof value === 'string' ? value : undefined;
 }
 
+function getStringArray(value) {
+	return Array.isArray(value) ? value.filter((item) => typeof item === 'string') : [];
+}
+
+function getReferenceType(route) {
+	return getString(route.entry?.data?.referenceType);
+}
+
+function getPageTopics({ title, primaryKeyword, articleSection, referenceType, keyQuestions }) {
+	return Array.from(
+		new Set(
+			[primaryKeyword, articleSection, referenceType, title, ...keyQuestions]
+				.filter((value) => typeof value === 'string')
+				.map((value) => value.trim())
+				.filter(Boolean)
+		)
+	);
+}
+
 function toIsoDate(value) {
 	if (!value) return undefined;
 	const parsed = value instanceof Date ? value : new Date(value);
@@ -315,14 +334,23 @@ export function buildSeo(route, currentUrl) {
 	const title = getString(route.entry?.data?.title) ?? siteMeta.name;
 	const description = getString(route.entry?.data?.description) ?? siteMeta.description;
 	const primaryKeyword = getString(route.entry?.data?.primaryKeyword);
+	const referenceType = getReferenceType(route);
 	const canonicalUrl = new URL(currentUrl.pathname, `${siteMeta.siteUrl}/`).toString();
 	const articleSection = getFirstSectionLabel(route);
 	const breadcrumbs = buildBreadcrumbs(route, canonicalUrl, title);
 	const publishedTime = getPublishedTime(route);
 	const modifiedTime = getModifiedTime(route);
-	const articleTags = Array.from(
-		new Set([...(primaryKeyword ? [primaryKeyword] : []), ...siteMeta.keywords])
-	).slice(0, 8);
+	const keyQuestions = getStringArray(route.entry?.data?.keyQuestions).slice(0, 3);
+	const pageTopics = getPageTopics({
+		title,
+		primaryKeyword,
+		articleSection,
+		referenceType,
+		keyQuestions,
+	});
+	const articleTags = pageTopics
+		.filter((topic) => topic !== title)
+		.slice(0, 8);
 	const imageObjects = buildImageObjects(canonicalUrl);
 	const primaryImage = imageObjects[0];
 	const webpageId = `${canonicalUrl}#webpage`;
@@ -350,7 +378,9 @@ export function buildSeo(route, currentUrl) {
 					inLanguage: siteMeta.languageTag,
 					isPartOf: { '@id': `${siteMeta.siteUrl}/#website` },
 					primaryImageOfPage: { '@id': primaryImage['@id'] },
-					about: currentProfileEntity?.expertise ?? siteMeta.keywords,
+					about:
+						currentProfileEntity?.expertise ??
+						(pageKind === 'home' || pageKind === 'section' ? siteMeta.keywords : pageTopics),
 					...(breadcrumbs.length > 1 ? { breadcrumb: { '@id': breadcrumbId } } : {}),
 					...(authorship.author ? { author: { '@id': authorship.author.id } } : {}),
 					...(authorship.editor ? { editor: { '@id': authorship.editor.id } } : {}),
@@ -376,7 +406,7 @@ export function buildSeo(route, currentUrl) {
 					image: imageObjects.map((image) => ({ '@id': image['@id'] })),
 					isPartOf: { '@id': `${siteMeta.siteUrl}/#website` },
 					isAccessibleForFree: true,
-					about: siteMeta.keywords,
+					about: pageTopics,
 					...(articleSection ? { articleSection } : {}),
 					...(articleTags.length ? { keywords: articleTags.join(', ') } : {}),
 					...(publishedTime ? { datePublished: publishedTime } : {}),

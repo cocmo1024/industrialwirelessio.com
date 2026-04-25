@@ -1,6 +1,25 @@
 ---
 title: Site Survivability Planning
-description: A framework for designing telemetry systems that can withstand remote field conditions and limited maintenance access.
+description: How to design remote telemetry systems that keep useful local state, alarms, power, and recovery behavior when field conditions are bad.
+referenceType: reliability
+adProfile: reliability
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Helps teams define what a remote telemetry site must survive before they choose routers, gateways, power systems, and alarm rules.
+readerTakeaway: You should leave with a survivability checklist tied to power, communications loss, local buffering, alarms, cabinet environment, and field service.
+primaryKeyword: remote telemetry site survivability planning
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Utility engineers
+  - Field service managers
+  - Telemetry integrators
+  - OT reliability owners
+keyQuestions:
+  - What should a remote telemetry site survive?
+  - How should local fallback be defined?
+  - Which failures should be designed before hardware selection?
 ---
 
 import { LinkCard } from '@astrojs/starlight/components';
@@ -9,17 +28,62 @@ import { LinkCard } from '@astrojs/starlight/components';
 
 Remote systems should be designed around the days when everything is inconvenient: weak coverage, bad weather, no immediate site access, and power behaving worse than the design spreadsheet assumed. Survivability planning is where architecture earns trust.
 
-## Survivability priorities
+A site that works only when the link is stable, the battery is healthy, the cabinet stays dry, and a technician is nearby is not truly a remote telemetry site. It is a connected field installation with optimistic assumptions.
 
-- Local resilience when communications fail temporarily.
-- Physical protection against environmental stress and mounting realities.
-- Recovery procedures that do not require expert intervention for routine failures.
+## Quick answer
 
-## Ask early
+A survivable remote telemetry site preserves the local operating story when the network is unavailable, protects its power and cabinet environment, exposes meaningful failure states, and can be recovered by the intended field team without expert improvisation. Survivability is not one feature. It is the combined behavior of power, communications, I/O, buffering, alarm rules, physical installation, and service process.
 
-- What happens if the site cannot be reached for longer than expected?
-- Which failures should trigger alerts, local fallback, or store-and-forward behavior?
-- Which components are most likely to fail first, and how hard are they to replace?
+## Survivability dimensions
+
+| Dimension | What to define | Common failure if skipped |
+| --- | --- | --- |
+| Communications loss | What the site stores, alarms, retries, and reports after reconnect | Operators see current state but lose event sequence |
+| Power instability | Battery runtime, brownout behavior, restart order, fuse isolation | The site disappears or restarts into an unknown state |
+| Cabinet environment | Condensation, heat, surge paths, grounding, corrosion, water entry | Intermittent failures are blamed on the router or carrier |
+| Local signal integrity | Sensor faults, stuck inputs, noisy analogs, failed counters | Bad data looks like real process behavior |
+| Field service | Replacement procedure, labeling, remote access, spare parts | Simple failures require specialist support |
+| Alarm discipline | Priority, deadband, persistence, latching, stale-data rules | Operators stop trusting the site |
+
+## The questions to answer before hardware selection
+
+1. How long can the site be unreachable before operations loses unacceptable visibility?
+2. Which events must be preserved locally if the network is down?
+3. Which alarms must leave immediately and which can wait?
+4. What should the upstream system show when data is stale?
+5. What happens after battery depletion, brownout, or restart?
+6. Who can safely replace or reset the field device?
+7. What information must be visible from the cabinet door or remote management tool?
+
+These questions usually matter more than a router speed rating.
+
+## Local fallback is not one thing
+
+Local fallback may include:
+
+- latching critical alarms;
+- preserving event sequence;
+- controlling a local output safely;
+- storing interval data until reconnect;
+- reducing data volume under low power;
+- keeping last-known state with timestamp;
+- or entering a safe local mode when upstream control disappears.
+
+The team should define fallback by consequence. A tank level site, a generator fuel site, a lift station, and a cathodic-protection rectifier do not need the same fallback behavior.
+
+## Minimum acceptance test
+
+Before calling a remote site ready, simulate:
+
+- network loss and reconnect;
+- power interruption and restart;
+- bad sensor value;
+- alarm transition during outage;
+- cabinet door service event;
+- antenna or signal degradation;
+- and upstream stale-data display.
+
+The test should prove what operators and technicians will see, not only that packets eventually arrive.
 
 ## Compare next
 
@@ -28,6 +92,16 @@ Remote systems should be designed around the days when everything is inconvenien
 		title="Power, enclosures, and antennas"
 		href="/hardware/power-enclosures-and-antennas/"
 		description="Physical-layer discipline is one of the fastest ways to improve site survivability."
+	/>
+	<LinkCard
+		title="Alarm latching, last-known state, and local buffering"
+		href="/reliability/alarm-latching-last-known-state-and-local-buffering-for-unattended-sites/"
+		description="Use this when the main survivability question is what the site remembers during a network outage."
+	/>
+	<LinkCard
+		title="Out-of-band management and local fallback"
+		href="/reliability/out-of-band-management-and-local-fallback-for-unattended-sites/"
+		description="Use this when recovery access and local autonomy need stronger design."
 	/>
 	<LinkCard
 		title="Cellular vs LoRaWAN vs satellite"
