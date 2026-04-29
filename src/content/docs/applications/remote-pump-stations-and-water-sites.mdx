@@ -34,7 +34,7 @@ import { LinkCard } from '@astrojs/starlight/components';
 
 # Remote Pump Stations and Water Sites
 
-Remote pump stations and water sites reward simple, durable architectures. Power can be limited, access windows are sparse, and reliability matters more than feature density. Real buyers are not usually searching for a generic wireless stack. They are asking how to make a remote site visible, supportable, and dependable without creating a maintenance burden the organization cannot absorb.
+Remote pump stations and water sites reward simple, durable architectures. Power can be limited, access windows are sparse, and reliability matters more than feature density. Real buyers are usually not searching for a generic wireless stack. They are asking how to make a remote site visible, supportable, and dependable without creating a maintenance burden the organization cannot absorb.
 
 ## What matters first
 
@@ -47,40 +47,17 @@ The best remote-site telemetry architectures usually prioritize four things in t
 
 That usually leads to a modest, rugged field architecture: a gateway or RTU-class device at the site boundary, conservative alarm logic, store-and-forward behavior, disciplined power and enclosure planning, and a backhaul path chosen from real coverage confidence rather than generic preference.
 
-## When this page should guide your design
-
-Use this page when you are dealing with:
-
-- remote pump stations or lift stations with sparse site access;
-- water or wastewater assets where alarm visibility matters more than high-volume analytics;
-- sites with constrained solar, battery, or utility power;
-- networks where coverage quality is uncertain or seasonal;
-- field teams who need quick replacement and recovery more than feature density.
-
-If the site is effectively a staffed plant area with strong wired infrastructure, this page will be less central.
-
-## Why these sites are different
-
-Water and pump sites often combine:
-
-- intermittent or constrained power budgets;
-- uneven network coverage or backhaul uncertainty;
-- limited opportunities for on-site troubleshooting;
-- strong uptime expectations relative to staffing and site access.
-
-That mix changes the architecture. Local resilience, serviceability, and physical implementation matter as much as the radio choice.
-
 ## A reference architecture that usually holds up
 
 For many remote pump and water sites, the durable pattern looks like this:
 
 | Layer | Preferred job | Why it matters |
 | --- | --- | --- |
-| Sensors / local signals | Expose the few measurements and status points that matter operationally | Prevents overscoping the site from day one |
-| Field controller / RTU / gateway | Collect, buffer, alarm, and translate locally | Maintains usefulness when communications are intermittent |
+| Sensors and local signals | Expose the few measurements and status points that matter operationally | Prevents overscoping the site from day one |
+| Pump controller, RTU, or gateway | Collect, buffer, alarm, and translate locally | Maintains usefulness when communications are intermittent |
 | Communications path | Cellular, private APN, or dual-path depending on site criticality | Keeps visibility aligned with real coverage conditions |
-| Alarm and event model | Distinguish urgent, actionable alarms from low-value chatter | Protects operators from alarm fatigue |
-| Power / enclosure / antenna stack | Keep the site survivable in weather, surge, and low-maintenance conditions | Prevents â€œcommunications problemsâ€?that are actually physical deployment problems |
+| Alarm and event model | Distinguish urgent alarms from low-value chatter | Protects operators from alarm fatigue |
+| Power, enclosure, and antenna stack | Keep the site survivable in weather, surge, and low-maintenance conditions | Prevents "communications problems" that are actually physical deployment problems |
 
 This architecture is intentionally simple. Simplicity is not a lack of sophistication at remote sites. It is often the design choice that keeps the system supportable.
 
@@ -91,9 +68,10 @@ The best designs usually optimize for:
 - dependable alarm visibility;
 - store-and-forward behavior when communications are unstable;
 - easy replacement or servicing of field components;
-- hardware categories chosen for operational fit, not capability density.
+- hardware categories chosen for operational fit, not capability density;
+- clear ownership of remote access, local control, and field recovery.
 
-This is why simple, well-scoped designs often outperform more ambitious stacks in remote water environments.
+If the site cannot explain what happens during a communications outage, the architecture is not finished.
 
 ## How to choose the backhaul path
 
@@ -104,17 +82,7 @@ The backhaul decision should be made from site reality, not technology preferenc
 - **Dual-path design** is justified when the site is operationally critical enough that a single communications path creates unacceptable alarm risk.
 - **LoRaWAN or other low-power paths** can fit some monitoring patterns, but only when the site density, data pattern, and network ownership model are aligned.
 
-The question is not â€œwhich network is best.â€?The question is â€œwhich network path fails in the most understandable and recoverable way for this site type?â€?
-## Common design implications
-
-Pump station and water telemetry designs often benefit from:
-
-- a gateway or RTU-class device that can buffer and translate cleanly;
-- a network path chosen from actual coverage confidence, not assumptions;
-- disciplined power, enclosure, and antenna planning;
-- fallback logic that recognizes field-access delays as normal.
-
-When those pieces are weak, the system may work in good weather and fail in the exact conditions that matter most.
+The question is not "which network is best." The question is "which network path fails in the most understandable and recoverable way for this site type?"
 
 ## Alarm design is part of the architecture
 
@@ -125,9 +93,30 @@ Teams should define:
 - which alarms require immediate human action;
 - which conditions should buffer locally and report later;
 - which points need deadbands or report-by-exception logic;
-- what happens when the site loses communications during an event.
+- what happens when the site loses communications during an event;
+- how operators distinguish live state from stale state.
 
 Without those rules, the system may appear connected but still fail the actual job of remote operations.
+
+## What remote access should and should not do
+
+Remote access is useful for pump-station fleets, but it should be introduced carefully.
+
+Good first-phase remote access usually includes:
+
+- live status and alarm visibility;
+- event review and last-known-state context;
+- communications, battery, and cabinet-health diagnostics;
+- documented acknowledgement workflows.
+
+Remote command requires stricter discipline:
+
+- local interlocks must remain authoritative;
+- user actions must be logged;
+- reset or override behavior should be time-bounded;
+- remote setpoint changes need policy, approval, and rollback expectations.
+
+If the system allows remote users to bypass local safety or operating boundaries casually, the remote-access layer is overreaching.
 
 ## What to pressure-test early
 
@@ -163,7 +152,8 @@ The most expensive remote-site failures are usually not caused by exotic technic
 - undersized solar or battery planning;
 - enclosures and antennas chosen without service and weather reality in mind;
 - poor alarm priority design that creates noise instead of action;
-- hardware selected for features rather than for recoverability.
+- remote access enabled before safety, authority, and support boundaries are defined;
+- hardware selected for features rather than recoverability.
 
 That is why field telemetry design should be treated as an operating-system problem for the site, not just a communications purchase.
 
@@ -171,24 +161,19 @@ That is why field telemetry design should be treated as an operating-system prob
 
 <div class="portal-links">
 	<LinkCard
+		title="Stormwater pump controller remote access"
+		href="/applications/stormwater-and-flood-control-site-telemetry-for-unattended-assets/"
+		description="Use this when storm events, pump controller authority, and remote command boundaries are the core issue."
+	/>
+	<LinkCard
 		title="Cellular vs LoRaWAN vs satellite"
 		href="/network-paths/cellular-vs-lorawan-vs-satellite/"
 		description="Match the network path to terrain, site density, power, and maintenance reality."
 	/>
 	<LinkCard
-		title="Lift stations and sewer network telemetry"
-		href="/applications/lift-stations-and-sewer-network-telemetry/"
-		description="Apply the same remote-site discipline to sewer assets where alarm visibility is especially critical."
-	/>
-	<LinkCard
 		title="Remote tank level telemetry"
 		href="/applications/remote-tank-level-telemetry-for-water-and-wastewater/"
 		description="Translate the same field constraints into a classic remote monitoring deployment."
-	/>
-	<LinkCard
-		title="Industrial telemetry gateways"
-		href="/product-families/industrial-telemetry-gateways/"
-		description="Choose the device class that owns the field boundary with the least operational burden."
 	/>
 	<LinkCard
 		title="Report by exception and store-and-forward"

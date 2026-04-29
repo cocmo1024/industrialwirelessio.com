@@ -85,6 +85,17 @@ import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
 	/>
 </div>
 
+## What "industrial wireless" means here
+
+This site treats **industrial wireless** as a field-architecture problem, not only a radio choice. The useful decisions usually involve:
+
+- remote pump stations, tanks, generators, pipelines, valves, and unattended cabinets;
+- cellular, private APN, LoRaWAN, satellite, and dual-path backhaul tradeoffs;
+- remote I/O, RTU, gateway, router, antenna, and cabinet design as one deployment stack;
+- alarm behavior, stale-data rules, local buffering, and field recovery after outages.
+
+The goal is not to make every site more connected. The goal is to make remote assets visible, supportable, and recoverable when site access, weather, power, and communications are imperfect.
+
 ## Current priority clusters
 
 The homepage stays curated. New field telemetry pages should enter the appropriate hub first; this page promotes only durable cluster entrances with clear remote-site search intent.
