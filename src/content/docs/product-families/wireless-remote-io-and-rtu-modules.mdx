@@ -20,6 +20,7 @@ keyQuestions:
   - When should a remote site use wireless remote I/O?
   - When is an RTU better than a router or gateway?
   - Which field-side responsibilities should remain local during an outage?
+lastReviewed: 2026-05-01
 ---
 
 import { LinkCard } from '@astrojs/starlight/components';
@@ -34,6 +35,8 @@ The category gets confusing because product names overlap. Some devices call the
 
 Use wireless remote I/O when the job is modest field signal collection with simple reporting. Use an RTU-class device when the site needs local alarm logic, basic control, store-and-forward behavior, or survivability during communications loss. Use a telemetry gateway or router when the field logic already exists elsewhere and the primary problem is backhaul, protocol movement, or remote access.
 
+For searchers using the phrase **wireless I/O**, the practical question is usually narrower: "Can I collect field points without building a full control cabinet or SCADA remote terminal?" Sometimes yes. But if the site has alarms, outputs, or outage consequences, the answer quickly moves from wireless I/O toward RTU-class behavior.
+
 ## Device-class boundary
 
 | Device class | Best fit | Weak fit |
@@ -42,6 +45,19 @@ Use wireless remote I/O when the job is modest field signal collection with simp
 | RTU-class module | Alarm handling, local state, simple control, store-and-forward, harsh unattended sites | Pure networking or high-throughput edge compute |
 | Telemetry gateway | Protocol translation, data buffering, upstream delivery, several connected devices | Direct field wiring without enough local I/O support |
 | Industrial router | Cellular or Ethernet backhaul, VPN, remote access, failover | Field-side signal ownership or local alarm logic |
+
+## Wireless I/O versus RTU: the real split
+
+| Requirement | Wireless remote I/O is usually enough | RTU-class behavior is safer |
+| --- | --- | --- |
+| Read a few tank, pressure, door, or run-status points | Yes | Only if alarm sequence or local control matters |
+| Preserve exact alarm order during a network outage | Sometimes | Usually |
+| Control a relay output based on local condition | Sometimes | Usually |
+| Run on solar or limited backup power | Often | Often, but logic and reporting must be tuned |
+| Replace device by field technician with minimal software | Often | Depends on configuration discipline |
+| Support several protocols and upstream consumers | Usually not | Sometimes, or use a gateway |
+
+The product label is less important than local responsibility. If the device must decide, latch, buffer, or protect state locally, treat it as more than remote I/O.
 
 ## What to define before selection
 

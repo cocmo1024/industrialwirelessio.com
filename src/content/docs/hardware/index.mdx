@@ -1,6 +1,22 @@
 ---
 title: Hardware
 description: Hardware reference pages for remote telemetry stacks including gateways, power systems, antennas, enclosures, and field I/O.
+referenceType: hardware
+adProfile: hardware
+commercialIntent: high
+reviewCadence: Monthly review
+primaryKeyword: industrial wireless hardware
+searchIntent: select
+decisionStage: shortlist
+targetRoles:
+  - Field engineers
+  - Utility engineers
+  - System integrators
+  - Maintenance planners
+contentStatus: cornerstone
+problemSolved: Helps teams select the remote telemetry hardware stack as a field-ready footprint instead of comparing routers, antennas, I/O, and cabinets as isolated parts.
+readerTakeaway: You should leave with a practical way to connect gateway, remote I/O, router, power, antenna, grounding, and enclosure decisions.
+lastReviewed: 2026-05-01
 ---
 
 import { LinkCard, Steps } from '@astrojs/starlight/components';
@@ -8,6 +24,21 @@ import { LinkCard, Steps } from '@astrojs/starlight/components';
 # Hardware
 
 Hardware should be evaluated as a site footprint, not as isolated line items. The gateway, I/O, power design, antenna plan, and enclosure choices either work together or fail together in the field.
+
+The highest-cost hardware mistakes usually happen before the bill of materials is written. A team chooses a good router but ignores antenna loss. It buys a strong gateway but leaves no safe service access. It adds remote I/O but does not define output fail states. It chooses a cabinet but forgets condensation, surge paths, battery isolation, or what a technician can actually replace in winter.
+
+## Hardware stack map
+
+| Layer | What it owns | Common failure when ignored |
+| --- | --- | --- |
+| Field signals | Discrete inputs, analog values, pulse counters, relay outputs | Alarms exist in the asset but never become reliable events |
+| Remote I/O or RTU | Local point collection, alarm latching, basic local behavior | Network outage turns into data loss or unsafe ambiguity |
+| Gateway or router | Protocol movement, backhaul, VPN, remote access, store-and-forward | Connectivity works in a demo but not after carrier, power, or antenna issues |
+| Antenna and feedline | Usable RF path, mounting height, grounding, serviceability | Weak signal is blamed on the carrier when the physical layer is the problem |
+| Cabinet power | DC distribution, fusing, battery isolation, surge protection | One fault takes down the whole site or damages multiple devices |
+| Enclosure environment | Heat, condensation, dust, water, insects, service access | Electronics fail despite being specified correctly |
+
+Remote telemetry hardware should be selected as a system because each layer changes the risk profile of the next.
 
 ## Core paths
 
@@ -63,6 +94,32 @@ Hardware should be evaluated as a site footprint, not as isolated line items. Th
 		description="Use reliability planning to stress-test the hardware stack against failure modes and service intervals."
 	/>
 </div>
+
+## What to define before buying hardware
+
+Before comparing product families, define:
+
+1. required signals and whether any output can affect equipment state;
+2. reporting interval, alarm urgency, and store-and-forward expectation;
+3. available power, backup duration, and brownout behavior;
+4. cabinet location, environmental exposure, and service access;
+5. expected network path and antenna mounting options;
+6. who will replace, reconfigure, and test the hardware after year one.
+
+If the project cannot answer those questions, hardware selection is premature.
+
+## Industrial wireless hardware shortlist rule
+
+For fixed remote sites, the best hardware shortlist usually removes devices that:
+
+- cannot expose clear offline and stale-data status;
+- require laptop-only recovery for basic field faults;
+- lack enough I/O or expansion path for the real signal list;
+- cannot tolerate the cabinet temperature, power, or surge environment;
+- force proprietary remote access that the owner cannot govern;
+- or make antenna, SIM, battery, and replacement procedures awkward.
+
+The right hardware is rarely the most feature-rich device. It is the device stack that field technicians can keep alive.
 
 ## Hardware planning flow
 
