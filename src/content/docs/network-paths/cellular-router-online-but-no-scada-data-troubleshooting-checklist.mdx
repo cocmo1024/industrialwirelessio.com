@@ -1,0 +1,367 @@
+---
+title: "Cellular Router Online but No SCADA Data: APN, VPN, Routing, DNS, and Firewall Checklist"
+description: A practical troubleshooting checklist for remote telemetry sites where the cellular router shows online but SCADA, MQTT, historian, or remote-access traffic still does not work.
+referenceType: network-path
+adProfile: network-path
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Helps field and OT teams separate carrier attach, APN, VPN, routing, DNS, firewall, NAT, protocol, and supervisory-system causes when a remote cellular telemetry site appears connected but does not move useful data.
+readerTakeaway: You should leave with a staged troubleshooting method for proving where the remote telemetry path is broken after the modem or router reports that it is online.
+primaryKeyword: cellular router online but no data
+searchIntent: deploy
+decisionStage: implementation
+targetRoles:
+  - Field technicians
+  - OT network engineers
+  - SCADA engineers
+  - Telemetry integrators
+  - Utility operations teams
+keyQuestions:
+  - Why is a cellular router online but SCADA data is not updating?
+  - How should APN, VPN, DNS, routing, and firewall problems be separated?
+  - What evidence should be collected before blaming the carrier or replacing hardware?
+notFor:
+  - Office Wi-Fi or consumer mobile troubleshooting
+  - Sites where the router never registers on the carrier network
+  - Teams without access to router diagnostics, SCADA status, or network ownership
+updateTriggers:
+  - Repeated remote telemetry sites that show online but fail to update
+  - New carrier, APN, VPN, or firewall architecture changes
+  - Changes to SCADA polling, MQTT broker, DNS, or remote-access policy
+---
+
+# Cellular Router Online but No SCADA Data: APN, VPN, Routing, DNS, and Firewall Checklist
+
+One of the most frustrating remote telemetry failures is the site that looks connected but still does not work.
+
+The cellular router shows registered. The modem has an IP address. The signal metrics look acceptable. The site may even respond to a basic ping. But the SCADA point stays stale, the MQTT broker receives nothing, the historian stops updating, or remote access cannot reach the PLC or RTU.
+
+That is not one problem. It is a path problem.
+
+Remote telemetry traffic crosses several boundaries:
+
+- carrier attach;
+- SIM and APN profile;
+- cellular IP assignment;
+- router interface state;
+- local LAN addressing;
+- default route;
+- NAT or no-NAT decision;
+- VPN tunnel;
+- firewall policy;
+- DNS;
+- protocol port;
+- SCADA, MQTT, OPC UA, or historian endpoint;
+- stale-data handling in the supervisory system.
+
+If the team treats "router online" as equivalent to "telemetry working," it will waste hours replacing hardware that is not the cause.
+
+## Quick answer
+
+When a cellular router is online but telemetry data is not moving, troubleshoot in layers:
+
+1. Confirm carrier registration and IP assignment.
+2. Confirm the APN and SIM profile are correct.
+3. Confirm local device addressing and gateway settings.
+4. Confirm outbound path, default route, DNS, and NAT behavior.
+5. Confirm VPN tunnel status if the architecture uses VPN.
+6. Confirm firewall rules and allowed ports.
+7. Confirm protocol health from both ends.
+8. Confirm the supervisory system is not showing stale data as live data.
+
+Do not begin by replacing antennas, routers, SIMs, or carriers. Begin by proving which layer is broken.
+
+## Router online does not mean application online
+
+A router can be online at several different levels.
+
+| Status shown | What it proves | What it does not prove |
+| --- | --- | --- |
+| Modem registered | The modem attached to a carrier network | APN, data path, VPN, or SCADA traffic works |
+| IP address assigned | The carrier gave the router an address | The address is reachable from the enterprise side |
+| Signal metrics acceptable | RF may be usable | Routing, firewall, DNS, or endpoint config is correct |
+| VPN connected | Tunnel negotiation succeeded | LAN routes, firewall rules, and protocol ports are correct |
+| Ping works | ICMP path may work | Modbus, DNP3, MQTT, OPC UA, HTTPS, or vendor protocol works |
+| SCADA point present | The tag exists in software | The value is fresh, current, or correctly timestamped |
+
+The goal is to identify the highest layer that is proven good and the first layer that fails.
+
+## Layer 1: confirm registration and data session
+
+Start at the cellular layer, but do not stop there.
+
+Capture:
+
+- registration state;
+- network technology;
+- carrier name or PLMN;
+- serving cell if available;
+- RSRP, RSRQ, and SINR;
+- SIM ICCID or identifier;
+- IMEI;
+- APN name;
+- assigned IP address;
+- session uptime;
+- data counters;
+- reconnect history;
+- recent modem errors.
+
+If the router has no data session, the problem may be:
+
+- inactive SIM;
+- wrong APN;
+- carrier provisioning error;
+- exhausted or suspended data plan;
+- wrong modem band profile;
+- poor RF;
+- damaged antenna path;
+- router firmware or modem module issue.
+
+If the router has a data session, move upward. Do not keep arguing about signal strength unless the session is unstable.
+
+## Layer 2: APN and SIM profile
+
+The APN decides which carrier data environment the site enters. A wrong APN can still allow a router to look partially connected while blocking the path the owner expects.
+
+Check:
+
+- exact APN spelling;
+- private APN versus public internet APN;
+- username and password if required;
+- static IP assignment if expected;
+- carrier-side route assignment;
+- data plan attached to the SIM;
+- whether the SIM belongs to the correct enterprise account;
+- whether the SIM is provisioned for the router modem type;
+- whether roaming is expected or forbidden.
+
+Common APN failure pattern:
+
+> The site works on a public APN during bench testing, then fails after moving to the private APN because routes, firewall rules, or DNS were never matched to the production path.
+
+Record the APN used in both bench and field tests. Many "field failures" are actually profile changes between staging and deployment.
+
+## Layer 3: local LAN addressing
+
+If the router is online but the PLC, RTU, meter, or remote I/O is unreachable, inspect the local LAN.
+
+Check:
+
+- local device IP address;
+- subnet mask;
+- default gateway;
+- duplicate IP conflicts;
+- switch port link status;
+- VLAN or port isolation;
+- static route requirements;
+- whether the field device allows traffic from the router subnet;
+- whether the field device is listening on the expected protocol port;
+- whether the field device has restarted into a default network profile.
+
+The most common local error is simple: the field device does not point back to the router as its gateway, so inbound or VPN-originated traffic reaches the site but replies go nowhere.
+
+## Layer 4: routing and NAT
+
+Remote telemetry architectures usually choose between two broad models:
+
+- outbound publishing from the site;
+- routed or VPN access into the site.
+
+Those models need different routing behavior.
+
+For outbound publishing, confirm:
+
+- default route points through the cellular interface;
+- DNS resolves the broker or API endpoint;
+- firewall permits outbound protocol traffic;
+- NAT is applied correctly if needed;
+- broker credentials and TLS settings are correct.
+
+For routed access, confirm:
+
+- enterprise network knows the route to the remote LAN;
+- router advertises or holds the expected LAN route;
+- NAT is disabled or intentionally configured;
+- return path exists;
+- overlapping IP ranges do not exist across sites;
+- split tunnel or full tunnel behavior is understood.
+
+Routing failures often look like application failures because the field device receives a request but cannot return the response.
+
+## Layer 5: DNS
+
+DNS is easy to overlook because many industrial systems still use IP addresses. But modern telemetry often uses hostnames for:
+
+- MQTT brokers;
+- HTTPS APIs;
+- VPN endpoints;
+- NTP servers;
+- certificate validation;
+- cloud ingestion endpoints;
+- remote management platforms.
+
+Check:
+
+- configured DNS servers;
+- whether DNS queries leave the router;
+- whether private DNS is required on a private APN;
+- whether public DNS is blocked by policy;
+- whether the hostname resolves differently on public internet and private network;
+- whether the router caches a stale result;
+- whether the PLC or gateway uses its own DNS configuration.
+
+If a site can ping an IP address but cannot connect to a hostname, stop debugging the protocol and fix DNS.
+
+## Layer 6: VPN tunnel
+
+VPN status needs more detail than "connected."
+
+Check:
+
+- tunnel establishment time;
+- remote and local subnets;
+- phase 1 and phase 2 settings if IPsec is used;
+- certificate or key validity;
+- route injection;
+- keepalive or dead-peer detection;
+- rekey failures;
+- split tunnel rules;
+- firewall rules on both ends;
+- whether the tunnel reconnects after carrier drop.
+
+Common failure pattern:
+
+> The VPN is connected, but the SCADA server cannot reach the PLC because the tunnel policy includes only the router IP, not the LAN subnet behind it.
+
+Another common failure:
+
+> The tunnel includes the correct subnet, but another remote site uses the same LAN range, so routing becomes ambiguous.
+
+Every fixed telemetry deployment should have a site addressing plan. Duplicate `192.168.1.0/24` networks eventually become operational debt.
+
+## Layer 7: firewall and ports
+
+Prove protocol reachability, not just network reachability.
+
+Common telemetry ports include:
+
+- Modbus TCP;
+- DNP3 TCP or UDP;
+- MQTT or MQTTS;
+- OPC UA;
+- HTTPS;
+- SSH or vendor management;
+- VPN protocols;
+- NTP;
+- DNS.
+
+Do not open broad access just to make troubleshooting easier. Instead, record:
+
+- source IP;
+- destination IP;
+- destination port;
+- protocol;
+- direction;
+- owner;
+- business reason;
+- logging expectation;
+- expiration date if temporary.
+
+If ping works but the protocol does not, check port policy before blaming the PLC, router, or carrier.
+
+## Layer 8: application and stale-data behavior
+
+Sometimes the network works, but the application view is misleading.
+
+Check:
+
+- last successful poll;
+- last value timestamp;
+- last communication timestamp;
+- stale-data threshold;
+- whether old values remain displayed without a stale flag;
+- whether the SCADA driver is disabled;
+- whether tag addressing changed;
+- whether protocol errors are being suppressed;
+- whether the historian is accepting late data;
+- whether alarms are latched locally but not cleared upstream.
+
+A remote site should not merely show values. It should show freshness.
+
+If the router was offline for 40 minutes and then reconnects, the operator needs to know which data is current, which is replayed, and which is still missing.
+
+## Troubleshooting sequence
+
+Use this field sequence:
+
+1. Record current site time, router time, and SCADA time.
+2. Export or screenshot cellular status.
+3. Confirm SIM, APN, IP, and data counters.
+4. Test DNS resolution from the router or gateway.
+5. Test outbound reachability to broker, API, or VPN endpoint.
+6. Test local LAN reachability from the router.
+7. Test enterprise-side reachability to the router or remote LAN if allowed.
+8. Test protocol port reachability.
+9. Confirm application freshness and timestamps.
+10. Change only one variable at a time.
+
+Do not swap SIM, router, antenna, APN, and firewall policy in the same maintenance window. That destroys the evidence chain.
+
+## What evidence to collect before escalation
+
+Before escalating to the carrier, network team, SCADA team, or hardware vendor, collect:
+
+- site name and asset type;
+- router model and firmware;
+- SIM identifier;
+- APN;
+- assigned IP address;
+- signal metrics;
+- session uptime and reconnect history;
+- data counters before and after a test;
+- VPN status and route table;
+- DNS test results;
+- ping or TCP test results;
+- firewall logs if available;
+- SCADA last-update timestamp;
+- exact time window of the failure;
+- whether other sites on the same carrier, APN, or VPN were affected.
+
+Escalation without evidence turns into opinion. Evidence narrows ownership.
+
+## Common root causes
+
+| Symptom | Likely area | First check |
+| --- | --- | --- |
+| Router has IP but no broker connection | DNS, firewall, TLS, outbound route | Resolve broker and test port |
+| VPN connected but PLC unreachable | LAN route, tunnel policy, PLC gateway | Route table and PLC default gateway |
+| SCADA point stale but router online | Driver, protocol, stale-data logic | Last poll time and protocol error |
+| Site works on bench but not field | APN, firewall, RF, addressing | Compare bench and field profiles |
+| Ping works but Modbus fails | Port firewall or device listener | TCP port test and device config |
+| Works after reboot then fails | reconnect logic, DNS cache, power, memory | logs around failure time |
+| Multiple sites fail together | APN, carrier core, VPN concentrator, firewall | shared dependency map |
+
+## Design improvements that prevent repeat failures
+
+After the immediate fault is fixed, improve the architecture:
+
+- keep a standard site addressing plan;
+- record SIM, APN, VPN, and firewall ownership;
+- expose router health into the telemetry view;
+- display stale-data status clearly;
+- log signal quality, not only online/offline status;
+- test DNS and endpoint reachability during commissioning;
+- keep router configuration backups;
+- define temporary firewall change procedure;
+- avoid overlapping LAN ranges;
+- require a site acceptance test that proves application-level data movement.
+
+The best remote telemetry systems make the next failure easier to diagnose.
+
+## Related references
+
+- [Cellular signal quality RSRP, RSRQ, and SINR checklist](/network-paths/cellular-signal-quality-rsrp-rsrq-sinr-checklist-for-remote-telemetry/)
+- [Cellular SIM, APN, VPN, and carrier operations checklist](/network-paths/cellular-telemetry-sim-apn-vpn-and-carrier-operations-checklist/)
+- [Industrial remote access security boundaries](/network-paths/industrial-remote-access-security-boundaries-for-unattended-telemetry-sites/)
+- [Remote telemetry commissioning and site acceptance checklist](/reliability/remote-telemetry-commissioning-and-site-acceptance-checklist/)
