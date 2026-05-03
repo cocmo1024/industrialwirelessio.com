@@ -1,0 +1,194 @@
+---
+title: Internet-Facing PLC Exposure Checklist for Remote Telemetry Sites
+description: A field-ready checklist for finding and removing internet-facing PLC, HMI, router, VPN, and remote access exposure at remote water, energy, and utility telemetry sites.
+referenceType: network-path
+adProfile: network-path
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: internet facing PLC remote telemetry
+searchIntent: deploy
+decisionStage: operations
+targetRoles:
+  - Utility telemetry engineers
+  - OT cybersecurity teams
+  - SCADA engineers
+  - Remote site technicians
+  - System integrators
+contentStatus: cornerstone
+problemSolved: How to separate remote telemetry from unsafe PLC exposure when unattended field sites use cellular routers, VPNs, vendor access, or legacy remote access shortcuts.
+readerTakeaway: You should leave with a practical checklist for remote sites that publish telemetry without making PLCs or engineering services reachable from the public internet.
+keyQuestions:
+  - How do remote telemetry sites accidentally expose PLCs?
+  - What should be checked after a cellular router or VPN change?
+  - How should telemetry transport and remote maintenance access be separated?
+notFor:
+  - Incident response after confirmed compromise
+  - High-security environments with a formal OT SOC already governing every remote access path
+updateTriggers:
+  - New CISA, NIST, or vendor guidance involving internet-facing OT devices
+  - Carrier, router, VPN, or remote access product changes
+  - New critical infrastructure advisories involving water, energy, or unattended sites
+lastReviewed: 2026-05-04
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Internet-Facing PLC Exposure Checklist for Remote Telemetry Sites
+
+Remote telemetry often begins with a cellular router, VPN tunnel, modem, or managed remote access service. That equipment can be safe when configured as a controlled boundary. It can also create the exact failure that OT teams are trying to avoid: a PLC, HMI, RTU, or engineering service that is reachable from outside the intended network.
+
+For unattended water, wastewater, pipeline, energy, and utility sites, this is not theoretical. Public advisories continue to warn that internet-facing operational technology and weak remote access paths create real operational risk. A remote site can be small and still matter if it controls pumps, valves, tanks, pressure, chemical dosing, or electrical equipment.
+
+## Quick answer
+
+Remote telemetry should normally publish data outward or through a controlled VPN path. It should not expose PLC programming services, HMI web pages, router admin pages, or industrial protocol ports directly to the public internet.
+
+Check every remote site after:
+
+- cellular router replacement;
+- SIM/APN change;
+- VPN profile change;
+- vendor support setup;
+- SCADA polling redesign;
+- gateway replacement;
+- emergency troubleshooting;
+- carrier migration;
+- acquisition of old infrastructure.
+
+Most unsafe exposure is not designed intentionally. It is left behind by maintenance shortcuts.
+
+## Exposure checklist
+
+| Check | Pass condition |
+| --- | --- |
+| PLC has no public IP | PLC is only reachable from the intended OT or private network boundary |
+| Router admin is not public | Web, SSH, Telnet, or API administration is disabled externally or restricted |
+| No raw industrial ports exposed | Modbus TCP, EtherNet/IP, S7, DNP3, vendor engineering ports, or HMI ports are not internet-facing |
+| VPN requires named identity | Remote users and vendors do not share one static credential |
+| MFA exists where remote human access is used | Password-only remote maintenance is not the control |
+| Port forwarding is documented or removed | Old NAT rules are not silently exposing devices |
+| Cellular APN behavior is understood | Public, private, static, and carrier NAT behavior are documented |
+| Logs exist | Router, VPN, and access events can be reviewed |
+| Vendor access is time-bound | Support access is not permanently open |
+| Telemetry is separated from maintenance | Data publishing does not imply programming access |
+
+This checklist should be part of remote telemetry commissioning, not only cybersecurity audits.
+
+## How exposure happens
+
+### Cellular router passthrough
+
+A router may be configured so the device behind it receives traffic more directly than expected. This can happen through passthrough modes, static public IP SIMs, carrier configurations, or NAT rules created during troubleshooting.
+
+### Port forwarding for emergency support
+
+A technician opens a port so a vendor can help quickly. The site starts working, the rule stays, and no one records why it exists.
+
+### Router admin left exposed
+
+The PLC may not be exposed, but the router is. If router admin access is reachable and weakly protected, the network boundary can be changed by an attacker.
+
+### Flat remote cabinet network
+
+The cellular router, PLC, HMI, radio, and local switch all sit in one flat network. One exposed service becomes a path to everything.
+
+### Shared vendor VPN
+
+Remote access may be technically private but operationally weak if many users share one credential, MFA is missing, and sessions are not logged.
+
+### Old equipment inherited without records
+
+Water, wastewater, oil and gas, and small utility systems often inherit remote sites with old modems, unknown SIM plans, and undocumented contractor access.
+
+## Separate the paths
+
+Remote site architecture should separate three paths.
+
+| Path | Purpose | Safer design |
+| --- | --- | --- |
+| Telemetry path | Send measurements, alarms, heartbeats, and state | Outbound publish or private SCADA polling through controlled routing |
+| Maintenance path | Let named humans inspect or troubleshoot | VPN or access broker with MFA, logging, and time limits |
+| Engineering path | Program PLC, change logic, update firmware | Human-owned, controlled, logged, and usually not continuously available |
+
+If one router rule handles all three, the site is probably underdesigned.
+
+## Ports and services to review
+
+Do not rely only on port numbers. Still, these categories deserve attention:
+
+- industrial protocol services;
+- PLC programming services;
+- HMI web interfaces;
+- router web administration;
+- SSH and Telnet;
+- remote desktop;
+- VNC;
+- vendor remote support agents;
+- VPN endpoints;
+- cellular management services;
+- MQTT brokers or API services hosted at the site.
+
+The right question is not "is this port bad?" It is "should this service be reachable from this network by this user for this purpose?"
+
+## Field verification process
+
+1. Record the site inventory: router, PLC, HMI, switch, radio, gateway, SIM, antenna, and IP scheme.
+2. Record all inbound and outbound rules on the router and firewall.
+3. Confirm APN type and whether the SIM receives a public, private, or carrier-NAT address.
+4. Test from outside the OT network where allowed.
+5. Review router logs for unexpected inbound attempts.
+6. Disable unused admin services.
+7. Remove unknown port forwards.
+8. Confirm SCADA still receives data.
+9. Confirm vendor support still has a controlled path if needed.
+10. Store the final config and ownership record.
+
+Do not close a site visit with "it works." Close it with "it works, and we know why it is not exposed."
+
+## Telemetry design that avoids exposure
+
+Prefer:
+
+- outbound MQTT or HTTPS from gateway to broker where appropriate;
+- private APN or private WAN for SCADA polling;
+- VPN with named identities and logs;
+- firewall rules from SCADA to specific site devices only;
+- read-only data paths where possible;
+- local buffering during link loss;
+- separate credentials for router admin, VPN, and PLC engineering;
+- documented break-glass process for emergency support.
+
+Avoid:
+
+- public router admin;
+- public PLC programming access;
+- blanket inbound rules;
+- shared contractor passwords;
+- port forwards with no owner;
+- permanently enabled remote desktop;
+- using telemetry VPN as an unrestricted maintenance tunnel.
+
+## Source notes
+
+This page is informed by NIST [SP 800-82 Rev. 3 Guide to Operational Technology Security](https://csrc.nist.gov/pubs/sp/800/82/r3/final), CISA's [Industrial Control Systems](https://www.cisa.gov/ics/) guidance, CISA's advisory on [IRGC-affiliated actors exploiting PLCs](https://www.cisa.gov/news-events/cybersecurity-advisories/aa23-335a), and the 2026 joint advisory PDF [Iranian-Affiliated Cyber Actors Exploit Programmable Logic Controllers Across US Critical Infrastructure](https://media.defense.gov/2026/Apr/07/2003907538/-1/-1/0/AA26-097A-IRANIAN-AFFILIATED-CYBER-ACTORS-EXPLOIT-PROGRAMMABLE-LOGIC-CONTROLLERS-ACROSS-US-CRITICAL-INFRASTRUCTURE_508C.PDF).
+
+## Related paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Industrial remote access security boundaries"
+		href="/network-paths/industrial-remote-access-security-boundaries-for-unattended-telemetry-sites/"
+		description="Use this page when the remote access architecture needs a broader governance model."
+	/>
+	<LinkCard
+		title="Cellular SIM, APN, VPN, and carrier operations"
+		href="/network-paths/cellular-telemetry-sim-apn-vpn-and-carrier-operations-checklist/"
+		description="Carrier and APN behavior can decide whether a remote site is private, public, or misunderstood."
+	/>
+	<LinkCard
+		title="Remote telemetry commissioning checklist"
+		href="/reliability/remote-telemetry-commissioning-and-site-acceptance-checklist/"
+		description="Add exposure checks to normal site acceptance before unattended operation."
+	/>
+</div>
+

@@ -1,0 +1,200 @@
+---
+title: LoRaWAN to OPC UA for Remote Telemetry Architecture
+description: How to think about LoRaWAN, OPC UA mapping, gateways, information models, and remote telemetry architecture after the 2026 OPC Foundation and LoRa Alliance joint activity.
+referenceType: protocol
+adProfile: protocol
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: LoRaWAN to OPC UA remote telemetry
+searchIntent: design
+decisionStage: solution-aware
+targetRoles:
+  - Utility telemetry engineers
+  - OT architects
+  - System integrators
+  - Remote monitoring teams
+contentStatus: cornerstone
+problemSolved: How to use LoRaWAN in remote telemetry without leaving industrial consumers with unmodeled payloads and one-off integrations.
+readerTakeaway: You should leave with a practical architecture boundary for low-power LoRaWAN sensors, gateways, OPC UA information models, and upstream SCADA or enterprise consumers.
+keyQuestions:
+  - Does LoRaWAN replace cellular for remote industrial telemetry?
+  - What does mapping LoRaWAN data to OPC UA actually help with?
+  - Where should payload decoding, context mapping, and stale-data handling live?
+notFor:
+  - High-speed control loops or low-latency remote operations
+  - Dense sites where wired or cellular gateway architecture is already simpler
+updateTriggers:
+  - OPC Foundation and LoRa Alliance mapping updates
+  - Major LoRaWAN gateway or network-server product changes
+  - New utility or industrial monitoring requirements around low-power remote sensors
+lastReviewed: 2026-05-04
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# LoRaWAN to OPC UA for Remote Telemetry Architecture
+
+LoRaWAN is useful in remote telemetry because it can collect small, low-power measurements over long distances. OPC UA is useful because industrial systems need structured meaning, not just bytes. The 2026 joint activity between the OPC Foundation and LoRa Alliance to map LoRaWAN data into OPC UA is important because it points at a long-standing problem: low-power sensor networks often reach the gateway, but then become messy one-off payloads upstream.
+
+The durable architecture question is not "LoRaWAN or OPC UA?" It is "where does a small remote sensor measurement become an industrial information object that SCADA, historians, dashboards, and operations teams can trust?"
+
+## Quick answer
+
+LoRaWAN should usually remain the low-power field network. OPC UA should usually appear above the LoRaWAN network server, gateway, or integration layer where decoded payloads can be named, typed, timestamped, quality-marked, and mapped into an industrial information model.
+
+Do not push OPC UA down into tiny battery sensors. Do not leave upstream consumers decoding random LoRaWAN payload formats forever.
+
+## What the mapping effort signals
+
+On April 20, 2026, the OPC Foundation and LoRa Alliance announced joint work to map LoRaWAN to OPC UA. The practical signal is that LPWAN telemetry is no longer only an IoT dashboard problem. Utilities, industrial sites, environmental monitoring teams, and distributed asset owners need low-power sensor data to enter industrial systems with consistent meaning.
+
+This matters for:
+
+- tank level and environmental sensors;
+- flood and stormwater monitoring;
+- valve vault and pressure zone measurements;
+- chemical storage and remote utility assets;
+- low-power condition monitoring;
+- site perimeter and cabinet environment sensing;
+- distributed assets where cellular per point is too expensive.
+
+The mapping does not make LoRaWAN a control network. It makes the upstream data contract more serious.
+
+## Architecture boundary
+
+| Layer | Job | Common owner |
+| --- | --- | --- |
+| LoRaWAN end device | Measure and transmit small payloads at low power | Field instrumentation or utility team |
+| LoRaWAN gateway | Receive radio traffic and forward packets | Telecom, utility, site owner, or service provider |
+| Network server | Join, route, deduplicate, and manage device sessions | LoRaWAN operator or platform owner |
+| Payload decoder | Convert bytes into values and units | Integration owner |
+| OPC UA mapping layer | Convert decoded values into typed industrial information | OT architecture or data platform team |
+| SCADA/historian/application | Alarm, trend, report, and operate from trusted meaning | Operations team |
+
+The risk is skipping the mapping layer and letting every application interpret payloads differently.
+
+## What should be modeled
+
+A useful LoRaWAN-to-OPC-UA mapping should preserve:
+
+- device identity;
+- asset identity;
+- location or site context;
+- measurement type;
+- engineering units;
+- range and scale;
+- timestamp;
+- quality;
+- battery state;
+- signal or link health;
+- stale-data rules;
+- alarm thresholds or event classification where appropriate.
+
+If the system only forwards a number, operations still have to guess what the number means.
+
+## Where LoRaWAN is strong
+
+LoRaWAN is a strong fit when:
+
+- payloads are small;
+- reporting intervals are minutes or hours, not milliseconds;
+- sensors are battery-powered;
+- many points exist across a wide area;
+- cabling is expensive or impossible;
+- cellular per point would be operationally heavy;
+- loss tolerance can be handled by retries, buffering, or supervisory rules.
+
+Examples:
+
+| Remote telemetry case | Why LoRaWAN may fit |
+| --- | --- |
+| Flood sensors | Low power, sparse reporting, wide area |
+| Tank level | Periodic measurement, battery device possible |
+| Environmental monitoring | Many low-rate sensor points |
+| Valve vault status | Small payloads and hard-to-wire sites |
+| Cabinet temperature and door status | Low bandwidth and simple events |
+
+## Where LoRaWAN is weak
+
+LoRaWAN is a weak fit when:
+
+- control latency matters;
+- large payloads are required;
+- frequent reporting is mandatory;
+- dense metal structures create radio issues;
+- bidirectional control is central to the use case;
+- operations need deterministic delivery;
+- the site already has a robust gateway with power and cellular.
+
+In those cases, cellular, wired Ethernet, private wireless, or local RTU architecture may be healthier.
+
+## OPC UA does not remove telemetry rules
+
+Even with OPC UA mapping, the system still needs:
+
+- alarm priority rules;
+- deadbands;
+- heartbeat or stale-data logic;
+- battery replacement rules;
+- gateway outage behavior;
+- time synchronization policy;
+- commissioning evidence;
+- device replacement workflow.
+
+OPC UA improves the structure of the data. It does not decide operating policy.
+
+## Commissioning checklist
+
+Before trusting a LoRaWAN-to-OPC-UA path:
+
+1. Confirm the sensor payload decoder with known test values.
+2. Verify units and scaling.
+3. Check timestamp source and delay expectations.
+4. Confirm duplicate packet handling.
+5. Define stale-data behavior.
+6. Test low battery and missing device conditions.
+7. Confirm asset naming and location mapping.
+8. Validate alarm thresholds and deadbands.
+9. Verify upstream OPC UA browse or subscription behavior.
+10. Document who owns device replacement and decoder changes.
+
+Without this evidence, the mapping can look clean in a demo but fail in field operations.
+
+## LoRaWAN vs cellular after OPC UA mapping
+
+Mapping LoRaWAN to OPC UA does not make it a cellular replacement. It makes LoRaWAN easier to integrate when LoRaWAN is already the right field network.
+
+| Use cellular when | Use LoRaWAN when |
+| --- | --- |
+| One remote cabinet already has power and a router | Many small sensors are spread out |
+| Higher data volume is expected | Payloads are tiny and infrequent |
+| Remote access or maintenance path is needed | Sensors only report measurements |
+| Latency and troubleshooting access matter | Battery life and reach matter |
+| SIM/APN/VPN operations are manageable | Per-point cellular would be excessive |
+
+The architecture may use both: cellular for the main cabinet or gateway backhaul, LoRaWAN for distributed sensors around the asset network.
+
+## Source notes
+
+This page is based on the OPC Foundation and LoRa Alliance announcement, [OPC Foundation and LoRa Alliance Launch Joint Activities to Map LoRaWAN to OPC UA](https://opcfoundation.org/news/press-releases/opc-foundation-and-lora-alliance-launch-joint-activities-to-map-lorawan-to-opc-ua/), and OPC Foundation material on [OPC UA, MQTT, and information interoperability](https://opcconnect.opcfoundation.org/2021/12/opc-ua-mqtt-and-information-interoperability/).
+
+## Related paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Cellular vs LoRaWAN vs satellite"
+		href="/network-paths/cellular-vs-lorawan-vs-satellite/"
+		description="Use this page to decide whether LoRaWAN belongs in the field network at all."
+	/>
+	<LinkCard
+		title="How often should remote telemetry sites report data?"
+		href="/protocols/how-often-should-remote-telemetry-sites-report-data/"
+		description="Reporting interval and stale-data policy decide whether low-power telemetry can work."
+	/>
+	<LinkCard
+		title="Remote telemetry commissioning checklist"
+		href="/reliability/remote-telemetry-commissioning-and-site-acceptance-checklist/"
+		description="Turn the architecture into field evidence before unattended operation."
+	/>
+</div>
+
