@@ -5,6 +5,19 @@ import starlight from '@astrojs/starlight';
 import tailwindcss from '@tailwindcss/vite';
 import { siteMeta } from './src/utils/site-meta.mjs';
 
+const noindexSitemapPaths = new Set([
+	'/advertising/',
+	'/affiliate-disclosure/',
+	'/disclaimer/',
+	'/privacy/',
+	'/terms-of-use/',
+]);
+
+/** @param {string} page */
+function shouldIncludeInSitemap(page) {
+	return !noindexSitemapPaths.has(new URL(page, siteMeta.siteUrl).pathname);
+}
+
 export default defineConfig({
 	site: siteMeta.siteUrl,
 	trailingSlash: 'always',
@@ -61,7 +74,9 @@ export default defineConfig({
 				Footer: './src/components/Footer.astro',
 			},
 		}),
-		sitemap(),
+		sitemap({
+			filter: shouldIncludeInSitemap,
+		}),
 	],
 	vite: {
 		plugins: [tailwindcss()],
