@@ -1,0 +1,194 @@
+---
+title: Quarterly Remote Telemetry Site Inspection Checklist
+description: A practical quarterly inspection checklist for remote telemetry sites covering cabinet, power, antenna, data quality, alarms, and recovery evidence.
+referenceType: reliability
+adProfile: reliability
+commercialIntent: high
+reviewCadence: Quarterly review
+contentStatus: cornerstone
+problemSolved: Helps teams inspect remote telemetry sites before small cabinet, power, antenna, sensor, alarm, or data-quality issues become truck-roll emergencies.
+readerTakeaway: You should leave with a repeatable quarterly inspection model that field technicians and telemetry owners can use without turning every visit into a redesign.
+primaryKeyword: remote telemetry site inspection checklist
+searchIntent: deploy
+decisionStage: implementation
+targetRoles:
+  - Field technicians
+  - Utility engineers
+  - Remote telemetry engineers
+  - System integrators
+  - Operations managers
+keyQuestions:
+  - What should be checked during a remote telemetry site inspection?
+  - How often should remote telemetry cabinets, antennas, power systems, and alarms be reviewed?
+  - What evidence should a field technician capture before leaving an unattended site?
+notFor:
+  - Indoor-only plant networks without unattended cabinets, antennas, batteries, or remote sensors
+  - One-time commissioning jobs where the site will be decommissioned after a temporary test
+  - Sites with mature CMMS inspection templates that already include telemetry-specific evidence
+updateTriggers:
+  - New field failure patterns around cabinet environment, power, signal quality, or stale data
+  - Changes in remote telemetry hardware, cellular, satellite, or radio maintenance practices
+  - Updated customer requirements for inspection evidence or unattended-site reliability
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Quarterly Remote Telemetry Site Inspection Checklist
+
+Remote telemetry systems do not usually fail in one dramatic step. They drift. A battery loses reserve. A cable gland loosens. Antenna signal quality gets worse after a nearby change. A cabinet begins collecting condensation. A digital input still changes, but its alarm path no longer reaches the right person. A dashboard looks live because one value updates while the important event stream is silently stale.
+
+A quarterly inspection is a controlled way to catch that drift. It should be more than a photo visit and less than full recommissioning. The goal is to prove that the site is still physically survivable, electrically healthy, communicative, operationally useful, and supportable.
+
+## Quick answer
+
+A quarterly remote telemetry inspection should verify cabinet condition, power reserve, antenna and backhaul quality, sensor and I/O behavior, alarm delivery, stale-data handling, local buffering, documentation accuracy, and recovery readiness. The technician should leave with evidence, not just a statement that the site looked normal.
+
+## Why quarterly inspection matters
+
+Unattended sites create a specific reliability problem: the system may be important only during abnormal conditions, but those are exactly the conditions that reveal neglected installation details.
+
+Examples:
+
+- A flood-control site looks fine during dry weather but fails when the cabinet takes moisture.
+- A remote tank site reports normally until a weak battery causes a reset during cold starts.
+- A cellular router stays online but signal quality degrades enough to cause intermittent SCADA loss.
+- A pump station alarm contact changes locally but the upstream alarm rule has been disabled or rerouted.
+- A site has a working gateway but nobody can find the latest configuration backup when replacement is needed.
+
+Quarterly inspection is not bureaucracy. It is a way to reduce blind spots before the next event.
+
+## Inspection scope
+
+Use a consistent scope so teams can compare sites across time:
+
+| Area | Inspection question | Evidence to keep |
+| --- | --- | --- |
+| Cabinet | Is the enclosure still sealed, labeled, dry, and serviceable? | Photos, door seal check, cable entry condition |
+| Power | Is supply voltage stable and backup reserve credible? | Voltage readings, charger status, battery age |
+| Backhaul | Is cellular, radio, fiber, or satellite quality acceptable? | Signal-quality readings and reconnect test |
+| Field signals | Do critical inputs, meters, and sensors still match reality? | Forced-state or comparison checks |
+| Alarms | Do assert, clear, latch, and notification paths still work? | Alarm test records with timestamps |
+| Data quality | Are values fresh, scaled correctly, and labeled correctly upstream? | Screenshot or exported point verification |
+| Recovery | Can the site be restored after outage or device replacement? | Backup, config version, credential path |
+| Handoff | Can operations and support understand the site later? | As-built note updates and exceptions list |
+
+## Cabinet and environment checks
+
+Start with the physical cabinet because physical problems create strange telemetry symptoms later.
+
+Check:
+
+- enclosure damage, corrosion, sun exposure, mounting stability, and door alignment;
+- gasket condition, water marks, insect intrusion, dust, or condensation;
+- cable glands, conduit entries, drain or vent condition, and unused openings;
+- labels on gateway, RTU, power supply, fuses, I/O, terminal blocks, and field wiring;
+- service clearance around replaceable components;
+- surge protection status indicators where present;
+- grounding and bonding connections that are visible without disturbing the installation.
+
+Take cabinet photos with labels readable. A blurry wide photo is weak evidence. Future support needs to know what is installed, how it is powered, and whether the cabinet condition changed.
+
+Related page: <LinkCard title="Remote Cabinet Environment Control and Condensation Risk" href="/hardware/remote-cabinet-environment-control-heaters-vents-and-condensation-risk/" />
+
+## Power and backup inspection
+
+Power inspection should capture current health and reserve risk.
+
+Record:
+
+- incoming supply voltage under normal load;
+- DC power supply output and fuse status;
+- battery voltage, age, charger state, and any visible swelling or corrosion;
+- solar controller status if present;
+- UPS or battery backup alarm state;
+- load changes since the last inspection;
+- whether recent outages caused resets or stale data.
+
+Do not treat "powered on" as enough. Remote telemetry sites often fail during transition: utility loss, generator transfer, cold start, weak battery, or unstable solar recovery.
+
+Related page: <LinkCard title="Remote Cabinet DC Power Distribution, Fusing, and Battery Isolation" href="/hardware/remote-cabinet-dc-power-distribution-fusing-and-battery-isolation/" />
+
+## Antenna and backhaul checks
+
+For wireless sites, inspect both the physical antenna path and the network readings.
+
+Capture:
+
+- antenna mount condition, orientation, cable route, connector weatherproofing, and strain relief;
+- cable length or any added adapter that was not in the original design;
+- cellular RSRP, RSRQ, SINR, or vendor-equivalent signal values;
+- radio RSSI/noise margin or satellite terminal status where applicable;
+- reconnect time after a controlled modem/router restart if allowed;
+- evidence of blocked line of sight, new metal structures, vegetation, or changed site conditions.
+
+Signal strength is not enough. Poor signal quality can leave the router "online" while protocol traffic behaves badly.
+
+Related page: <LinkCard title="RSRP, RSRQ, and SINR Checklist for Remote Telemetry" href="/network-paths/cellular-signal-quality-rsrp-rsrq-sinr-checklist-for-remote-telemetry/" />
+
+## Sensor, I/O, and point checks
+
+A quarterly visit should verify the points that operators rely on during abnormal conditions. Do not test every low-value point if the site has many. Test the points that drive alarms, dispatch, compliance, safety awareness, or production decisions.
+
+For each critical point:
+
+- compare analog values with a local gauge, instrument, meter, or expected condition;
+- force or simulate a digital input when operationally safe;
+- confirm scaling, engineering units, and decimal placement upstream;
+- verify totalizer or pulse counts against expected change;
+- confirm that disabled, bypassed, or failed sensors are marked clearly;
+- note any field condition that makes the reading misleading.
+
+The inspection should catch the difference between "the gateway is connected" and "the data still means what operations thinks it means."
+
+## Alarm and stale-data testing
+
+Alarm testing is where many inspections are too shallow.
+
+Test:
+
+- alarm assert and clear behavior;
+- latching behavior where required;
+- notification routing to the right destination;
+- stale-data or heartbeat alarm behavior;
+- local buffering during a short controlled link outage where safe;
+- alarm timestamps after reconnect;
+- whether repeated nuisance alarms have been suppressed without review.
+
+If operations relies on the site during emergencies, the alarm path must be tested during normal inspection windows.
+
+Related page: <LinkCard title="Alarm Latching and Local Buffering for Unattended Sites" href="/reliability/alarm-latching-last-known-state-and-local-buffering-for-unattended-sites/" />
+
+## Documentation and recovery evidence
+
+Every inspection should reduce future recovery time. Update:
+
+- cabinet photos;
+- network path notes;
+- SIM, APN, VPN, carrier, or private network notes where appropriate;
+- gateway or RTU model and firmware;
+- I/O map changes;
+- configuration backup location;
+- password or credential ownership path, without putting secrets in the inspection report;
+- unresolved exceptions and assigned owner.
+
+Documentation is part of reliability. A site that works but cannot be restored quickly after hardware replacement is not fully supportable.
+
+## Pass, watch, fail
+
+Use a simple status model:
+
+| Status | Meaning | Action |
+| --- | --- | --- |
+| Pass | Site meets inspection criteria and evidence is complete | Keep normal cadence |
+| Watch | Site works but has visible drift or incomplete evidence | Assign correction before next quarter |
+| Fail | Site has unreliable alarm, data, power, communication, or recovery behavior | Open corrective work immediately |
+
+This prevents vague inspection notes from hiding real risk.
+
+## Next-step references
+
+<LinkCard title="Remote Telemetry Commissioning and Site Acceptance Checklist" href="/reliability/remote-telemetry-commissioning-and-site-acceptance-checklist/" />
+
+<LinkCard title="Why Do Remote Telemetry Sites Go Offline?" href="/reliability/why-do-remote-telemetry-sites-go-offline/" />
+
+<LinkCard title="Network Outage Playbooks for Unattended Sites" href="/reliability/network-outage-playbooks-for-unattended-sites/" />
