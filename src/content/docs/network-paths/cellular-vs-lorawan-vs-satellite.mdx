@@ -14,6 +14,18 @@ targetRoles:
   - Utility teams
   - System integrators
 contentStatus: cornerstone
+problemSolved: Helps remote telemetry teams choose cellular, LoRaWAN, or satellite based on site density, power, coverage confidence, data burden, and service ownership.
+readerTakeaway: You should leave with a network-path decision model that ties communications choice to field survivability rather than marketing claims.
+keyQuestions:
+  - When is cellular the practical default?
+  - When does LoRaWAN justify the extra network layer?
+  - When is satellite worth the cost and bandwidth tradeoff?
+notFor:
+  - Indoor Wi-Fi or plant-floor wireless comparisons
+  - Projects where communications path has already been mandated by the asset owner
+updateTriggers:
+  - Changes in cellular, LoRaWAN, and satellite telemetry offerings
+  - New pricing, coverage, or field-service patterns for remote telemetry
 ---
 
 import { LinkCard } from '@astrojs/starlight/components';
@@ -76,6 +88,36 @@ Teams often go wrong when they:
 - treat the network path as separate from power, enclosure, and maintenance design.
 
 In field deployments, the network is only one part of a survivable architecture.
+
+## Decision matrix
+
+| Condition | Cellular | LoRaWAN | Satellite |
+| --- | --- | --- | --- |
+| Site count is broad and sparse | Strong default if coverage is credible | Weak unless gateways can be placed economically | Strong fallback for unreachable sites |
+| Sensor payloads are tiny and low power | Good but may be overbuilt | Strong fit | Usually too expensive unless coverage is the main issue |
+| Data includes logs, firmware, or frequent diagnostics | Stronger fit | Usually weak | Possible but cost and bandwidth must be justified |
+| Organization can own local infrastructure | Not usually required | Required for private deployments | Usually provider-driven |
+| Coverage uncertainty is unacceptable | Needs survey and maybe dual carrier | Needs gateway design and path testing | Often strongest where terrestrial paths are unreliable |
+
+This matrix helps prevent false comparisons. LoRaWAN can be excellent for dense low-power assets, while cellular can be better for sparse sites, and satellite can be justified when the cost of being blind is higher than the communication bill.
+
+## Field survey checklist
+
+Before committing, verify:
+
+- measured signal quality at antenna height, not just phone reception;
+- seasonal obstructions, cabinet location, and antenna cable loss;
+- power budget for modem, radio, gateway, or satellite terminal;
+- data volume and reporting interval under normal and alarm conditions;
+- expected outage behavior and local buffering;
+- who owns SIMs, plans, gateways, terminals, and replacements;
+- whether field technicians can diagnose the path without specialist support.
+
+The strongest network design is the one operations can support after the installer leaves.
+
+## Practical rule
+
+Use cellular as the first practical candidate when coverage, power, and plan management are acceptable. Use LoRaWAN when the asset pattern supports a private low-power sensor network. Use satellite when terrestrial coverage uncertainty creates unacceptable operational risk. Then design buffering and stale-data rules as if the path will still fail sometimes.
 
 ## Related paths
 

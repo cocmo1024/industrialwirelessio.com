@@ -87,9 +87,46 @@ That answer should shape:
 
 The interval should be driven by consequence, not habit.
 
+## Example interval classes
+
+Use classes rather than one universal timer:
+
+| Site class | Example | Heartbeat / stale-data posture |
+| --- | --- | --- |
+| Alarm-critical unattended site | lift station, flood-control gate, chemical injection site | Short heartbeat, aggressive stale-data flag, clear supervisory-loss alarm |
+| Slow monitoring site | tank level, environmental sensor, low-risk utility point | Longer heartbeat, visible value age, less aggressive dispatch alarm |
+| High-consequence remote asset | substation, pressure-zone booster, remote pump station | Redundant context, local buffering, explicit operator escalation |
+| Battery-constrained low-power node | remote sensor, LoRaWAN endpoint | Heartbeat balanced against power budget and payload limits |
+
+This class-based model keeps the system from annoying operators with low-value alarms while still protecting high-consequence assets.
+
+## Display rules matter
+
+Stale data should be visible in the operator interface. A good display should show:
+
+- last value;
+- value age;
+- live, stale, replayed, or unknown status;
+- time of last heartbeat;
+- whether the site is in supervisory loss;
+- whether local buffered events are pending.
+
+If the display shows only the last value, operators may make decisions from old data without realizing it.
+
+## Acceptance test
+
+Test heartbeat and stale-data behavior by simulating:
+
+1. quiet site with no process events;
+2. backhaul loss while the site continues locally;
+3. alarm event during communications outage;
+4. delayed recovery with buffered events;
+5. repeated connect/disconnect behavior.
+
+The system should not require operators to guess whether silence is normal. It should tell them whether visibility is trustworthy.
+
 ## What to read next
 
 - [Alarm latching, last-known state, and local buffering for unattended sites](/reliability/alarm-latching-last-known-state-and-local-buffering-for-unattended-sites/)
 - [Digital-input event buffering for alarm-first telemetry](/reliability/digital-input-event-buffering-for-alarm-first-telemetry/)
 - [Stormwater and flood-control site telemetry for unattended assets](/applications/stormwater-and-flood-control-site-telemetry-for-unattended-assets/)
-

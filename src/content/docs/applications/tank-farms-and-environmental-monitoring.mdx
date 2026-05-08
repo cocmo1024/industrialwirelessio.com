@@ -66,6 +66,47 @@ If a site is visited rarely, then replacement steps, last-known-state behavior, 
 - Picking hardware before cabinet, antenna, and power rules are defined
 - Assuming environmental monitoring points have the same availability and maintenance pattern as staffed industrial sites
 
+## Minimum telemetry model
+
+For tank farms and environmental monitoring, the first useful model usually includes:
+
+| Data class | Why it matters |
+| --- | --- |
+| Primary measurement | level, pressure, flow, pH, turbidity, weather, or other monitored value |
+| Threshold state | high, low, rate-of-change, or regulatory exception status |
+| Value age and quality | prevents old readings from appearing safe |
+| Local power status | explains whether the site is failing before sensors disappear |
+| Cabinet or device health | catches environmental and battery issues early |
+| Communications heartbeat | separates quiet operation from loss of visibility |
+
+This model is small enough to deploy but complete enough to support real decisions.
+
+## Alarm design
+
+Alarm-first sites should define:
+
+- which thresholds create immediate notification;
+- which changes are logged but not dispatched;
+- how many repeated alarms are suppressed or grouped;
+- what happens when communications fail during an alarm;
+- whether local buffering preserves the sequence after reconnect.
+
+This prevents the two worst outcomes: alarm spam that operators ignore and quiet failure where the site stops reporting while the last value still looks normal.
+
+## Field rollout checklist
+
+Before installing many sites, validate one representative site against:
+
+1. enclosure heat, moisture, and cable-entry exposure;
+2. antenna placement and measured signal quality;
+3. surge and grounding path;
+4. battery or backup-power assumptions;
+5. sensor calibration and replacement access;
+6. stale-data display at the central system;
+7. field technician replacement procedure.
+
+Tank farm telemetry succeeds when the site can be serviced predictably. A perfect dashboard cannot compensate for a cabinet that fails after the first bad weather season.
+
 ## Compare next
 
 <div class="portal-links">

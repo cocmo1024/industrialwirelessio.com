@@ -69,6 +69,52 @@ Do not ask only "did the modem drop?" Ask:
 - Out-of-band access or clearer field diagnostics
 - Post-outage analysis that classifies the failure correctly
 
+## A useful outage classification sheet
+
+Every offline event should be classified in a way that changes the next action. A practical sheet looks like this:
+
+| Category | Evidence to collect | Better next action |
+| --- | --- | --- |
+| Primary power loss | Battery voltage trend, charger state, fuse status, outage window | Improve DC distribution, backup sizing, or alarm lead time |
+| Cabinet/environment | Moisture, heat, corrosion, loose wiring, insect or dust intrusion | Improve enclosure, sealing, thermal design, inspection cadence |
+| Surge or grounding | Recent storm, damaged protection, repeated electronics failure | Audit bonding, arrestors, cable entry, and replacement practice |
+| Carrier or backhaul | RSSI/RSRP history, SIM state, APN/VPN logs, tower events | Tune antenna, carrier plan, modem config, or failover path |
+| Local device or firmware | router/RTU logs, watchdog resets, firmware version, config changes | Add change control, rollback, and known-good configuration archive |
+| Supervisory false loss | heartbeat interval, stale-data rule, central polling behavior | Fix monitoring logic before replacing field hardware |
+
+This turns outage analysis into a repeatable operating process. Without classification, every event becomes a fresh argument.
+
+## What to capture before the field visit
+
+Before dispatch, collect whatever the central system already knows:
+
+- last successful heartbeat and last payload timestamp;
+- battery, charger, or power status before loss;
+- modem signal history if available;
+- recent configuration or firmware changes;
+- weather or known utility events around the site;
+- whether neighboring sites failed at the same time.
+
+That evidence shapes the field visit. A technician arriving with no hypothesis often replaces the visible failed component and leaves the root cause untouched.
+
+## What the site should report after recovery
+
+When the site returns, it should not only say "online." It should expose enough evidence to explain the outage:
+
+- whether local buffers replayed missed events;
+- whether values are live, stale, or replayed;
+- whether the device rebooted and why;
+- whether the link returned before the local controller recovered;
+- whether there were repeated connect/disconnect cycles.
+
+This is where [event buffering](/reliability/digital-input-event-buffering-for-alarm-first-telemetry/) and [heartbeat policy](/reliability/heartbeat-timers-stale-data-rules-and-supervisory-loss-handling/) become operational tools, not just architecture topics.
+
+## The design goal
+
+The goal is not zero offline events. Some remote sites will lose power, carrier service, or equipment. The goal is to make each outage shorter, less ambiguous, and less likely to repeat for the same reason.
+
+Good telemetry reliability work leaves a trail: what failed, what the site preserved locally, what operators saw, what field staff found, and what design change prevents the same pattern. That trail is what separates a mature remote telemetry program from a collection of disconnected cabinets.
+
 ## Compare next
 
 <div class="portal-links">

@@ -14,6 +14,18 @@ targetRoles:
   - Integrators
   - Operations teams
 contentStatus: seed
+problemSolved: Helps remote telemetry teams treat surge and lightning exposure as a survivability design issue instead of an accessory added after radio selection.
+readerTakeaway: You should leave with a practical field checklist for grounding, cable routing, antenna exposure, protection points, and post-storm inspection.
+keyQuestions:
+  - Where should surge protection be considered in a remote telemetry cabinet?
+  - Why do sites with good radios still fail after storms?
+  - What should field teams inspect after lightning or seasonal surge events?
+notFor:
+  - Indoor-only telemetry panels with no outdoor cable exposure
+  - Projects where electrical protection has already been engineered and documented by the site owner
+updateTriggers:
+  - New field protection patterns for remote utility cabinets
+  - Changes in outdoor antenna, grounding, and surge-protection practices
 ---
 
 import { LinkCard } from '@astrojs/starlight/components';
@@ -54,6 +66,58 @@ The most common mistake is assuming carrier or gateway selection is the key resi
 - the site was too hard to inspect after seasonal events.
 
 This is field survivability work, not accessory purchasing.
+
+## The protection points to map
+
+A practical field design should map every path that can bring transient energy into the cabinet or equipment stack:
+
+| Exposure path | What to check | Why it matters |
+| --- | --- | --- |
+| AC or DC power entry | Surge protection, fusing, bonding, disconnect location | Power faults often present as modem or gateway failures later |
+| Antenna and coax runs | Arrestor placement, ground path, drip loop, cable routing | Elevated antennas improve signal while increasing exposure |
+| Sensor and I/O wiring | Long runs, shield termination, shared trench exposure | Remote inputs can pull surge into expensive electronics |
+| Grounding electrode and bond path | Continuity, corrosion, conductor routing, mechanical protection | Protection devices only work if surge current has a credible path |
+| Ethernet or serial extensions | Isolation, cable length, outdoor transitions | Data wiring can become an unplanned surge path |
+
+The useful question is not "did we buy a surge protector?" It is "where will surge current actually go during a field event?"
+
+## Why remote sites fail repeatedly
+
+Repeat failures usually mean the site has a system problem, not a bad batch of radios. Common patterns include:
+
+- the antenna mast is bonded differently from the cabinet;
+- the protection device is present but has a poor ground path;
+- long sensor leads enter the cabinet without coordinated protection;
+- the cabinet ground looks acceptable on a drawing but is corroded or disconnected in the field;
+- post-storm replacement restores the failed modem but leaves the exposure unchanged.
+
+When replacement parts keep failing, treat the next visit as a protection audit, not only a swap-out.
+
+## Post-storm inspection checklist
+
+After a lightning or surge-heavy event, field teams should inspect:
+
+- protection device indicators and replacement status;
+- cabinet ground/bond connections and visible corrosion;
+- antenna arrestors, coax connectors, and water ingress;
+- power supply output stability under load;
+- unexplained digital input chatter or sensor faults;
+- modem/router logs around the event window;
+- whether the site recovered cleanly or only appeared to recover.
+
+This evidence helps separate carrier outages from physical damage. It also gives operations a defensible reason to upgrade a cabinet rather than repeatedly replacing electronics.
+
+## Design rule for unattended sites
+
+For unattended telemetry, protection design should be conservative because a single storm can create days of blind operation. Put the field stack in this order:
+
+1. credible ground and bonding path;
+2. coordinated protection at power, antenna, and long cable entries;
+3. cabinet layout that separates dirty entry paths from sensitive electronics;
+4. diagnostics that show whether the site failed from power, communication, or I/O disturbance;
+5. inspection procedure after severe weather.
+
+That sequence makes the communications design more durable. It also supports better [site survivability planning](/reliability/site-survivability-planning/) because the site is not relying on radio redundancy while ignoring the physical path that actually destroys equipment.
 
 ## Related paths
 

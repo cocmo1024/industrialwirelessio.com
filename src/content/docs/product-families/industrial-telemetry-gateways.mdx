@@ -14,6 +14,18 @@ targetRoles:
   - Technical buyers
   - System integrators
 contentStatus: cornerstone
+problemSolved: Helps teams shortlist industrial telemetry gateways by field protocol burden, buffering, remote diagnostics, power/cabinet fit, and ownership after commissioning.
+readerTakeaway: You should leave with a gateway evaluation model that separates telemetry gateways from routers, RTUs, and heavier edge computers.
+keyQuestions:
+  - When is a telemetry gateway the right device class?
+  - What should be tested before deploying gateways across remote sites?
+  - How do backhaul, buffering, and diagnostics change the shortlist?
+notFor:
+  - Sites that only need unmanaged network transport with no field data responsibility
+  - Projects that require full local application hosting and edge compute ownership
+updateTriggers:
+  - New industrial telemetry gateway releases
+  - Changes in store-and-forward, remote management, cellular, satellite, and RTU gateway patterns
 ---
 
 import { LinkCard } from '@astrojs/starlight/components';
@@ -64,6 +76,47 @@ The most important evaluation questions usually include:
 - how stable the vendor’s lifecycle and support model appear.
 
 In remote sites, those operational questions matter more than broad spec-sheet ambition.
+
+## Gateway vs router vs RTU vs edge computer
+
+The category decision should be explicit:
+
+| Device class | Better fit | Warning sign |
+| --- | --- | --- |
+| Router | Transport and secure access are the main job | Field data buffering or protocol translation is being bolted on later |
+| Telemetry gateway | Field data, buffering, translation, and upstream delivery are the main job | The site needs heavy local apps or control autonomy |
+| RTU | Remote control, sparse communications, and field autonomy matter | The project only needs data forwarding |
+| Edge computer | Local application hosting, analytics, or containerized workloads matter | The site team cannot support OS, patches, and app lifecycle |
+
+Buying the wrong class creates long-term support cost. A telemetry gateway should own the data boundary without becoming an unmanaged computer.
+
+## Field acceptance tests
+
+Before standardizing a gateway, test:
+
+1. field-device restart while the gateway remains powered;
+2. backhaul outage while local events occur;
+3. buffer replay after reconnect;
+4. stale-data and heartbeat behavior at the supervisory layer;
+5. remote configuration backup and restore;
+6. firmware rollback or known-good configuration recovery;
+7. cabinet power interruption and clean restart.
+
+These tests expose whether the device is a real remote-site gateway or only a good demo box.
+
+## Shortlist scoring
+
+Score each device on:
+
+- exact field protocols and tag capacity;
+- local storage and timestamp handling;
+- diagnostics visible to remote operators;
+- security model and credential management;
+- power draw and enclosure fit;
+- carrier, LoRaWAN, Ethernet, or satellite compatibility;
+- supportability by field technicians after the integrator leaves.
+
+The best gateway is often the one that reduces support ambiguity, not the one with the longest feature sheet.
 
 ## Related paths
 

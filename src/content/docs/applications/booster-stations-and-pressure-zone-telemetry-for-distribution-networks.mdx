@@ -68,3 +68,56 @@ This usually creates more operational value than a broad but weak telemetry spre
 ## The common failure
 
 The common failure is building a site that reports enough to trend, but not enough to diagnose. Operations then sees that pressure moved but cannot tell whether the cause was pump cycling, a power issue, a communications gap, or a field condition that needed dispatch.
+
+## Minimum viable signal list
+
+For many booster and pressure-zone sites, the first useful signal list is not huge. It is a disciplined set of values that explains operating state:
+
+| Signal | Why it belongs in the first design |
+| --- | --- |
+| Suction and discharge pressure where available | Separates supply-side issues from station behavior |
+| Pump run, ready, fault, and mode | Explains whether pressure behavior matches commanded operation |
+| VFD or starter status | Helps diagnose cycling, failure to start, and abnormal operation |
+| Local power and backup status | Changes dispatch urgency during storms or utility issues |
+| Cabinet temperature or health where relevant | Catches environmental failures before they become unexplained outages |
+| Communications heartbeat and stale-data flag | Prevents old values from looking like live pressure |
+
+This list is intentionally operational. It supports diagnosis, not just charting.
+
+## Alarm logic that prevents nuisance dispatch
+
+Pressure alarms need context. A low-pressure alarm during startup, planned maintenance, or known power loss should not be handled the same way as a low-pressure event during normal remote operation.
+
+Useful alarm logic usually separates:
+
+- low pressure while pump is commanded on;
+- low pressure while pump is unavailable or faulted;
+- high pressure after a start or valve transition;
+- pressure drift while the station is idle;
+- pressure value stale because the site is offline.
+
+This separation reduces nuisance alarms and improves dispatch confidence. It also gives the utility a clearer root-cause path after the event.
+
+## Communications and fallback behavior
+
+These sites often need an explicit fallback model because operators may make decisions during outages. The site should define:
+
+- how long local data is buffered;
+- whether last-known pressure is displayed with age;
+- which alarms are latched locally until acknowledged;
+- whether the site can be accessed out-of-band;
+- what field staff should do if the central system shows stale data.
+
+This connects the application page to broader [network outage playbooks](/reliability/network-outage-playbooks-for-unattended-sites/) and [digital-input event buffering](/reliability/digital-input-event-buffering-for-alarm-first-telemetry/). Pressure telemetry is only useful if the communications layer preserves enough context to trust the alarm.
+
+## What to prove in a pilot site
+
+A pilot booster or pressure-zone site should prove:
+
+1. pressure values and pump states align during normal cycling;
+2. alarm timestamps make sense after a link interruption;
+3. stale data is visible and cannot be mistaken for live pressure;
+4. local recovery after power loss is predictable;
+5. operators can diagnose the top repeat alarms without a field visit every time.
+
+If the pilot proves only that the value appears in SCADA, it is too shallow. The economic value comes from fewer blind dispatches, faster cause isolation, and better confidence during remote events.

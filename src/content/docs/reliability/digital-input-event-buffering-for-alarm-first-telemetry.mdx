@@ -67,3 +67,61 @@ Without buffered transitions, those questions cannot be answered confidently.
 ## The common design error
 
 The common error is assuming alarm visibility and event fidelity are the same thing. They are not. A system can send current alarms reliably and still lose the order, duration, or repetition of the event sequence that operations needs later.
+
+## What the event record should contain
+
+For alarm-first remote telemetry, a useful buffered record usually needs more than a point name and a value. A practical record includes:
+
+| Field | Why it matters |
+| --- | --- |
+| Point identifier | Lets operations trace the event to the physical input, cabinet, or asset |
+| Asserted or cleared state | Separates new alarms from recovery events |
+| Local timestamp | Preserves sequence when the link is down |
+| Quality or source status | Shows whether the event was live, buffered, replayed, or inferred |
+| Power and communications context | Explains whether the alarm occurred during a site-level disturbance |
+| Sequence number | Helps detect duplicates or missing records after reconnect |
+
+Without these fields, a buffered event may still be hard to trust. Operations needs to know what happened, when it happened, and whether the delivery path changed the story.
+
+## Sizing the local buffer
+
+Buffer depth should be based on realistic outage windows and event bursts, not on a generic memory number. A lift station, wellhead, gate, tank farm, or pressure-zone cabinet can produce several transitions during one link interruption.
+
+The first sizing pass should estimate:
+
+- longest expected communications outage before dispatch or recovery;
+- maximum likely event burst during power loss, pump fault, intrusion, or process upset;
+- whether repeated chatter should be retained, compressed, or flagged;
+- how long the site must preserve evidence if the central system is unavailable;
+- what happens when the buffer fills.
+
+The failure mode matters. Dropping the oldest event may hide the cause. Dropping the newest event may hide the current condition. Compressing repeated chatter may be acceptable only if the system preserves duration and count.
+
+## How buffering changes alarm response
+
+Buffered event telemetry should change how operators interpret alarms:
+
+- a live event means the central system saw the transition close to real time;
+- a replayed event means the site is reconstructing history after a gap;
+- a stale current state means the site may be offline even if the last value looked normal;
+- repeated assert/clear cycles may indicate field chatter, power instability, or sensor problems.
+
+This is why event buffering should be paired with [heartbeat timers and stale-data rules](/reliability/heartbeat-timers-stale-data-rules-and-supervisory-loss-handling/). A buffered alarm story is incomplete if the supervisory layer cannot explain whether the site itself was reachable.
+
+## Acceptance test before rollout
+
+Before using the design across many sites, test it with controlled failures:
+
+1. assert and clear an input while the backhaul is disconnected;
+2. create multiple events during the same outage window;
+3. restore communications and confirm ordering, timestamps, and duplicate handling;
+4. force a power interruption and confirm whether the buffer survives;
+5. confirm the operator display distinguishes live events from replayed events.
+
+If the test only verifies the final alarm state, it has not tested alarm-first telemetry. It has tested a status point.
+
+## Related pages
+
+- [Alarm latching and local buffering for unattended sites](/reliability/alarm-latching-last-known-state-and-local-buffering-for-unattended-sites/)
+- [Heartbeat timers, stale-data rules, and supervisory loss handling](/reliability/heartbeat-timers-stale-data-rules-and-supervisory-loss-handling/)
+- [Why do remote telemetry sites go offline?](/reliability/why-do-remote-telemetry-sites-go-offline/)
