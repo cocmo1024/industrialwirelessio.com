@@ -1,0 +1,115 @@
+# Industrial Wireless I/O
+
+> Field-oriented reference for industrial wireless I/O, remote telemetry, industrial wireless architecture, network paths, and site reliability. Pages are built from public vendor documentation, field deployment patterns, and physical-layer constraints for unattended industrial sites.
+
+Contact: cqq365@gmail.com
+
+## Core
+- [Industrial Wireless I/O](https://industrialwirelessio.com/): Field-oriented reference system for remote telemetry, industrial wireless architecture, network paths, and site reliability.
+
+## Applications
+- [Booster stations and pressure-zone telemetry for distribution networks](https://industrialwirelessio.com/applications/booster-stations-and-pressure-zone-telemetry-for-distribution-networks/): A practical guide to remote telemetry for booster stations and pressure zones where pump status, pressure behavior, and alarm credibility drive field architecture.
+- [Applications](https://industrialwirelessio.com/applications/): Application-first reference pages for remote telemetry, field connectivity, and wireless industrial monitoring deployments.
+- [Lift Stations and Sewer Network Telemetry](https://industrialwirelessio.com/applications/lift-stations-and-sewer-network-telemetry/): A practical application guide for lift station and sewer telemetry projects where alarm visibility, low-power resilience, and field serviceability matter more than feature density.
+- [Pipeline Cathodic Protection and Remote Cabinet Telemetry](https://industrialwirelessio.com/applications/pipeline-cathodic-protection-and-remote-cabinet-telemetry/): Design telemetry for pipeline cathodic protection and remote field cabinets where sparse access, power limits, and credible alarms matter most.
+- [Remote Generator and Fuel Tank Telemetry for Critical Sites](https://industrialwirelessio.com/applications/remote-generator-and-fuel-tank-telemetry-for-critical-sites/): Design telemetry for standby generators and fuel assets where outage visibility, fuel assurance, and truck-roll reduction matter most.
+- [Remote Pump Stations and Water Sites](https://industrialwirelessio.com/applications/remote-pump-stations-and-water-sites/): A practical architecture guide for remote pump stations and water sites where telemetry reliability, power limits, and field serviceability matter more than feature density.
+- [Remote Tank Level Telemetry for Water and Wastewater](https://industrialwirelessio.com/applications/remote-tank-level-telemetry-for-water-and-wastewater/): An application guide for remote tank monitoring projects where level visibility, alarm behavior, power limits, and unattended-site reliability shape the architecture.
+- [Stormwater pump controller remote access and flood-control telemetry](https://industrialwirelessio.com/applications/stormwater-and-flood-control-site-telemetry-for-unattended-assets/): A field-first guide to stormwater pump controller remote access, flood-control telemetry, alarm handling, local event capture, and remote command boundaries for unattended assets.
+- [Substation and Distributed Energy Telemetry](https://industrialwirelessio.com/applications/substation-and-distributed-energy-telemetry/): A practical guide for remote telemetry around substations and distributed energy assets where field survivability, event clarity, and service burden shape the architecture.
+- [Tank Farms and Environmental Monitoring](https://industrialwirelessio.com/applications/tank-farms-and-environmental-monitoring/): A practical field architecture guide for tank farms and distributed environmental monitoring where sparse maintenance, alarm confidence, and site survivability dominate the design.
+- [Valve and Pressure Reducing Station Telemetry](https://industrialwirelessio.com/applications/valve-position-and-pressure-reducing-station-telemetry-for-water-and-gas-networks/): Design telemetry for valve assets and PRV stations with position visibility, alarming, local fallback, sparse-site power, and dispatch-ready field architecture.
+- [Wellhead and Chemical Injection Site Telemetry](https://industrialwirelessio.com/applications/wellhead-and-chemical-injection-site-telemetry-for-unattended-oil-and-gas-assets/): A practical guide for telemetry at unattended wellheads and chemical injection sites where sparse access, low-power constraints, and alarm credibility define the architecture.
+
+## Product Families
+- [Digi IX10 and IX20 for remote industrial sites](https://industrialwirelessio.com/product-families/digi-ix10-and-ix20-for-remote-industrial-sites/): A practical guide to where Digi IX10 and IX20-class industrial routers fit in remote telemetry, unattended sites, and serviceable field connectivity.
+- [Product Families](https://industrialwirelessio.com/product-families/): Product-family reference pages for telemetry gateways, remote I/O, and field connectivity hardware.
+- [Industrial Telemetry Gateways](https://industrialwirelessio.com/product-families/industrial-telemetry-gateways/): A product-family guide to telemetry gateways, including where they fit in remote architectures and what buyers should evaluate before choosing one.
+- [Phoenix Contact TC Router for unattended telemetry sites](https://industrialwirelessio.com/product-families/phoenix-contact-tc-router-for-unattended-telemetry-sites/): A practical guide to where Phoenix Contact TC Router products fit in unattended field telemetry, secure cellular access, and battery-conscious remote site architectures.
+- [Siemens SCALANCE M for industrial remote access and telemetry](https://industrialwirelessio.com/product-families/siemens-scalance-m-for-industrial-remote-access-and-telemetry/): A practical guide to where Siemens SCALANCE M belongs in remote industrial communication, telemetry, and secure access programs anchored in Siemens-oriented environments.
+- [Wireless Remote I/O and RTU Modules](https://industrialwirelessio.com/product-families/wireless-remote-io-and-rtu-modules/): How to decide when remote I/O, RTU-class hardware, or a telemetry gateway should own field-side sensing, alarms, and local fallback.
+
+## Vendors
+- [Vendors](https://industrialwirelessio.com/vendors/): Vendor-focused reference pages for remote telemetry, field connectivity, and industrial wireless portfolios compared through real site constraints.
+- [Phoenix Contact Field Connectivity](https://industrialwirelessio.com/vendors/phoenix-contact-field-connectivity/): A practical vendor page for Phoenix Contact in field I/O, industrial networking, power, and telemetry-oriented site architecture.
+- [Siemens Remote Connectivity](https://industrialwirelessio.com/vendors/siemens-remote-connectivity/): How to evaluate Siemens remote connectivity for telemetry, industrial remote access, SCALANCE-based architectures, and automation-aligned field support.
+
+## Network Paths
+- [Carrier Failover and Dual-Path Design for Remote Sites](https://industrialwirelessio.com/network-paths/carrier-failover-and-dual-path-design-for-remote-sites/): A network-path guide for remote telemetry teams deciding when single-path cellular is enough and when critical sites justify carrier failover or a second communications path.
+- [Cellular Router Online but No SCADA Data Checklist](https://industrialwirelessio.com/network-paths/cellular-router-online-but-no-scada-data-troubleshooting-checklist/): A practical troubleshooting checklist for remote telemetry sites where the cellular router shows online but SCADA, MQTT, historian, or remote-access traffic still does not work.
+- [RSRP, RSRQ, and SINR Checklist for Remote Telemetry](https://industrialwirelessio.com/network-paths/cellular-signal-quality-rsrp-rsrq-sinr-checklist-for-remote-telemetry/): A field checklist for interpreting RSRP, RSRQ, SINR, antenna placement, and cellular link quality before blaming a remote telemetry outage on the carrier.
+- [Cellular Telemetry SIM, APN, VPN, and Carrier Operations Checklist](https://industrialwirelessio.com/network-paths/cellular-telemetry-sim-apn-vpn-and-carrier-operations-checklist/): A practical operations checklist for remote telemetry teams managing SIMs, APNs, VPNs, carrier plans, static IPs, failover, and field support at scale.
+- [Cellular vs LoRaWAN vs Satellite](https://industrialwirelessio.com/network-paths/cellular-vs-lorawan-vs-satellite/): A practical comparison of cellular, LoRaWAN, and satellite for remote telemetry, including where each path fits and how field conditions change the right choice.
+- [Network Paths](https://industrialwirelessio.com/network-paths/): Network path reference pages for cellular, LoRaWAN, satellite, and hybrid telemetry architecture decisions.
+- [Remote Access Security Boundaries for Telemetry Sites](https://industrialwirelessio.com/network-paths/industrial-remote-access-security-boundaries-for-unattended-telemetry-sites/): How to design remote access for unattended industrial telemetry sites without confusing VPN connectivity, field maintenance, identity control, and telemetry transport.
+- [Internet-Facing PLC Exposure Checklist for Remote Telemetry Sites](https://industrialwirelessio.com/network-paths/internet-facing-plc-exposure-checklist-for-remote-telemetry-sites/): A field-ready checklist for finding and removing internet-facing PLC, HMI, router, VPN, and remote access exposure at remote water, energy, and utility telemetry sites.
+- [LEO satellite vs cellular for remote industrial telemetry](https://industrialwirelessio.com/network-paths/leo-satellite-vs-cellular-for-remote-industrial-telemetry/): How to decide when remote telemetry should stay on cellular and when low-earth-orbit satellite becomes the healthier path for industrial sites.
+- [Private 5G vs LTE for Industrial Telemetry](https://industrialwirelessio.com/network-paths/private-5g-vs-lte-for-industrial-telemetry/): A practical comparison for telemetry teams deciding when private 5G is actually justified over disciplined LTE for industrial monitoring, alarms, and remote-site data collection.
+- [Private APN vs Public Cellular for Remote Sites](https://industrialwirelessio.com/network-paths/private-apn-vs-public-cellular-for-remote-sites/): A network-path comparison for remote telemetry teams deciding whether private APN arrangements materially improve serviceability, segmentation, and operational control.
+- [Telemetry Data Plan Budgeting for Remote Sites](https://industrialwirelessio.com/network-paths/telemetry-data-plan-budgeting-for-remote-sites/): Estimate cellular data-plan cost before cameras, reporting cadence, and exceptions turn a small recurring line item into a design problem.
+
+## Protocols
+- [Alarm Priority and Deadband Design for Remote Telemetry](https://industrialwirelessio.com/protocols/alarm-priority-and-deadband-design-for-remote-telemetry/): A telemetry-behavior reference for remote sites that need meaningful alarming, low-noise reporting, and communications efficiency under real field constraints.
+- [How often should remote telemetry sites report data?](https://industrialwirelessio.com/protocols/how-often-should-remote-telemetry-sites-report-data/): Choose telemetry reporting intervals based on asset behavior, alarm criticality, data-plan cost, and local buffering rather than a fixed polling habit.
+- [Protocols](https://industrialwirelessio.com/protocols/): Protocol reference pages for remote telemetry systems, field devices, gateways, and upstream industrial monitoring stacks.
+- [LoRaWAN to OPC UA for Remote Telemetry Architecture](https://industrialwirelessio.com/protocols/lorawan-to-opc-ua-for-remote-telemetry-architecture/): How to think about LoRaWAN, OPC UA mapping, gateways, information models, and remote telemetry architecture after the 2026 OPC Foundation and LoRa Alliance joint activity.
+- [Modbus RTU, MQTT, and OPC UA in Telemetry](https://industrialwirelessio.com/protocols/modbus-rtu-mqtt-and-opc-ua-in-telemetry/): How to place Modbus RTU, MQTT, and OPC UA at the right layer of a remote telemetry system without confusing field protocols with upstream data movement.
+- [Report by Exception and Store-and-Forward](https://industrialwirelessio.com/protocols/report-by-exception-and-store-and-forward/): A protocol-behavior reference for remote telemetry systems that need to balance alarm timeliness, low-power operation, and resilience during communication outages.
+- [Telemetry Protocol Fit](https://industrialwirelessio.com/protocols/telemetry-protocol-fit/): A practical framework for placing field and upstream protocols in remote telemetry architectures.
+
+## Hardware
+- [Antenna Cable Loss and Mounted Height for Remote Telemetry](https://industrialwirelessio.com/hardware/antenna-cable-loss-and-mounted-height-for-remote-telemetry/): A practical guide for remote telemetry projects where antenna choice, feedline loss, and mounted height quietly determine whether the site is dependable.
+- [Cabinet grounding, bonding, and surge current paths for remote sites](https://industrialwirelessio.com/hardware/cabinet-grounding-bonding-and-surge-current-paths-for-remote-sites/): How to think about grounding, bonding, and surge current paths in remote telemetry cabinets so field failures are reduced before they become invisible intermittent problems.
+- [Cellular Router Selection for Fixed-Site Telemetry](https://industrialwirelessio.com/hardware/cellular-router-selection-for-fixed-site-telemetry/): Choose industrial cellular routers for fixed telemetry sites without overbuying speed, underbuying survivability, or ignoring data-plan and truck-roll cost.
+- [Hardware](https://industrialwirelessio.com/hardware/): Hardware reference pages for remote telemetry stacks including gateways, power systems, antennas, enclosures, and field I/O.
+- [Power, Enclosures, and Antennas](https://industrialwirelessio.com/hardware/power-enclosures-and-antennas/): A field-first guide to the physical deployment stack behind remote telemetry reliability.
+- [Remote Cabinet DC Power Distribution, Fusing, and Battery Isolation](https://industrialwirelessio.com/hardware/remote-cabinet-dc-power-distribution-fusing-and-battery-isolation/): A practical guide for remote telemetry cabinets where low-voltage distribution, fusing, and battery isolation quietly decide serviceability and survivability.
+- [Remote Cabinet Environment Control and Condensation Risk](https://industrialwirelessio.com/hardware/remote-cabinet-environment-control-heaters-vents-and-condensation-risk/): How to design cabinet environment control for remote telemetry so condensation, heat buildup, seasonal swings, and service intervals do not quietly destroy field reliability.
+- [Surge Protection and Lightning Risk at Remote Sites](https://industrialwirelessio.com/hardware/surge-protection-and-lightning-risk-at-remote-sites/): A hardware reference for telemetry deployments where surge exposure, grounding quality, and lightning risk often do more damage than the nominal radio or gateway choice.
+- [What should a remote telemetry cabinet contain?](https://industrialwirelessio.com/hardware/what-should-a-remote-telemetry-cabinet-contain/): Plan remote telemetry cabinet hardware, power, protection, labeling, and service features before field improvisation creates support problems.
+
+## Reliability
+- [Alarm Latching and Local Buffering for Unattended Sites](https://industrialwirelessio.com/reliability/alarm-latching-last-known-state-and-local-buffering-for-unattended-sites/): A practical guide for unattended telemetry sites where temporary link loss should not erase the operating story the remote team needs.
+- [Digital-input event buffering for alarm-first telemetry](https://industrialwirelessio.com/reliability/digital-input-event-buffering-for-alarm-first-telemetry/): How to buffer digital alarm and event inputs locally so intermittent links do not erase the event story at unattended remote sites.
+- [Heartbeat timers, stale-data rules, and supervisory loss handling](https://industrialwirelessio.com/reliability/heartbeat-timers-stale-data-rules-and-supervisory-loss-handling/): How to define heartbeat timing, stale-data rules, and supervisory loss behavior so unattended telemetry sites do not look healthy after the operating story is already missing.
+- [Reliability](https://industrialwirelessio.com/reliability/): Reliability planning for remote telemetry, industrial wireless architecture, maintenance access, and long-term site survivability.
+- [Network Outage Playbooks for Unattended Sites](https://industrialwirelessio.com/reliability/network-outage-playbooks-for-unattended-sites/): A practical guide for designing outage response and telemetry behavior at remote unattended sites so communications loss does not turn into operational confusion.
+- [Out-of-Band Management and Local Fallback for Unattended Sites](https://industrialwirelessio.com/reliability/out-of-band-management-and-local-fallback-for-unattended-sites/): A practical guide for unattended telemetry sites where link loss should not turn a manageable outage into a blind field emergency.
+- [Quarterly Remote Telemetry Site Inspection Checklist](https://industrialwirelessio.com/reliability/quarterly-remote-telemetry-site-inspection-checklist/): A practical quarterly inspection checklist for remote telemetry sites covering cabinet, power, antenna, data quality, alarms, and recovery evidence.
+- [Remote Telemetry Alarm Flood Reduction with Deadbands](https://industrialwirelessio.com/reliability/remote-telemetry-alarm-flood-reduction-deadbands-persistence-and-operator-trust/): How to reduce nuisance alarms in remote telemetry systems without hiding events that operators and field teams actually need.
+- [Remote Telemetry Commissioning and Site Acceptance Checklist](https://industrialwirelessio.com/reliability/remote-telemetry-commissioning-and-site-acceptance-checklist/): A field-ready commissioning and site acceptance checklist for remote telemetry systems before unattended operation begins.
+- [Remote Telemetry Firmware Patching and Change Control for Unattended Sites](https://industrialwirelessio.com/reliability/remote-telemetry-firmware-patching-and-change-control-for-unattended-sites/): A practical change-control model for router, modem, RTU, gateway, radio, and telemetry firmware updates at unattended industrial sites.
+- [Site Survivability Planning](https://industrialwirelessio.com/reliability/site-survivability-planning/): How to design remote telemetry systems that keep useful local state, alarms, power, and recovery behavior when field conditions are bad.
+- [Solar, Battery, and Low-Power Site Planning](https://industrialwirelessio.com/reliability/solar-battery-and-low-power-site-planning/): A reliability reference for remote telemetry deployments where power budgeting, battery autonomy, and service intervals shape the viability of the entire site.
+- [When should a remote site alarm immediately vs buffer locally?](https://industrialwirelessio.com/reliability/when-should-a-remote-site-alarm-immediately-vs-buffer-locally/): Separate urgent alarms from locally buffered events so unattended telemetry sites stay actionable without becoming noisy, expensive, or confusing.
+- [Why Do Remote Telemetry Sites Go Offline?](https://industrialwirelessio.com/reliability/why-do-remote-telemetry-sites-go-offline/): A practical failure-analysis guide to why remote telemetry sites disappear, how to classify the cause, and what changes actually improve uptime.
+
+## About
+- [About](https://industrialwirelessio.com/about/): Mission, scope, editorial structure, and review approach for Industrial Wireless I/O remote telemetry and field-connectivity reference pages.
+
+## Advertising
+- [Advertising](https://industrialwirelessio.com/advertising/): Advertising approach, inventory principles, and commercial separation for Industrial Wireless I/O.
+
+## Affiliate Disclosure
+- [Affiliate Disclosure](https://industrialwirelessio.com/affiliate-disclosure/): Disclosure for potential affiliate relationships on Industrial Wireless I/O.
+
+## Contact
+- [Contact](https://industrialwirelessio.com/contact/): Contact and editorial outreach information for Industrial Wireless I/O.
+
+## Disclaimer
+- [Disclaimer](https://industrialwirelessio.com/disclaimer/): Important limitations and usage boundaries for information published on Industrial Wireless I/O.
+
+## Editorial Desk
+- [Industrial Wireless I/O Editorial Desk](https://industrialwirelessio.com/editorial-desk/): Who maintains Industrial Wireless I/O and how the site develops remote telemetry, field hardware, and site reliability pages.
+
+## Editorial Policy
+- [Editorial Policy](https://industrialwirelessio.com/editorial-policy/): How Industrial Wireless I/O approaches sourcing, updates, and editorial independence.
+
+## Privacy
+- [Privacy](https://industrialwirelessio.com/privacy/): Privacy overview for Industrial Wireless I/O and how usage information may be handled.
+
+## Review Desk
+- [Industrial Wireless I/O Review Desk](https://industrialwirelessio.com/review-desk/): How Industrial Wireless I/O reviews major telemetry pages for field realism, reliability logic, and physical-layer coherence.
+
+## Terms Of Use
+- [Terms of Use](https://industrialwirelessio.com/terms-of-use/): Terms governing use of Industrial Wireless I/O, including acceptable use, content reuse, external links, and no-warranty limits.
