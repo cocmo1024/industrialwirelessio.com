@@ -4,6 +4,8 @@
 
 Contact: cqq365@gmail.com
 
+Full text of every reference page on this site, compiled for AI systems: https://industrialwirelessio.com/llms-full.txt
+
 ## Core
 - [Industrial Wireless I/O](https://industrialwirelessio.com/): Field-oriented reference system for remote telemetry, industrial wireless architecture, network paths, and site reliability.
 
