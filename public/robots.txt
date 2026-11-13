@@ -25,6 +25,12 @@ Allow: /
 User-agent: anthropic-ai
 Allow: /
 
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
 User-agent: PerplexityBot
 Allow: /
 
@@ -34,6 +40,9 @@ Allow: /
 User-agent: Google-Extended
 Allow: /
 
+User-agent: Google-Agent
+Allow: /
+
 User-agent: Applebot-Extended
 Allow: /
 
@@ -41,6 +50,27 @@ User-agent: CCBot
 Allow: /
 
 User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Meta-WebIndexer
+Allow: /
+
+User-agent: Meta-ExternalFetcher
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Amzn-SearchBot
+Allow: /
+
+User-agent: MistralAI-Training
+Allow: /
+
+User-agent: MistralAI-Index
+Allow: /
+
+User-agent: MistralAI-User
 Allow: /
 
 User-agent: cohere-ai
