@@ -1,0 +1,38 @@
+vendor: Siemens
+vendorSlug: siemens
+model: SCALANCE M876-4
+productType: router
+slug: siemens-scalance-m876-4
+status: active
+protocols:
+  - lte
+frequencyBands:
+  - "LTE B1/B2/B3/B4/B5/B7/B8/B12/B13/B18/B19/B20/B26/B28/B38/B40"
+  - "GSM 850/900/1800/1900 MHz"
+txPowerDbm: null
+rxSensitivityDbm: null
+rangeClass: null
+antenna: null
+io:
+  di: 1
+  do: 1
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "Record covers the global variant 6GK5876-4AA10-2BA2 (Industry Mall listing)."
+upstreamInterfaces: []
+powerSupply: "24 V DC (rated)"
+powerConsumption: null
+batteryLife: null
+ipRating: null
+operatingTemp: "-20 °C to +60 °C (vertical mounting); -20 °C to +50 °C (horizontal mounting)"
+certifications:
+  - RoHS
+  - "National approvals per the Industry Mall listing"
+hazardousArea: null
+sourceUrl: "https://mall.industry.siemens.com/mall/en/oeii/Catalog/Product?mlfb=6GK5876-4AA10-2BA2&SiepCountryCode=OE"
+sourceType: product-page
+sourceDocId: "C79000-G8976-C331-17"
+dateChecked: 2026-11-14
+notes: "Operating temperature per the operating instructions (C79000-G8976-C331-17); the NAM datasheet states -20 °C to +70 °C and the two are not merged. Carrier certifications are not asserted. Data row only for now under blueprint §4.3: no antenna or RF figure was transcribed from the listing in this pass. Promotion path: transcribe the antenna/RF rows from the operating instructions."

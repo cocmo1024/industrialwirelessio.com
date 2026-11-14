@@ -1,0 +1,37 @@
+vendor: Digi
+vendorSlug: digi
+model: IX20 (IX20-00G4)
+productType: router
+slug: digi-ix20
+status: active
+protocols:
+  - lte
+frequencyBands:
+  - "LTE Cat 4 Global (G4) band set, per the IX20-00G4 model page"
+txPowerDbm: null
+rxSensitivityDbm: null
+rangeClass: null
+antenna: null
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: null
+upstreamInterfaces:
+  - Ethernet (2 ports)
+  - RS-232 serial
+powerSupply: null
+powerConsumption: "1.5 W (light traffic), 3.5 W (peak data transmission) (IX20-00G4 model page)"
+batteryLife: null
+ipRating: IP30
+operatingTemp: null
+certifications: []
+hazardousArea: null
+sourceUrl: "https://www.digi.com/products/models/ix20-00g4?aliaspath=%2FProducts%2Fmodels%2FIX20-00G4"
+sourceType: product-page
+sourceDocId: null
+dateChecked: 2026-11-14
+notes: "Power figures per the current IX20-00G4 model page on digi.com. The older IX20 datasheet gives 2.5 W / 6 W; the two documents are not merged. Data row only for now under blueprint §4.3: no antenna or RF figure was transcribed from the model page in this pass, so the wireless-identity count stays at two. Promotion path: transcribe the antenna/interface rows from the model page."

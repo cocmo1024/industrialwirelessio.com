@@ -1,0 +1,39 @@
+vendor: Phoenix Contact
+vendorSlug: phoenix-contact
+model: TC ROUTER 3002T-4G GL
+productType: router
+slug: phoenix-contact-tc-router-3002t-4g-gl
+status: active
+protocols:
+  - lte
+  - 3g
+  - gprs
+frequencyBands:
+  - "Global LTE / 3G / 2G band support (manufacturer product page, item 1632697)"
+txPowerDbm: 23
+txPowerCondition: "LTE maximum; reduced by 5 dBm above +60 °C (manufacturer data)"
+rxSensitivityDbm: null
+rangeClass: null
+antenna: null
+io:
+  di: 2
+  do: 1
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: null
+upstreamInterfaces:
+  - Ethernet (2 ports)
+powerSupply: "10-30 VDC"
+powerConsumption: "4.8 W maximum dissipation (nominal condition)"
+batteryLife: null
+ipRating: null
+operatingTemp: "-40 °C to +70 °C"
+certifications: []
+hazardousArea: "Class I Division 2 (C1D2)"
+sourceUrl: https://www.phoenixcontact.com/us/products/1632697
+sourceType: product-page
+sourceDocId: null
+dateChecked: 2026-11-14
+notes: "Current successor model (item 1632697). The earlier TC ROUTER variant (item 2702528) is legacy."
