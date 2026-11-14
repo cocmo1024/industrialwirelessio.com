@@ -1,0 +1,107 @@
+slug: isa100
+name: ISA100.11a
+fullName: ISA100 Wireless — ISA100.11a, the ISA's process-industry wireless standard
+standardsBody: International Society of Automation (ISA)
+standardDesignation: IEC 62734 (ANSI/ISA-100.11a-2011)
+coverage: Cornerstone — definition, architecture and ecosystem
+bands:
+  - label: 2.4 GHz ISM
+    detail: 2400–2483.5 MHz, IEEE 802.15.4
+    railFreqMhz: 2400
+topology: Mesh, star or hybrid — field devices reach the gateway through backbone routers; duocast transmits to two backbone routers at once
+latencyClass: Device update periods from 0.5 s; designed for applications that tolerate latencies on the order of 100 ms
+powerProfile: Two device roles — routing devices relay traffic and draw more power; non-routing I/O devices are the battery class
+bestFor: Process plants standardizing on IPv6 field networking, multi-protocol tunneling, or a Yokogawa/Honeywell ecosystem
+keyParameters:
+  - key: standard
+    label: Standard
+    value: ANSI/ISA-100.11a-2011, “Wireless Systems for Industrial Automation — Process Control and Related Applications”; approved by the IEC as international standard IEC 62734; products are certified by the ISA100 Wireless Compliance Institute (WCI)
+    source: ISA, ISA-100 series of standards; ISA100 WCI, IEC approval announcement (Sept 2014)
+  - key: phy
+    label: Radio (PHY)
+    value: IEEE 802.15.4, 2.4 GHz ISM band; 250 kbps raw data rate (Yokogawa YFGW710 specification)
+    source: ISA100 WCI, interoperability release and Complete Guide Fig. 3.4.1; Yokogawa YFGW710 product specification
+  - key: channels
+    label: Channels
+    value: Channel plans are implementation-specific — Yokogawa's YFGW710 uses 15 channels, Honeywell's FDAP Gen3 specifies 13 DSSS channels; the channel switches with every transmission, with adaptive hopping and blacklisting of interfered channels
+    source: Yokogawa YFGW710 specification; Honeywell FDAP Gen3 Specification OW03 670 322; ISA100 WCI Complete Guide §3.6
+  - key: timeslot
+    label: Timeslot model
+    value: Timeslots are assigned in advance by the system manager; TDMA and CSMA access modes are both defined. WCI publishes no single fixed slot duration (contrast WirelessHART's fixed 10 ms)
+    source: ISA100 WCI, Complete Guide §3.6 and §3.9
+  - key: security
+    label: Security
+    value: AES-128 at two layers — transport (end-to-end) and data-link (hop-by-hop) — with join, master, data-link and session keys managed by a dedicated security manager role; WCI describes the model as policy-based and scalable; provisioning is by infrared or over the air
+    source: ISA100 WCI, “Secure” page and Complete Guide §3.5/§3.9
+  - key: updateRates
+    label: Supported device update rates
+    value: "0.5 seconds to 60 minutes (Yokogawa YFGW410: user-selectable 0.5–3600 s; Honeywell WDM supported rates start at 0.5 s)"
+    source: Yokogawa GS 01W02D01-01EN (YFGW410); Honeywell Wireless Device Manager Specification OW03 650 330
+  - key: ipv6
+    label: Network layer
+    value: Native IPv6 addressing with 6LoWPAN — every field device is an IP node; the backbone is an IP network built over access points and backbone routers
+    source: ISA100 WCI, interoperability release; Complete Guide §3.5
+  - key: application
+    label: Application layer
+    value: Object-oriented application model plus tunneling — Profibus, Foundation Fieldbus, HART, Modbus and OPC are carried through one network; device communication runs under contracts created and managed by the system manager
+    source: ISA100 WCI, Complete Guide Fig. 3.4.1 and “Universal Industrial Wireless Network”; Honeywell WDM Specification (contract mechanism)
+gatewayCapacity:
+  - vendor: Yokogawa
+    model: YFGW410 Field Wireless Management Station (via YFGW510 access points)
+    maxDevices: "200"
+    condition: At a 1-second device update rate; at most 20 devices per field wireless subnet
+    source: Yokogawa GS 01W02D01-01EN, performance specifications
+  - vendor: Yokogawa
+    model: YFGW410 Field Wireless Management Station (via YFGW510 access points)
+    maxDevices: "500"
+    condition: At a 5-second device update rate; at most 100 devices per field wireless subnet; up to 20 subnets
+    source: Yokogawa GS 01W02D01-01EN, performance specifications
+  - vendor: Yokogawa
+    model: YFGW710 Field Wireless Integrated Gateway (discontinued)
+    maxDevices: "50"
+    condition: At update periods up to 5 seconds; 10 devices at update periods up to 1 second
+    source: Yokogawa YFGW710 product specification
+  - vendor: Honeywell
+    model: OneWireless Wireless Device Manager (WDMY)
+    maxDevices: "500"
+    condition: ISA100 Wireless and/or WirelessHART field instruments combined, depending on update rates; up to 40 access points
+    source: Honeywell Wireless Device Manager Specification OW03 650 330, field network capacity
+linkStrip:
+  nodeA: Field device (I/O or routing device)
+  nodeB: Backbone router → gateway
+  linkLabel: ISA100.11a · 2.4 GHz ISM · star-mesh
+  readings:
+    - label: Update rate
+      value: 0.5 s – 60 min
+    - label: Addressing
+      value: Native IPv6
+    - label: Latency class
+      value: ≈100 ms order
+sources:
+  - label: ISA — ISA-100 series of standards (ISA-100.11a-2011 designation and scope)
+    url: https://www.isa.org/standards-and-publications/isa-standards/isa-100-standards
+    dateChecked: 2026-11-14
+  - label: ISA100 WCI — ISA100 Wireless standard gains final IEC approval as IEC 62734
+    url: https://isa100wci.org/news-events/isa100-wireless-standard-gains-final-iec-approval
+    dateChecked: 2026-11-14
+  - label: ISA100 WCI — ISA100 Wireless, The Complete Guide (architecture, security, roles)
+    url: https://isa100wci.org/hubfs/ISA100%20Wireless%20-The%20Complete%20Guide%20Brochure%20-%20reduced.pdf?hsLang=en
+    dateChecked: 2026-11-14
+  - label: ISA100 WCI — Secure (two-layer AES-128 security model)
+    url: https://isa100wci.org/about-isa100-wireless/secure
+    dateChecked: 2026-11-14
+  - label: ISA100 WCI — Universal Industrial Wireless Network (object model and tunneling)
+    url: https://isa100wci.org/about-isa100-wireless/universal-industrial-wireless-network
+    dateChecked: 2026-11-14
+  - label: Yokogawa — YFGW410 Field Wireless Management Station, General Specifications GS 01W02D01-01EN
+    url: https://web-material3.yokogawa.com/GS01W02D01-01EN_008.pdf
+    dateChecked: 2026-11-14
+  - label: Yokogawa — YFGW710 Field Wireless Integrated Gateway (specification; product discontinued)
+    url: https://www.yokogawa.com/us/solutions/discontinued/yfgw710-field-wireless-integrated-gateway/
+    dateChecked: 2026-11-14
+  - label: Honeywell — OneWireless Wireless Device Manager Specification OW03 650 330
+    url: https://prod-edam.honeywell.com/content/dam/honeywell-edam/pmt/hps/products/pas/wireless/wireless-device-manager/OneWireless-Wireless-Device-Manager-Specification.pdf?download=false
+    dateChecked: 2026-11-14
+  - label: ISA100 WCI — Certified Products / ISA100 Wireless Product Listing (ecosystem)
+    url: https://isa100wci.org/end-users/certified-products
+    dateChecked: 2026-11-14

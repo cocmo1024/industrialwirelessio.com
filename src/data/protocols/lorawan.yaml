@@ -1,0 +1,107 @@
+slug: lorawan
+name: LoRaWAN
+fullName: LoRaWAN — the LoRa Alliance network specification over the LoRa physical layer
+standardsBody: LoRa Alliance
+standardDesignation: LoRaWAN L2 Specification TS001-1.0.4 · Regional Parameters RP002-1.0.4
+coverage: Cornerstone — definition, payload limits and conditional range
+bands:
+  - label: EU 868 MHz
+    detail: EU863-870 — ETSI duty-cycled sub-GHz
+    railFreqMhz: 868
+  - label: US 915 MHz
+    detail: US902-928 — 400 ms dwell-time rule
+    railFreqMhz: 915
+topology: Star-of-stars — end devices talk single-hop to gateways; gateways relay to a central network server
+latencyClass: Seconds-class and airtime-bound — Class A downlink waits for the next uplink
+powerProfile: Battery-first — years at slow reporting rates; Class C receivers need continuous power
+bestFor: Small, slow readings from spread-out assets — level, temperature, counts, alarm states
+keyParameters:
+  - key: phy
+    label: Physical layer (LoRa)
+    value: Chirp spread spectrum (CSS) modulation developed by Semtech — LoRa is the PHY; LoRaWAN is the MAC and network layer maintained by the LoRa Alliance
+    source: Semtech, “What is LoRa”; LoRaWAN L2 Specification TS001-1.0.4, §2
+  - key: euDataRates
+    label: Data rates (EU868)
+    value: DR0 = SF12/125 kHz at 250 bit/s; DR3 = SF9 at 1,760 bit/s; DR5 = SF7 at 5,470 bit/s; DR7 = FSK at 50 kbit/s
+    source: LoRa Alliance, Regional Parameters RP002-1.0.4, §2.4.3 Table 8
+  - key: dutyCycle
+    label: Duty cycle (EU863-870)
+    value: Duty-cycled transmission under ETSI EN 300.220; the three default channels (868.10 / 868.30 / 868.50 MHz) carry a <1% duty-cycle limit — at most about 36 seconds of airtime per hour
+    source: LoRa Alliance, Regional Parameters RP002-1.0.4, §2.4.2 Table 6 and §2.4.3
+  - key: dwell
+    label: Dwell time (US902-928)
+    value: Maximum 400 ms dwell time per uplink under the FCC frequency-hopping rules — this, not a duty cycle, is what caps US payload sizes
+    source: LoRa Alliance, Regional Parameters RP002-1.0.4, §2.5.3
+  - key: classes
+    label: Device classes
+    value: "Class A: two short receive windows after each uplink (mandatory for all devices). Class B: additional beacon-scheduled receive slots. Class C: receiver open whenever the device is not transmitting"
+    source: LoRaWAN L2 Specification TS001-1.0.4, §2.1
+  - key: adr
+    label: Adaptive data rate
+    value: With ADR, the network server manages each end device's data rate and transmit power individually to maximize battery life and network capacity
+    source: LoRaWAN L2 Specification TS001-1.0.4, §4.3.1.1
+  - key: range
+    label: Range (conditioned)
+    value: Up to 15 km in rural areas, per the LoRa Alliance. The Alliance publishes no urban or indoor figure — inside a plant, range is set by antenna height, spreading factor and obstructions, and is a small fraction of the rural figure
+    source: LoRa Alliance, “About LoRaWAN” (range statement); RP002-1.0.4 for the data-rate determinants
+payloadLimits:
+  - region: EU863-870
+    dataRate: DR0 (SF12)
+    maxMacPayload: 59 bytes
+    maxAppPayload: 51 bytes
+    source: RP002-1.0.4, §2.4.6 Table 12
+  - region: EU863-870
+    dataRate: DR2 (SF10)
+    maxMacPayload: 59 bytes
+    maxAppPayload: 51 bytes
+    source: RP002-1.0.4, §2.4.6 Table 12
+  - region: EU863-870
+    dataRate: DR3 (SF9)
+    maxMacPayload: 123 bytes
+    maxAppPayload: 115 bytes
+    source: RP002-1.0.4, §2.4.6 Table 12
+  - region: EU863-870
+    dataRate: DR5 (SF7)
+    maxMacPayload: 230 bytes
+    maxAppPayload: 222 bytes
+    source: RP002-1.0.4, §2.4.6 Table 12
+  - region: US902-928
+    dataRate: DR0 (SF10)
+    maxMacPayload: 19 bytes
+    maxAppPayload: 11 bytes
+    source: RP002-1.0.4, §2.5.6 Table 19
+  - region: US902-928
+    dataRate: DR1 (SF9)
+    maxMacPayload: 61 bytes
+    maxAppPayload: 53 bytes
+    source: RP002-1.0.4, §2.5.6 Table 19
+  - region: US902-928
+    dataRate: DR3 (SF7)
+    maxMacPayload: 230 bytes
+    maxAppPayload: 222 bytes
+    source: RP002-1.0.4, §2.5.6 Table 19
+    note: "Maxima are the repeater-compatible tables of RP002-1.0.4 (EU Table 12, US Table 19); without the repeater constraint, DR4 and above allow up to 250-byte MAC payloads and 242-byte application payloads (Tables 13 and 20). Application payload assumes the optional FOpts field is empty — MAC commands carried in FOpts reduce it."
+linkStrip:
+  nodeA: End device (Class A sensor)
+  nodeB: Gateway → network server
+  linkLabel: LoRaWAN · sub-GHz · single hop
+  readings:
+    - label: App payload @ SF12 (EU)
+      value: ≤ 51 B
+    - label: Duty cycle (EU)
+      value: < 1%
+    - label: Range (rural)
+      value: ≤ 15 km
+sources:
+  - label: LoRa Alliance — LoRaWAN L2 Specification TS001-1.0.4 (October 2020)
+    url: https://lora-alliance.org/wp-content/uploads/2021/11/LoRaWAN-Link-Layer-Specification-v1.0.4.pdf
+    dateChecked: 2026-11-14
+  - label: LoRa Alliance — LoRaWAN Regional Parameters RP002-1.0.4 (EU §2.4, US §2.5)
+    url: https://read.uberflip.com/i/1479525-rp002-1-0-4-regional-parameters/30
+    dateChecked: 2026-11-14
+  - label: LoRa Alliance — About LoRaWAN (layer split, classes, range statement)
+    url: https://lora-alliance.org/about-lorawan/
+    dateChecked: 2026-11-14
+  - label: Semtech — What is LoRa (physical layer definition)
+    url: https://www.semtech.com/lora/what-is-lora
+    dateChecked: 2026-11-14
