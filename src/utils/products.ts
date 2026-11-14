@@ -53,6 +53,11 @@ export const PROTOCOL_LABELS: Record<string, string> = {
 	'proprietary-subghz': 'Proprietary sub-GHz',
 	'proprietary-24ghz': 'Proprietary 2.4 GHz',
 	'modbus': 'Modbus',
+	'proprietary-900': 'Proprietary 900 MHz',
+	'proprietary-2-4': 'Proprietary 2.4 GHz',
+	'proprietary-licensed': 'Proprietary licensed band',
+	'gprs': 'GPRS',
+	'3g': '3G',
 };
 
 export function protocolLabel(slug: string): string {

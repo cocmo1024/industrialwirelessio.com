@@ -677,7 +677,7 @@ const latestChecked = (sources: { dateChecked: Date }[]) =>
 				)}
 				{data.faq && data.faq.length > 0 && <FaqSection items={data.faq} />}
 				<script>
-					const form = document.getElementById('product-filters');
+					const form = document.getElementById('product-filters') as HTMLFormElement | null;
 					const rows = [...document.querySelectorAll('[data-product-row]')];
 					const counter = document.querySelector('[data-visible-count]');
 					function applyFilters() {
