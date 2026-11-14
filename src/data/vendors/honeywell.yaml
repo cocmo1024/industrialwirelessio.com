@@ -1,0 +1,7 @@
+slug: honeywell
+name: Honeywell
+website: https://www.honeywell.com
+listingStatus: listed
+featuredEligible: false
+productLines:
+  - OneWireless (ISA100 / WirelessHART)

@@ -1,0 +1,8 @@
+slug: emerson
+name: Emerson
+website: https://www.emerson.com
+listingStatus: listed
+featuredEligible: false
+productLines:
+  - WirelessHART gateways
+  - Wireless adapters
