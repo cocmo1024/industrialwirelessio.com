@@ -1,0 +1,48 @@
+vendor: TEKTELIC
+vendorSlug: tektelic
+model: KONA Micro IoT Gateway
+productType: gateway
+slug: tektelic-kona-micro
+status: active
+protocols:
+  - lorawan
+frequencyBands:
+  - US915
+  - EU868
+  - AU915
+  - AS923
+txPowerDbm: 27
+txPowerCondition: Adjustable 14–27 dBm
+rxSensitivityDbm: -141
+rxSensitivityCondition: SF12, 293 bps
+rangeClass: null
+antenna: External LoRa antenna, reverse-SMA female
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: 8 RX / 1 TX channels
+upstreamInterfaces:
+  - Ethernet 10/100 (RJ45)
+  - Cellular 3G/4G with dual SIM (optional)
+powerSupply: 12 V DC adapter, or PoE (IEEE 802.3bt Class 3, 802.3af compatible)
+powerConsumption: 2.3 W (Ethernet backhaul), 2.6 W (cellular backhaul)
+batteryLife:
+  value: 4 h
+  conditions: Backup operation from the internal 7.2 V lithium-ion battery
+  sourceRef: TEKTELIC KONA Micro User Guide T0008073_UG
+ipRating: IP30
+operatingTemp: "0 °C to +40 °C"
+certifications:
+  - FCC Part 15.247
+  - ISED RSS-247
+  - CE RED 2014/53/EU
+  - UL/CSA/EN/IEC 62368-1
+hazardousArea: null
+sourceUrl: https://tektelic.com/wp-content/uploads/TEKTELIC-KONA-Micro-Spec-Sheet_Jun-26.pdf
+sourceType: datasheet
+sourceDocId: TEKTELIC KONA Micro spec sheet (Jun-26); User Guide T0008073_UG
+dateChecked: 2026-11-14

@@ -1,0 +1,46 @@
+vendor: Kerlink
+vendorSlug: kerlink
+model: Wirnet iFemtoCell-evolution
+productType: gateway
+slug: kerlink-wirnet-ifemtocell-evolution
+status: active
+protocols:
+  - lorawan
+frequencyBands:
+  - EU863-870
+  - IN865-867
+  - RU864-870
+  - US902-928
+  - AU915-928
+  - AS923
+  - KR920-923
+txPowerDbm: 24
+txPowerCondition: Conducted, configurable 5–24 dBm; maximum TX EIRP 27 dBm
+rxSensitivityDbm: -140
+rxSensitivityCondition: SF12
+rangeClass: null
+antenna: LoRa swivel antenna, 3 dBi peak gain (SMA); integrated LTE antenna
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "8 RX channels (125 kHz, multi-SF) + 1 RX (250/500 kHz, mono-SF) + 1 FSK RX, 1 TX; USB-A and USB-C for configuration"
+upstreamInterfaces:
+  - Ethernet 10/100 (RJ45)
+  - 4G with 3G/2G fallback
+powerSupply: AC/DC adapter (90–264 VAC in, 12 VDC out), or 5 V DC via USB-C; UPS accessories with 5 h or 24 h autonomy
+powerConsumption: null
+batteryLife: null
+ipRating: IP30
+operatingTemp: "-20 °C to +55 °C (gateway only, without power supply)"
+certifications:
+  - CE
+hazardousArea: null
+sourceUrl: https://docs.kerlink.com/wirnet-productline/lib/exe/fetch.php?media=documentation:commercial_leaflet_ifemtocell-evolution_2.9.pdf
+sourceType: datasheet
+sourceDocId: Kerlink Wirnet iFemtoCell-evolution datasheet V2.9
+dateChecked: 2026-11-14
+notes: The Quick Start Guide KLK03378 V12.0 also describes Wi-Fi backhaul; upstream interfaces follow the V2.9 datasheet, which lists Ethernet and cellular only.
