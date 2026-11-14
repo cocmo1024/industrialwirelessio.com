@@ -1,0 +1,43 @@
+vendor: Banner Engineering
+vendorSlug: banner-engineering
+model: DX80N9X6S4P8
+productType: wireless-io-module
+slug: banner-dx80n9x6s4p8
+status: legacy
+protocols:
+  - proprietary-900
+frequencyBands:
+  - "900 MHz ISM (FHSS)"
+txPowerDbm: 21
+txPowerCondition: "Conducted, 900 MHz 150 mW configuration (datasheet 132161 Rev. I); the 2.4 GHz sibling models are 18 dBm conducted"
+rxSensitivityDbm: null
+rangeClass:
+  value: "4.8"
+  unit: km
+  conditions: "Up to 4.8 km (3 miles) at 900 MHz with the 2 dB antenna that ships with the product; range depends on the environment and line of sight (datasheet)"
+  sourceRef: "Datasheet 132161 Rev. I"
+antenna: "External reverse-polarity SMA, 50 ohm (2 dBd omni antenna ships with the product)"
+io:
+  di: 4
+  do: 8
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "Four selectable discrete inputs (sourcing PNP or sinking NPN, DIP-selectable) and eight sourcing (PNP) discrete outputs, per datasheet 132161 Rev. I."
+upstreamInterfaces:
+  - "Sure Cross wireless network (to a DX80 gateway)"
+powerSupply: "10-30 V dc"
+powerConsumption: "Less than 1.4 W (60 mA) at 24 V dc (datasheet)"
+batteryLife: null
+ipRating: IP67
+operatingTemp: "-40 °C to +85 °C"
+certifications:
+  - "FCC Part 15 Subpart C, 15.247 (FCC ID TGUDX80)"
+  - "IC 7044A-DX8009 (Canada)"
+hazardousArea: null
+sourceUrl: https://info.bannerengineering.com/cs/groups/public/documents/literature/132161.pdf
+sourceType: datasheet
+sourceDocId: "132161 Rev. I"
+dateChecked: 2026-11-14
+notes: "Recorded model is the 900 MHz IP67 (NEMA 6) base version; the same datasheet (132161 Rev. I, 2017) covers the 2.4 GHz sibling DX80N2X6S4P8 and the IP20 'C' housing models, which carry the Class I Division 2 / ATEX Zone 2 certifications — those certifications belong to the C models and are not asserted for this base model. Receiver sensitivity is not stated in the datasheet and is left blank. Status is recorded as legacy: Rev. I (2017) is the revision Banner's literature library currently serves and the document carries no discontinuation notice."
