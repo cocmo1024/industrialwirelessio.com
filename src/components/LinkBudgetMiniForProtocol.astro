@@ -1,0 +1,28 @@
+---
+/**
+ * Protocol-page wrapper for the link budget mini: pulls the
+ * receiver-sensitivity presets for one protocol live from the
+ * product database (only records with a datasheet sensitivity that
+ * earned a full product page — see sensitivityPresets), so MDX
+ * protocol pages embed the mini with a single component tag and
+ * the preset set can never drift from the database.
+ */
+import { getCollection } from 'astro:content';
+import LinkBudgetMini from './LinkBudgetMini.astro';
+import { sensitivityPresets } from '../utils/products';
+
+interface Props {
+	protocolSlug: string;
+	frequencyMhz: number;
+	contextNote: string;
+}
+
+const { protocolSlug, frequencyMhz, contextNote } = Astro.props;
+const productEntries = await getCollection('products');
+const presets = sensitivityPresets(
+	productEntries.map((entry) => entry.data),
+	protocolSlug,
+);
+---
+
+<LinkBudgetMini frequencyMhz={frequencyMhz} contextNote={contextNote} presets={presets} />

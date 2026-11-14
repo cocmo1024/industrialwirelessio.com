@@ -1,0 +1,451 @@
+---
+/**
+ * Link budget calculator — full tool form (blueprint §2.3 tool
+ * anatomy, §4.5 T1). All arithmetic runs through the shared engine
+ * (src/utils/link-engine.ts) — the same module the mini embeds on
+ * protocol pages import (R2). Nothing is prefilled: the only
+ * one-click values are receiver-sensitivity presets transcribed
+ * from manufacturer datasheets in the product database, each
+ * labelled with its source record.
+ */
+import type { SensitivityPreset } from '../utils/products';
+
+interface Props {
+	presets?: SensitivityPreset[];
+}
+
+const { presets = [] } = Astro.props;
+---
+
+<form class="calc" data-link-budget novalidate>
+	<fieldset>
+		<legend>The path</legend>
+		<div class="fields">
+			<label>
+				Frequency (MHz)
+				<input type="number" name="frequency" step="any" min="0" inputmode="decimal" required />
+			</label>
+			<label>
+				Distance
+				<span class="with-unit">
+					<input type="number" name="distance" step="any" min="0" inputmode="decimal" required />
+					<select name="distanceUnit" aria-label="Distance unit">
+						<option value="km" selected>km</option>
+						<option value="m">m</option>
+					</select>
+				</span>
+			</label>
+			<label class="model-choice">
+				Path-loss model
+				<span class="radio-row">
+					<label class="radio">
+						<input type="radio" name="model" value="free-space" checked /> Free space
+					</label>
+					<label class="radio">
+						<input type="radio" name="model" value="log-distance" /> Log-distance
+					</label>
+				</span>
+			</label>
+			<label data-exponent-field hidden>
+				Path-loss exponent n
+				<input type="number" name="exponent" step="any" inputmode="decimal" />
+				<span class="hint">2 = free space; higher values model obstructed paths. Required for the log-distance model — this tool does not pick one for you.</span>
+			</label>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend>The transmitting end</legend>
+		<div class="fields">
+			<label>
+				Transmit power (dBm)
+				<input type="number" name="txPower" step="any" inputmode="decimal" required />
+			</label>
+			<label>
+				Antenna gain (dBi)
+				<input type="number" name="txGain" step="any" inputmode="decimal" placeholder="0" />
+			</label>
+			<label>
+				Cable &amp; connector loss (dB)
+				<input type="number" name="txCableLoss" step="any" min="0" inputmode="decimal" placeholder="0" />
+			</label>
+		</div>
+	</fieldset>
+
+	<fieldset>
+		<legend>The receiving end</legend>
+		<div class="fields">
+			<label>
+				Antenna gain (dBi)
+				<input type="number" name="rxGain" step="any" inputmode="decimal" placeholder="0" />
+			</label>
+			<label>
+				Cable &amp; connector loss (dB)
+				<input type="number" name="rxCableLoss" step="any" min="0" inputmode="decimal" placeholder="0" />
+			</label>
+			<label>
+				Receiver sensitivity (dBm)
+				<input type="number" name="sensitivity" step="any" inputmode="decimal" required />
+			</label>
+			<label>
+				Fade-margin allowance (dB, optional)
+				<input type="number" name="allowance" step="any" min="0" inputmode="decimal" placeholder="0" />
+				<span class="hint">If you plan against a required margin, enter it here — the verdict then judges what is left after it.</span>
+			</label>
+		</div>
+		{
+			presets.length > 0 && (
+				<div class="presets">
+					<p class="presets-head">Receiver sensitivity presets — from the product database</p>
+					<ul>
+						{presets.map((preset) => (
+							<li>
+								<button type="button" class="btn preset-btn" data-sensitivity={preset.sensitivityDbm}>
+									Use {preset.sensitivityDbm} dBm
+								</button>{' '}
+								<a href={preset.href}>
+									{preset.vendor} {preset.model}
+								</a>{' '}
+								<span class="preset-cond">receiver sensitivity, {preset.condition} — per the manufacturer datasheet transcribed in its record</span>
+							</li>
+						))}
+					</ul>
+				</div>
+			)
+		}
+	</fieldset>
+
+	<p class="calc-error" data-error role="alert" hidden></p>
+
+	<section class="results" aria-live="polite" aria-label="Link budget result">
+		<div class="empty-state" data-empty>
+			<p class="empty-title">No budget yet.</p>
+			<p class="empty-reason" data-empty-reason>
+				The budget needs four figures: frequency, distance, transmit power and receiver
+				sensitivity. Antenna gains and cable losses count as 0 until you enter them.
+			</p>
+			<p class="empty-reason">Enter the figures on this page — nothing is uploaded or stored.</p>
+		</div>
+		<div data-output hidden>
+			<dl class="readings">
+				<div class="reading">
+					<dt>Path loss</dt>
+					<dd class="num" data-out="pathLoss">–</dd>
+				</div>
+				<div class="reading">
+					<dt>Received power</dt>
+					<dd class="num" data-out="received">–</dd>
+				</div>
+				<div class="reading">
+					<dt>Link margin</dt>
+					<dd class="num" data-out="margin">–</dd>
+				</div>
+				<div class="reading" data-allowance-row hidden>
+					<dt>Margin after allowance</dt>
+					<dd class="num" data-out="marginAfter">–</dd>
+				</div>
+			</dl>
+			<p class="verdict">
+				<strong data-verdict-label></strong>
+				<span data-verdict-detail></span>
+			</p>
+		</div>
+	</section>
+</form>
+
+<script>
+	import { computeLinkBudget, fmtDb, fmtSignedDb } from '../utils/link-engine';
+
+	for (const form of document.querySelectorAll<HTMLFormElement>('[data-link-budget]')) {
+		const field = (name: string) =>
+			form.querySelector<HTMLInputElement | HTMLSelectElement>(`[name="${name}"]`);
+		const raw = (name: string) => field(name)?.value.trim() ?? '';
+		const num = (name: string): number | undefined => {
+			const value = raw(name);
+			if (value === '') return undefined;
+			const parsed = Number(value);
+			return Number.isFinite(parsed) ? parsed : undefined;
+		};
+		const errorBox = form.querySelector<HTMLElement>('[data-error]');
+		const emptyBox = form.querySelector<HTMLElement>('[data-empty]');
+		const emptyReason = form.querySelector<HTMLElement>('[data-empty-reason]');
+		const output = form.querySelector<HTMLElement>('[data-output]');
+		const out = (key: string) => form.querySelector<HTMLElement>(`[data-out="${key}"]`);
+		const exponentField = form.querySelector<HTMLElement>('[data-exponent-field]');
+		const allowanceRow = form.querySelector<HTMLElement>('[data-allowance-row]');
+		const verdictLabel = form.querySelector<HTMLElement>('[data-verdict-label]');
+		const verdictDetail = form.querySelector<HTMLElement>('[data-verdict-detail]');
+
+		const MISSING_LABELS: Record<string, string> = {
+			frequency: 'frequency',
+			distance: 'distance',
+			txPower: 'transmit power',
+			sensitivity: 'receiver sensitivity',
+		};
+
+		function showError(message: string) {
+			if (errorBox) {
+				errorBox.textContent = message;
+				errorBox.hidden = false;
+			}
+			if (output) output.hidden = true;
+			if (emptyBox) emptyBox.hidden = true;
+		}
+
+		function update() {
+			const model =
+				form.querySelector<HTMLInputElement>('[name="model"]:checked')?.value ??
+				'free-space';
+			if (exponentField) exponentField.hidden = model !== 'log-distance';
+
+			const missing = ['frequency', 'distance', 'txPower', 'sensitivity'].filter(
+				(name) => num(name) === undefined,
+			);
+			if (missing.length > 0) {
+				if (errorBox) errorBox.hidden = true;
+				if (output) output.hidden = true;
+				if (emptyBox) emptyBox.hidden = false;
+				if (emptyReason) {
+					emptyReason.textContent = `Still needed: ${missing
+						.map((name) => MISSING_LABELS[name])
+						.join(', ')}. Antenna gains and cable losses count as 0 until you enter them.`;
+				}
+				return;
+			}
+			if (model === 'log-distance' && num('exponent') === undefined) {
+				showError(
+					'The log-distance model needs a path-loss exponent n — enter one, or switch back to the free-space model.',
+				);
+				return;
+			}
+			const distanceRaw = num('distance') ?? 0;
+			const distanceKm = raw('distanceUnit') === 'm' ? distanceRaw / 1000 : distanceRaw;
+			try {
+				const result = computeLinkBudget({
+					frequencyMhz: num('frequency') ?? 0,
+					distanceKm,
+					model: model === 'log-distance' ? 'log-distance' : 'free-space',
+					pathLossExponent: num('exponent'),
+					txPowerDbm: num('txPower') ?? 0,
+					txAntennaGainDbi: num('txGain') ?? 0,
+					rxAntennaGainDbi: num('rxGain') ?? 0,
+					txCableLossDb: num('txCableLoss') ?? 0,
+					rxCableLossDb: num('rxCableLoss') ?? 0,
+					rxSensitivityDbm: num('sensitivity') ?? 0,
+					fadeMarginAllowanceDb: num('allowance'),
+				});
+				if (errorBox) errorBox.hidden = true;
+				if (emptyBox) emptyBox.hidden = true;
+				if (output) output.hidden = false;
+				const pathLoss = out('pathLoss');
+				if (pathLoss) pathLoss.textContent = `${fmtDb(result.pathLossDb)} dB`;
+				const received = out('received');
+				if (received) received.textContent = `${fmtDb(result.receivedPowerDbm)} dBm`;
+				const margin = out('margin');
+				if (margin) margin.textContent = `${fmtSignedDb(result.linkMarginDb)} dB`;
+				const hasAllowance = num('allowance') !== undefined && (num('allowance') ?? 0) > 0;
+				if (allowanceRow) allowanceRow.hidden = !hasAllowance;
+				if (hasAllowance) {
+					const marginAfter = out('marginAfter');
+					if (marginAfter)
+						marginAfter.textContent = `${fmtSignedDb(result.marginAfterAllowanceDb)} dB`;
+				}
+				if (verdictLabel) {
+					verdictLabel.textContent = `${result.verdict.label}.`;
+					verdictLabel.dataset.state = result.verdict.state;
+				}
+				if (verdictDetail) verdictDetail.textContent = ` ${result.verdict.detail}`;
+			} catch (error) {
+				showError(
+					error instanceof RangeError
+						? `Check the figures: ${error.message}.`
+						: 'The figures could not be computed — check for empty or non-numeric fields.',
+				);
+			}
+		}
+
+		form.addEventListener('input', update);
+		form.addEventListener('change', update);
+		for (const button of form.querySelectorAll<HTMLButtonElement>('[data-sensitivity]')) {
+			button.addEventListener('click', () => {
+				const sensitivity = field('sensitivity');
+				if (sensitivity) {
+					sensitivity.value = button.dataset.sensitivity ?? '';
+					sensitivity.dispatchEvent(new Event('input', { bubbles: true }));
+				}
+			});
+		}
+		update();
+	}
+</script>
+
+<style>
+	.calc fieldset {
+		border: 1px solid var(--line);
+		border-radius: var(--r-md);
+		margin: 0 0 1rem;
+		padding: 0.9rem 1rem 1rem;
+	}
+
+	.calc legend {
+		font-size: var(--fs-sm);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		padding: 0 0.4rem;
+	}
+
+	.fields {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.8rem 1.2rem;
+	}
+
+	.fields > label {
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+		font-size: var(--fs-sm);
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		min-width: 11rem;
+		flex: 1 1 11rem;
+	}
+
+	.fields input[type='number'] {
+		font: inherit;
+		font-size: var(--fs-md);
+		letter-spacing: normal;
+		text-transform: none;
+		color: var(--ink);
+		padding: 0.4rem 0.6rem;
+		border: 1px solid var(--line-strong);
+		border-radius: var(--r-sm);
+		background: var(--card, transparent);
+		width: 100%;
+	}
+
+	.with-unit {
+		display: flex;
+		gap: 0.4rem;
+	}
+
+	.with-unit input {
+		flex: 1;
+	}
+
+	.with-unit select {
+		font: inherit;
+		font-size: var(--fs-md);
+		letter-spacing: normal;
+		text-transform: none;
+		color: var(--ink);
+		padding: 0.4rem;
+		border: 1px solid var(--line-strong);
+		border-radius: var(--r-sm);
+		background: var(--card, transparent);
+	}
+
+	.radio-row {
+		display: flex;
+		gap: 1rem;
+		padding-top: 0.45rem;
+	}
+
+	.radio {
+		display: inline-flex;
+		gap: 0.35rem;
+		align-items: center;
+		font-size: var(--fs-md);
+		letter-spacing: normal;
+		text-transform: none;
+		color: var(--ink);
+	}
+
+	.hint {
+		font-size: var(--fs-sm);
+		letter-spacing: normal;
+		text-transform: none;
+		color: var(--ink-2);
+	}
+
+	.presets {
+		margin-top: 0.9rem;
+		border-top: 1px solid var(--line);
+		padding-top: 0.7rem;
+	}
+
+	.presets-head {
+		font-size: var(--fs-sm);
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		margin: 0 0 0.5rem;
+	}
+
+	.presets ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.presets li {
+		padding: 0.3rem 0;
+	}
+
+	.preset-cond {
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+	}
+
+	.calc-error {
+		border: 1px solid var(--err);
+		background: var(--err-soft);
+		color: var(--ink);
+		border-radius: var(--r-sm);
+		padding: 0.6rem 0.8rem;
+	}
+
+	.results {
+		border: 1px solid var(--line);
+		border-radius: var(--r-md);
+		padding: 0.9rem 1rem;
+	}
+
+	.readings {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem 2rem;
+		margin: 0 0 0.8rem;
+	}
+
+	.reading dt {
+		font-size: var(--fs-xs);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+	}
+
+	.reading dd {
+		margin: 0.15rem 0 0;
+		font-size: var(--fs-xl);
+	}
+
+	.verdict {
+		margin: 0;
+		max-width: 72ch;
+	}
+
+	.verdict strong[data-state='ok'] {
+		color: var(--ok);
+	}
+
+	.verdict strong[data-state='warn'] {
+		color: var(--warn);
+	}
+
+	.verdict strong[data-state='err'] {
+		color: var(--err);
+	}
+</style>

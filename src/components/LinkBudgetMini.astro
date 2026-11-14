@@ -1,0 +1,247 @@
+---
+/**
+ * Link budget — mini embed for protocol and guide pages (blueprint
+ * §2.3: the calculator lives inside the reading flow; §3 commitment
+ * 6 as revised by R1.7: article-embedded minis are content data
+ * modules served by the SAME engine as the full tool).
+ *
+ * The mini deliberately reduces the field set: antenna gains and
+ * cable losses count as 0 dB, and it says so on its face. Anything
+ * beyond that belongs to the full calculator, which is the one
+ * canonical entry for the full calculation (R2) — this component
+ * contains no arithmetic of its own, only the shared engine import.
+ */
+import type { SensitivityPreset } from '../utils/products';
+
+interface Props {
+	/** Prefilled, editable frequency in MHz (a band fact from the protocol record). */
+	frequencyMhz: number;
+	/** One line naming the context, e.g. "EU868 uplink, end device to gateway". */
+	contextNote: string;
+	presets?: SensitivityPreset[];
+}
+
+const { frequencyMhz, contextNote, presets = [] } = Astro.props;
+---
+
+<aside class="mini panel" aria-label="Mini link budget calculator">
+	<div class="panel-head">Link budget — try it here</div>
+	<div class="panel-body">
+		<p class="mini-note">
+			{contextNote} Antenna gains and cable losses count as 0 dB in this mini version —
+			the <a href="/tools/link-budget-calculator/">full link budget calculator</a> includes
+			them, plus obstructed-path models.
+		</p>
+		<form class="mini-form" data-link-budget-mini novalidate>
+			<label>
+				Frequency (MHz)
+				<input type="number" name="frequency" step="any" min="0" inputmode="decimal" value={frequencyMhz} required />
+			</label>
+			<label>
+				Transmit power (dBm)
+				<input type="number" name="txPower" step="any" inputmode="decimal" required />
+			</label>
+			<label>
+				Receiver sensitivity (dBm)
+				<input type="number" name="sensitivity" step="any" inputmode="decimal" required />
+			</label>
+			<label>
+				Distance (km)
+				<input type="number" name="distance" step="any" min="0" inputmode="decimal" required />
+			</label>
+		</form>
+		{
+			presets.length > 0 && (
+				<p class="mini-presets">
+					Sensitivity from the product database:{' '}
+					{presets.map((preset, index) => (
+						<>
+							{index > 0 && ' · '}
+							<button type="button" class="mini-preset-btn" data-mini-sensitivity={preset.sensitivityDbm}>
+								{preset.vendor} {preset.model}: {preset.sensitivityDbm} dBm ({preset.condition})
+							</button>
+						</>
+					))}
+				</p>
+			)
+		}
+		<p class="mini-out" aria-live="polite">
+			<span data-mini-idle>
+				Enter transmit power, receiver sensitivity and distance to see the free-space
+				budget for this path.
+			</span>
+			<span data-mini-result hidden>
+				Path loss <strong class="num" data-mini-out="pathLoss">–</strong> · received{' '}
+				<strong class="num" data-mini-out="received">–</strong> · margin{' '}
+				<strong class="num" data-mini-out="margin">–</strong>{' '}
+				<strong data-mini-verdict></strong>
+			</span>
+			<span class="mini-error" data-mini-error hidden></span>
+		</p>
+	</div>
+</aside>
+
+<script>
+	import { computeLinkBudget, fmtDb, fmtSignedDb } from '../utils/link-engine';
+
+	for (const form of document.querySelectorAll<HTMLFormElement>('[data-link-budget-mini]')) {
+		const panel = form.closest('.mini');
+		if (!panel) continue;
+		const num = (name: string): number | undefined => {
+			const input = form.querySelector<HTMLInputElement>(`[name="${name}"]`);
+			const value = input?.value.trim() ?? '';
+			if (value === '') return undefined;
+			const parsed = Number(value);
+			return Number.isFinite(parsed) ? parsed : undefined;
+		};
+		const idle = panel.querySelector<HTMLElement>('[data-mini-idle]');
+		const resultBox = panel.querySelector<HTMLElement>('[data-mini-result]');
+		const errorBox = panel.querySelector<HTMLElement>('[data-mini-error]');
+		const verdict = panel.querySelector<HTMLElement>('[data-mini-verdict]');
+		const out = (key: string) =>
+			panel.querySelector<HTMLElement>(`[data-mini-out="${key}"]`);
+
+		function update() {
+			const frequency = num('frequency');
+			const txPower = num('txPower');
+			const sensitivity = num('sensitivity');
+			const distance = num('distance');
+			if (
+				frequency === undefined ||
+				txPower === undefined ||
+				sensitivity === undefined ||
+				distance === undefined
+			) {
+				if (idle) idle.hidden = false;
+				if (resultBox) resultBox.hidden = true;
+				if (errorBox) errorBox.hidden = true;
+				return;
+			}
+			try {
+				const result = computeLinkBudget({
+					frequencyMhz: frequency,
+					distanceKm: distance,
+					model: 'free-space',
+					txPowerDbm: txPower,
+					txAntennaGainDbi: 0,
+					rxAntennaGainDbi: 0,
+					txCableLossDb: 0,
+					rxCableLossDb: 0,
+					rxSensitivityDbm: sensitivity,
+				});
+				if (idle) idle.hidden = true;
+				if (errorBox) errorBox.hidden = true;
+				if (resultBox) resultBox.hidden = false;
+				const pathLoss = out('pathLoss');
+				if (pathLoss) pathLoss.textContent = `${fmtDb(result.pathLossDb)} dB`;
+				const received = out('received');
+				if (received) received.textContent = `${fmtDb(result.receivedPowerDbm)} dBm`;
+				const margin = out('margin');
+				if (margin) margin.textContent = `${fmtSignedDb(result.linkMarginDb)} dB`;
+				if (verdict) {
+					verdict.textContent = `— ${result.verdict.label.toLowerCase()}.`;
+					verdict.dataset.state = result.verdict.state;
+				}
+			} catch (error) {
+				if (idle) idle.hidden = true;
+				if (resultBox) resultBox.hidden = true;
+				if (errorBox) {
+					errorBox.hidden = false;
+					errorBox.textContent =
+						error instanceof RangeError
+							? `Check the figures: ${error.message}.`
+							: 'The figures could not be computed.';
+				}
+			}
+		}
+
+		form.addEventListener('input', update);
+		for (const button of panel.querySelectorAll<HTMLButtonElement>('[data-mini-sensitivity]')) {
+			button.addEventListener('click', () => {
+				const sensitivity = form.querySelector<HTMLInputElement>('[name="sensitivity"]');
+				if (sensitivity) {
+					sensitivity.value = button.dataset.miniSensitivity ?? '';
+					sensitivity.dispatchEvent(new Event('input', { bubbles: true }));
+				}
+			});
+		}
+		update();
+	}
+</script>
+
+<style>
+	.mini {
+		margin: 1.2rem 0;
+	}
+
+	.mini-note {
+		margin-top: 0;
+		color: var(--ink-2);
+	}
+
+	.mini-form {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.7rem 1rem;
+	}
+
+	.mini-form label {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+		font-size: var(--fs-sm);
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		flex: 1 1 9rem;
+	}
+
+	.mini-form input[type='number'] {
+		font: inherit;
+		font-size: var(--fs-md);
+		letter-spacing: normal;
+		text-transform: none;
+		color: var(--ink);
+		padding: 0.35rem 0.5rem;
+		border: 1px solid var(--line-strong);
+		border-radius: var(--r-sm);
+		background: var(--card, transparent);
+		width: 100%;
+	}
+
+	.mini-presets {
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+		margin-bottom: 0;
+	}
+
+	.mini-preset-btn {
+		font: inherit;
+		background: none;
+		border: none;
+		padding: 0;
+		color: var(--accent);
+		cursor: pointer;
+		text-decoration: underline;
+	}
+
+	.mini-out {
+		margin-bottom: 0;
+	}
+
+	.mini-out strong[data-state='ok'] {
+		color: var(--ok);
+	}
+
+	.mini-out strong[data-state='warn'] {
+		color: var(--warn);
+	}
+
+	.mini-out strong[data-state='err'] {
+		color: var(--err);
+	}
+
+	.mini-error {
+		color: var(--err);
+	}
+</style>

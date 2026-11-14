@@ -162,6 +162,42 @@ export function productPath(record: ProductRecord): string {
 	return `/product-families/${record.slug}/`;
 }
 
+export interface SensitivityPreset {
+	vendor: string;
+	model: string;
+	sensitivityDbm: number;
+	condition: string;
+	href: string;
+}
+
+/**
+ * Receiver-sensitivity presets for the link tools (Phase 3): only
+ * records that (a) carry a datasheet sensitivity figure and (b)
+ * earned a full product page may preset a calculator — the value a
+ * reader can one-click into a budget must be one click away from
+ * its source record. Optionally restricted to one protocol.
+ */
+export function sensitivityPresets(
+	records: ProductRecord[],
+	protocolSlug?: string,
+): SensitivityPreset[] {
+	return records
+		.filter(
+			(record) =>
+				record.rxSensitivityDbm != null &&
+				(!protocolSlug || record.protocols.includes(protocolSlug)) &&
+				productGate(record).indexable,
+		)
+		.map((record) => ({
+			vendor: record.vendor,
+			model: record.model,
+			sensitivityDbm: record.rxSensitivityDbm as number,
+			condition: record.rxSensitivityCondition ?? 'per the manufacturer datasheet',
+			href: productPath(record),
+		}))
+		.sort((a, b) => a.vendor.localeCompare(b.vendor) || a.model.localeCompare(b.model));
+}
+
 /** One-line factual summary of a record, composed only from its sourced fields. */
 export function productSummary(record: ProductRecord): string {
 	const parts: string[] = [
