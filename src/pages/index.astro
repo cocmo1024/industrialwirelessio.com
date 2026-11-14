@@ -1,10 +1,9 @@
 ---
 /**
- * Homepage (hub) — blueprint §2.3 anatomy, Phase 0 skeleton:
+ * Homepage (hub) — blueprint §2.3 anatomy:
  *   page head (name + positioning + ONE primary action, R4)
- *   → spectrum rail panel (signature component lands in Phase 1;
- *     this skeleton renders the band axis the rail will carry)
- *   → protocol matrix teaser (Phase 1, fed by protocol records)
+ *   → spectrum rail (signature component, fed by protocol records)
+ *   → protocol matrix teaser (same records, compact columns)
  *   → link-budget tool embed block (engine lands in Phase 3)
  *   → object entries (protocols / product database / tools)
  *   → three application scenarios
@@ -13,6 +12,8 @@
  */
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import SpectrumRail from '../components/SpectrumRail.astro';
+import ProtocolMatrix from '../components/ProtocolMatrix.astro';
 import { brand } from '../data/brand';
 import { buildSeo } from '../utils/seo';
 import { buildRouteManifest, hreflangLinksFor, parseEntryId } from '../utils/routes';
@@ -20,6 +21,7 @@ import { buildRouteManifest, hreflangLinksFor, parseEntryId } from '../utils/rou
 const entries = await getCollection('pages');
 const manifest = buildRouteManifest(entries);
 const hreflang = hreflangLinksFor(manifest, '');
+const protocolRecords = (await getCollection('protocols')).map((item) => item.data);
 
 const recent = entries
 	.map((entry) => ({ entry, parsed: parseEntryId(entry.id) }))
@@ -30,19 +32,11 @@ const recent = entries
 	)
 	.slice(0, 5);
 
-const bands = [
-	{ label: 'Sub-GHz', detail: 'LoRaWAN · NB-IoT/LTE-M bands' },
-	{ label: '900 MHz ISM', detail: 'Proprietary sub-GHz links' },
-	{ label: '2.4 GHz ISM', detail: 'WirelessHART · ISA100.11a · IO-Link Wireless' },
-	{ label: 'Licensed cellular', detail: 'LTE-M · NB-IoT · LTE backhaul' },
-	{ label: '3.5 GHz class', detail: 'Private 5G' },
-];
-
 const objects = [
 	{
 		name: 'Protocol graph',
 		href: '/protocols/',
-		detail: 'Protocol reference pages and the protocol matrix, organized by band and topology.',
+		detail: `${protocolRecords.length} protocol records with reference pages and the protocol matrix, organized by band and topology.`,
 	},
 	{
 		name: 'Product database',
@@ -80,33 +74,24 @@ const seo = buildSeo(
 	<section class="panel spectrum" aria-label="Protocol spectrum">
 		<div class="panel-head">Spectrum rail — protocols by band</div>
 		<div class="panel-body">
-			<ol class="band-axis">
-				{
-					bands.map((band) => (
-						<li>
-							<a href="/protocols/">
-								<span class="band-label">{band.label}</span>
-								<span class="band-detail">{band.detail}</span>
-							</a>
-						</li>
-					))
-				}
-			</ol>
+			<SpectrumRail protocols={protocolRecords} />
+			<p class="rail-note">
+				Every marker is a protocol record; NB-IoT/LTE-M and private 5G join the rail
+				when their records are verified. The full band axis, including proprietary
+				sub-GHz links in the 900 MHz ISM range, is walked through on the
+				<a href="/protocols/">protocol hub</a>.
+			</p>
 		</div>
 	</section>
 
 	<section class="panel" aria-label="Protocol matrix preview">
 		<div class="panel-head">Protocol matrix</div>
 		<div class="panel-body">
-			<div class="empty-state">
-				<p class="empty-title">The full protocol matrix is being built from protocol records.</p>
-				<p class="empty-reason">
-					Matrix rows are generated from the same records as the protocol pages, so the
-					numbers can never drift apart. The first records land with the Phase 1
-					protocol pages.
-				</p>
-				<a class="btn" href="/protocols/">Browse the protocol reference pages</a>
-			</div>
+			<ProtocolMatrix protocols={protocolRecords} compact />
+			<p class="rail-note">
+				<a href="/protocols/">Open the full protocol matrix</a> — every row is
+				generated from the same record that drives the protocol's own page.
+			</p>
 		</div>
 	</section>
 
@@ -188,44 +173,10 @@ const seo = buildSeo(
 		margin-bottom: 1.2rem;
 	}
 
-	.band-axis {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.6rem;
-		list-style: none;
-		margin: 0;
-		padding: 0;
-	}
-
-	.band-axis li {
-		flex: 1 1 10rem;
-		border: 1px solid var(--line);
-		border-top: 3px solid var(--accent);
-		border-radius: var(--r-sm);
-		background: var(--panel);
-	}
-
-	.band-axis a {
-		display: block;
-		padding: 0.5rem 0.6rem;
-		color: var(--ink);
-		text-decoration: none;
-	}
-
-	.band-axis a:hover {
-		background: var(--hover);
-	}
-
-	.band-label {
-		display: block;
-		font-family: var(--mono);
-		font-weight: 600;
-	}
-
-	.band-detail {
-		display: block;
-		font-size: var(--fs-sm);
+	.rail-note {
 		color: var(--ink-2);
+		font-size: var(--fs-sm);
+		margin: 0.4rem 0 0;
 	}
 
 	.object-grid {

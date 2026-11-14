@@ -4,23 +4,32 @@
  * (blueprint §5.1): every (page, locale) pair that exists on disk,
  * and nothing else. There is no fallback rendering.
  *
- * Phase 0 scope: the new article anatomy (nameplate rail + main
- * column) renders frontmatter-driven slots — title, lede, key
- * questions, review dates. Legacy MDX bodies still import Starlight
- * components, so bodies are NOT rendered in this phase; each page
- * carries a migration panel pointing at the live version. Bodies
- * migrate into this anatomy in Phase 4, when the Starlight component
- * imports are replaced by native components.
+ * Anatomies (blueprint §2.3):
+ *  - Protocol hub (slug `protocols`): spectrum rail + protocol matrix
+ *    rendered from protocol records, then the hub's MDX prose.
+ *  - Protocol pages (frontmatter `protocolSlug`): nameplate rail from
+ *    the protocol record, link strip, Quick answer definition block,
+ *    sourced parameter tables from the record, MDX prose, product
+ *    table slot (Phase 2 records), comparison entry, FAQ, sources.
+ *  - Comparison pages (frontmatter `comparisonOf`): conclusion block
+ *    first, budget-style table aligned from both protocol records,
+ *    dual link strips, MDX prose, FAQ, merged sources.
+ *  - Legacy pages (everything else): the Phase 0 skeleton — bodies
+ *    still import Starlight components and migrate in Phase 4; these
+ *    pages render frontmatter slots plus a migration panel.
  */
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import LinkStrip from '../components/LinkStrip.astro';
+import SpectrumRail from '../components/SpectrumRail.astro';
+import ProtocolMatrix from '../components/ProtocolMatrix.astro';
+import FaqSection from '../components/FaqSection.astro';
 import { brand } from '../data/brand';
 import { buildSeo, type PageKind } from '../utils/seo';
 import {
 	buildRouteManifest,
 	hreflangLinksFor,
 	pagePath,
-	parseEntryId,
 	type RouteEntry,
 } from '../utils/routes';
 
@@ -89,84 +98,468 @@ const manifest = buildRouteManifest(entries);
 const hreflang = hreflangLinksFor(manifest, slug);
 const sectionLabel = brand.sectionLabels[slug.split('/')[0]] ?? null;
 const liveUrl = `https://industrialwirelessio.com${pagePath('en', slug)}`;
+
+/* ---- Data-layer wiring (Phase 1) ---- */
+const protocolEntries = await getCollection('protocols');
+const protocolRecords = protocolEntries.map((item) => item.data);
+const recordBySlug = new Map(protocolRecords.map((record) => [record.slug, record]));
+
+const isHub = slug === 'protocols';
+const protocolRecord = data.protocolSlug ? recordBySlug.get(data.protocolSlug) : undefined;
+const comparisonRecords = data.comparisonOf
+	?.map((recordSlug) => recordBySlug.get(recordSlug))
+	.filter((record) => Boolean(record));
+const isComparison = Boolean(comparisonRecords && comparisonRecords.length >= 2);
+const isNewAnatomy = isHub || Boolean(protocolRecord) || isComparison;
+
+const { Content } = isNewAnatomy ? await render(entry) : { Content: null };
+
+if (data.faq && data.faq.length > 0) {
+	seo.structuredData.push({
+		'@context': 'https://schema.org',
+		'@type': 'FAQPage',
+		'@id': `${seo.canonicalUrl}#faq`,
+		mainEntity: data.faq.map((item) => ({
+			'@type': 'Question',
+			name: item.question,
+			acceptedAnswer: { '@type': 'Answer', text: item.answer },
+		})),
+	});
+}
+
+/* Comparison table rows: fixed identity rows + key parameters aligned by key. */
+const comparisonRows: { label: string; values: string[] }[] = [];
+if (isComparison && comparisonRecords) {
+	const [first, second] = [comparisonRecords[0]!, comparisonRecords[1]!];
+	comparisonRows.push(
+		{ label: 'Standard', values: [first.standardDesignation, second.standardDesignation] },
+		{ label: 'Standards body', values: [first.standardsBody, second.standardsBody] },
+		{
+			label: 'Band',
+			values: [
+				first.bands.map((band) => band.label).join(' · '),
+				second.bands.map((band) => band.label).join(' · '),
+			],
+		},
+		{ label: 'Topology', values: [first.topology, second.topology] },
+		{ label: 'Update / latency class', values: [first.latencyClass, second.latencyClass] },
+		{ label: 'Power profile', values: [first.powerProfile, second.powerProfile] },
+	);
+	const keys: string[] = [];
+	for (const record of [first, second]) {
+		for (const param of record.keyParameters) {
+			if (!keys.includes(param.key)) keys.push(param.key);
+		}
+	}
+	for (const key of keys) {
+		if (key === 'standard') continue; // covered by the fixed identity rows above
+		const params = [first, second].map(
+			(record) => record.keyParameters.find((param) => param.key === key)?.value,
+		);
+		if (params[0] && params[1] && params[0] !== params[1]) {
+			comparisonRows.push({
+				label:
+					first.keyParameters.find((param) => param.key === key)?.label ??
+					second.keyParameters.find((param) => param.key === key)?.label ??
+					key,
+				values: [params[0], params[1]],
+			});
+		}
+	}
+}
+
+const comparisonSources = isComparison
+	? [
+			...new Map(
+				(comparisonRecords ?? [])
+					.flatMap((record) => record!.sources)
+					.map((source) => [source.url, source]),
+			).values(),
+		]
+	: [];
+
+const latestChecked = (sources: { dateChecked: Date }[]) =>
+	sources.length
+		? new Date(Math.max(...sources.map((source) => source.dateChecked.getTime())))
+				.toISOString()
+				.slice(0, 10)
+		: null;
 ---
 
 <BaseLayout seo={seo} hreflang={hreflang} hasRail>
 	<Fragment slot="rail">
-		<div class="panel nameplate">
-			<div class="panel-head">{sectionLabel ?? brand.name}</div>
-			<div class="panel-body">
-				<dl>
-					<dt>Page</dt>
-					<dd>{data.title}</dd>
-					{
-						data.contentStatus && (
-							<>
-								<dt>Coverage</dt>
-								<dd>{data.contentStatus}</dd>
-							</>
-						)
-					}
-					{
-						data.datePublished && (
-							<>
-								<dt>Published</dt>
-								<dd class="num">{data.datePublished.toISOString().slice(0, 10)}</dd>
-							</>
-						)
-					}
-					{
-						data.lastReviewed && (
-							<>
-								<dt>Last reviewed</dt>
-								<dd class="num">{data.lastReviewed.toISOString().slice(0, 10)}</dd>
-							</>
-						)
-					}
-					<dt>Source standard</dt>
-					<dd>{brand.sourcing}</dd>
-				</dl>
-			</div>
-		</div>
+		{
+			protocolRecord ? (
+				<div class="panel nameplate">
+					<div class="panel-head">Protocol</div>
+					<div class="panel-body">
+						<dl>
+							<dt>Name</dt>
+							<dd>{protocolRecord.fullName}</dd>
+							<dt>Standard</dt>
+							<dd>
+								{protocolRecord.standardDesignation} · {protocolRecord.standardsBody}
+							</dd>
+							<dt>Band</dt>
+							<dd>{protocolRecord.bands.map((band) => band.label).join(' · ')}</dd>
+							<dt>Topology</dt>
+							<dd>{protocolRecord.topology}</dd>
+							<dt>Coverage</dt>
+							<dd>{protocolRecord.coverage}</dd>
+							<dt>Sources checked</dt>
+							<dd class="num">{latestChecked(protocolRecord.sources)}</dd>
+						</dl>
+					</div>
+				</div>
+			) : isComparison && comparisonRecords ? (
+				<div class="panel nameplate">
+					<div class="panel-head">Compared</div>
+					<div class="panel-body">
+						<dl>
+							{comparisonRecords.map((record) => (
+								<>
+									<dt>{record!.name}</dt>
+									<dd>
+										{record!.standardDesignation} · {record!.standardsBody} ·{' '}
+										<a href={`/protocols/${record!.slug}/`}>Protocol page</a>
+									</dd>
+								</>
+							))}
+							<dt>Sources checked</dt>
+							<dd class="num">{latestChecked(comparisonSources)}</dd>
+						</dl>
+					</div>
+				</div>
+			) : (
+				<div class="panel nameplate">
+					<div class="panel-head">{sectionLabel ?? brand.name}</div>
+					<div class="panel-body">
+						<dl>
+							<dt>Page</dt>
+							<dd>{data.title}</dd>
+							{data.contentStatus && (
+								<>
+									<dt>Coverage</dt>
+									<dd>{data.contentStatus}</dd>
+								</>
+							)}
+							{data.datePublished && (
+								<>
+									<dt>Published</dt>
+									<dd class="num">{data.datePublished.toISOString().slice(0, 10)}</dd>
+								</>
+							)}
+							{data.lastReviewed && (
+								<>
+									<dt>Last reviewed</dt>
+									<dd class="num">{data.lastReviewed.toISOString().slice(0, 10)}</dd>
+								</>
+							)}
+							<dt>Source standard</dt>
+							<dd>{brand.sourcing}</dd>
+						</dl>
+					</div>
+				</div>
+			)
+		}
 	</Fragment>
 
-	<article>
-		<h1>{data.title}</h1>
-		{data.description && <p class="lede">{data.description}</p>}
-		{
-			data.readerTakeaway && (
-				<section class="panel">
-					<div class="panel-head">Quick answer</div>
+	{
+		isHub ? (
+			<article>
+				<h1>{data.title}</h1>
+				{data.description && <p class="lede">{data.description}</p>}
+				<section class="panel spectrum" aria-label="Protocols by band">
+					<div class="panel-head">Spectrum rail — find a protocol by its band</div>
 					<div class="panel-body">
-						<p>{data.readerTakeaway}</p>
+						<SpectrumRail protocols={protocolRecords} />
 					</div>
 				</section>
-			)
-		}
-		{
-			data.keyQuestions && data.keyQuestions.length > 0 && (
-				<section>
-					<h2>Key questions</h2>
-					<ul>
-						{data.keyQuestions.map((question) => (
-							<li>{question}</li>
+				<section aria-label="Protocol matrix">
+					<h2>Protocol matrix</h2>
+					<ProtocolMatrix protocols={protocolRecords} />
+					<p class="matrix-note">
+						Every row is generated from the same protocol record that drives the
+						protocol's own page — the matrix is a view of the records, not a second
+						set of numbers. Rows are added as protocol records are verified against
+						primary sources.
+					</p>
+				</section>
+				{Content && (
+					<div class="prose">
+						<Content />
+					</div>
+				)}
+			</article>
+		) : protocolRecord ? (
+			<article>
+				<h1>{data.title}</h1>
+				{data.description && <p class="lede">{data.description}</p>}
+				<LinkStrip {...protocolRecord.linkStrip} />
+				{data.readerTakeaway && (
+					<section class="panel">
+						<div class="panel-head">Quick answer</div>
+						<div class="panel-body">
+							<p>{data.readerTakeaway}</p>
+						</div>
+					</section>
+				)}
+				<section aria-label="Key parameters">
+					<h2>Key parameters</h2>
+					<div class="table-wrap">
+						<table class="data">
+							<thead>
+								<tr>
+									<th scope="col">Parameter</th>
+									<th scope="col">Value</th>
+									<th scope="col">Source</th>
+								</tr>
+							</thead>
+							<tbody>
+								{protocolRecord.keyParameters.map((param) => (
+									<tr>
+										<th scope="row">{param.label}</th>
+										<td>{param.value}</td>
+										<td class="source-cell">{param.source}</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+				</section>
+				{protocolRecord.gatewayCapacity && (
+					<section aria-label="Gateway capacity">
+						<h2>Gateway capacity by model</h2>
+						<div class="table-wrap">
+							<table class="data">
+								<thead>
+									<tr>
+										<th scope="col">Gateway</th>
+										<th scope="col">Max. field devices</th>
+										<th scope="col">Condition (update rate)</th>
+										<th scope="col">Source</th>
+									</tr>
+								</thead>
+								<tbody>
+									{protocolRecord.gatewayCapacity.map((row) => (
+										<tr>
+											<th scope="row">
+												{row.vendor} {row.model}
+											</th>
+											<td>{row.maxDevices}</td>
+											<td>{row.condition}</td>
+											<td class="source-cell">{row.source}</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+						<p class="matrix-note">
+							Capacity figures are each manufacturer's own rating for that model —
+							they are not interchangeable between vendors, and every rating falls
+							as device update rates get faster. See the gateway sizing notes below.
+						</p>
+					</section>
+				)}
+				{protocolRecord.payloadLimits && (
+					<section aria-label="Payload limits">
+						<h2>Payload limits by region and data rate</h2>
+						<div class="table-wrap">
+							<table class="data">
+								<thead>
+									<tr>
+										<th scope="col">Region</th>
+										<th scope="col">Data rate</th>
+										<th scope="col">Max MAC payload</th>
+										<th scope="col">Max application payload</th>
+										<th scope="col">Source</th>
+									</tr>
+								</thead>
+								<tbody>
+									{protocolRecord.payloadLimits.map((row) => (
+										<tr>
+											<th scope="row">{row.region}</th>
+											<td>{row.dataRate}</td>
+											<td class="num">{row.maxMacPayload}</td>
+											<td class="num">{row.maxAppPayload ?? '—'}</td>
+											<td class="source-cell">{row.source}</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+						{protocolRecord.payloadLimits.some((row) => row.note) && (
+							<p class="matrix-note">
+								{protocolRecord.payloadLimits.find((row) => row.note)?.note}
+							</p>
+						)}
+					</section>
+				)}
+				{Content && (
+					<div class="prose">
+						<Content />
+					</div>
+				)}
+				<section class="panel" aria-label="Products using this protocol">
+					<div class="panel-head">Products on this protocol</div>
+					<div class="panel-body">
+						<div class="empty-state">
+							<p class="empty-title">No product records carry this protocol yet.</p>
+							<p class="empty-reason">
+								Product records enter the database only with manufacturer datasheet
+								sources attached (Phase 2). When the first gateways, adapters and
+								modules for {protocolRecord.name} are recorded, they appear here as
+								a live table filtered from the database.
+							</p>
+							<a class="btn" href="/product-families/">Browse the product database</a>
+						</div>
+					</div>
+				</section>
+				{data.relatedProtocols
+					?.filter((related) => recordBySlug.has(related) && related !== protocolRecord.slug)
+					.map((related) => {
+						const other = recordBySlug.get(related)!;
+						return (
+							<p class="compare-entry">
+								Comparing radios? Read the{' '}
+								<a href={`/protocols/${other.slug}/`}>{other.name} protocol page</a>{' '}
+								or go straight to the{' '}
+								<a href="/protocols/">protocol matrix</a>.
+							</p>
+						);
+					})}
+				{data.faq && data.faq.length > 0 && <FaqSection items={data.faq} />}
+				<section aria-label="Sources">
+					<h2>Sources</h2>
+					<ul class="source-list">
+						{protocolRecord.sources.map((source) => (
+							<li>
+								<a href={source.url}>{source.label}</a>{' '}
+								<span class="source-date num">
+									checked {source.dateChecked.toISOString().slice(0, 10)}
+								</span>
+							</li>
 						))}
 					</ul>
+					<p class="matrix-note">
+						Every figure on this page traces to one of these primary sources —
+						standards-body publications and manufacturer datasheets. Figures that
+						could not be traced are left out, not estimated.
+					</p>
 				</section>
-			)
-		}
-		<section class="panel migration-note">
-			<div class="panel-head">Rebuild in progress</div>
-			<div class="panel-body">
-				<p>
-					This page is being migrated into the new reference anatomy. Its full text is
-					already compiled into <a href="/llms-full.txt">llms-full.txt</a>, and the live
-					version remains available while the rebuild proceeds.
-				</p>
-				<a class="btn" href={liveUrl}>Read the live version</a>
-			</div>
-		</section>
-	</article>
+			</article>
+		) : isComparison && comparisonRecords ? (
+			<article>
+				<h1>{data.title}</h1>
+				{data.description && <p class="lede">{data.description}</p>}
+				{data.readerTakeaway && (
+					<section class="panel">
+						<div class="panel-head">Conclusion first</div>
+						<div class="panel-body">
+							<p>{data.readerTakeaway}</p>
+						</div>
+					</section>
+				)}
+				<section aria-label="Side-by-side comparison">
+					<h2>
+						{comparisonRecords[0]!.name} vs {comparisonRecords[1]!.name}, side by side
+					</h2>
+					<div class="table-wrap">
+						<table class="data">
+							<thead>
+								<tr>
+									<th scope="col">Dimension</th>
+									<th scope="col">{comparisonRecords[0]!.name}</th>
+									<th scope="col">{comparisonRecords[1]!.name}</th>
+								</tr>
+							</thead>
+							<tbody>
+								{comparisonRows.map((row) => (
+									<tr>
+										<th scope="row">{row.label}</th>
+										<td>{row.values[0]}</td>
+										<td>{row.values[1]}</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+					<p class="matrix-note">
+						Rows are aligned from the two protocol records — the same records that
+						drive each protocol's own page — so this table cannot drift from the
+						protocol pages.
+					</p>
+				</section>
+				<section aria-label="Reference links">
+					<h2>The two reference links</h2>
+					{comparisonRecords.map((record) => (
+						<>
+							<p class="link-caption">{record!.name} reference link</p>
+							<LinkStrip {...record!.linkStrip} />
+						</>
+					))}
+				</section>
+				{Content && (
+					<div class="prose">
+						<Content />
+					</div>
+				)}
+				{data.faq && data.faq.length > 0 && <FaqSection items={data.faq} />}
+				<section aria-label="Sources">
+					<h2>Sources</h2>
+					<ul class="source-list">
+						{comparisonSources.map((source) => (
+							<li>
+								<a href={source.url}>{source.label}</a>{' '}
+								<span class="source-date num">
+									checked {source.dateChecked.toISOString().slice(0, 10)}
+								</span>
+							</li>
+						))}
+					</ul>
+					<p class="matrix-note">
+						Comparison rows trace to the standards bodies and manufacturers listed
+						here; vendor comparison white papers were used as leads only, never as
+						the source of a row.
+					</p>
+				</section>
+			</article>
+		) : (
+			<article>
+				<h1>{data.title}</h1>
+				{data.description && <p class="lede">{data.description}</p>}
+				{data.readerTakeaway && (
+					<section class="panel">
+						<div class="panel-head">Quick answer</div>
+						<div class="panel-body">
+							<p>{data.readerTakeaway}</p>
+						</div>
+					</section>
+				)}
+				{data.keyQuestions && data.keyQuestions.length > 0 && (
+					<section>
+						<h2>Key questions</h2>
+						<ul>
+							{data.keyQuestions.map((question) => (
+								<li>{question}</li>
+							))}
+						</ul>
+					</section>
+				)}
+				<section class="panel migration-note">
+					<div class="panel-head">Rebuild in progress</div>
+					<div class="panel-body">
+						<p>
+							This page is being migrated into the new reference anatomy. Its full text is
+							already compiled into <a href="/llms-full.txt">llms-full.txt</a>, and the live
+							version remains available while the rebuild proceeds.
+						</p>
+						<a class="btn" href={liveUrl}>Read the live version</a>
+					</div>
+				</section>
+			</article>
+		)
+	}
 </BaseLayout>
 
 <style>
@@ -202,5 +595,64 @@ const liveUrl = `https://industrialwirelessio.com${pagePath('en', slug)}`;
 
 	.migration-note p {
 		margin-bottom: 0.6rem;
+	}
+
+	.prose {
+		max-width: 72ch;
+	}
+
+	.prose :global(h2) {
+		margin-top: 1.6rem;
+	}
+
+	.prose :global(table) {
+		border-collapse: collapse;
+		width: 100%;
+		margin-bottom: 1rem;
+	}
+
+	.prose :global(th),
+	.prose :global(td) {
+		border: 1px solid var(--line);
+		padding: 0.45rem 0.8rem;
+		text-align: left;
+		vertical-align: top;
+	}
+
+	.source-cell {
+		font-size: var(--fs-sm);
+		color: var(--ink-2);
+	}
+
+	.source-list {
+		list-style: none;
+		margin: 0 0 0.6rem;
+		padding: 0;
+	}
+
+	.source-list li {
+		padding: 0.35rem 0;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.source-date {
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+	}
+
+	.matrix-note {
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+		margin-top: 0.5rem;
+	}
+
+	.link-caption {
+		font-weight: 600;
+		margin-bottom: 0.4rem;
+	}
+
+	.compare-entry {
+		border-left: 3px solid var(--accent);
+		padding-left: 0.8rem;
 	}
 </style>
