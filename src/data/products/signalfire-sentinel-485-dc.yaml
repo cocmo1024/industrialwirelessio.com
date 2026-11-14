@@ -1,0 +1,37 @@
+vendor: SignalFire
+vendorSlug: signalfire
+model: Sentinel-485 (DC)
+productType: wireless-io-module
+slug: signalfire-sentinel-485-dc
+status: active
+protocols:
+  - proprietary-900
+frequencyBands:
+  - "902-928 MHz ISM (FHSS)"
+txPowerDbm: null
+rxSensitivityDbm: null
+rangeClass: null
+antenna: Internal antenna
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "No onboard I/O: one RS-485 Modbus RTU device attaches to the node (manual 960-0034-11 Rev 1.13)."
+upstreamInterfaces:
+  - "RS-485 (Modbus RTU, to one attached device)"
+  - "SignalFire wireless network (to a SignalFire Buffered Modbus Gateway)"
+powerSupply: "DC-powered via DC-DC converter; battery / solar power options (manual)"
+powerConsumption: null
+batteryLife: null
+ipRating: null
+operatingTemp: null
+certifications: []
+hazardousArea: "Class I Division 2, Groups A-D, T4"
+sourceUrl: "https://www.signal-fire.com/wp-content/uploads/2024/11/960-0034-11-SignalFire-Sentinel-MODBUS-DC-Powered-System-Manual-Rev-1_13.pdf"
+sourceType: manual
+sourceDocId: "960-0034-11 Rev 1.13"
+dateChecked: 2026-11-14
+notes: "The manual states an enclosure rating of Ingress Type 3; no IP code is recorded because the manufacturer does not state one. Transmit power and sensitivity are not stated in the manual and are left blank."

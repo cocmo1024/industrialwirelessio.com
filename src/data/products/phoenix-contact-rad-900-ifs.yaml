@@ -1,0 +1,45 @@
+vendor: Phoenix Contact
+vendorSlug: phoenix-contact
+model: RAD-900-IFS
+productType: wireless-io-module
+slug: phoenix-contact-rad-900-ifs
+status: active
+protocols:
+  - proprietary-900
+frequencyBands:
+  - "902-928 MHz"
+txPowerDbm: 30
+txPowerCondition: "Maximum 1 W, adjustable (datasheet)"
+rxSensitivityDbm: -112
+rxSensitivityCondition: "At 16 kbps"
+rangeClass:
+  value: "32"
+  unit: km
+  conditions: "Line of sight (datasheet)"
+  sourceRef: "Phoenix Contact datasheet, item 2901540"
+antenna: "RSMA (female) antenna connector"
+io:
+  di: null
+  do: null
+  ai: null
+  ao: 1
+  relay: 1
+  pulse: null
+ioNotes: "The RF link relay output is the module's digital output; it is counted once as a relay output, not again as a DO. One analog output is also provided (datasheet)."
+upstreamInterfaces:
+  - RS-232
+  - RS-485
+powerSupply: null
+powerConsumption: null
+batteryLife: null
+ipRating: IP20
+operatingTemp: null
+certifications:
+  - "FCC Part 15.247 (ID SGV-SHR-900)"
+  - "Industry Canada RSS-210 (ID 4720C-SHR900)"
+  - "UL / cUL Listed"
+hazardousArea: "Class I Division 2 / Zone 2 (per manufacturer approvals)"
+sourceUrl: https://www.phoenixcontact.com/us/products/2901540
+sourceType: datasheet
+sourceDocId: "Datasheet, item 2901540"
+dateChecked: 2026-11-14

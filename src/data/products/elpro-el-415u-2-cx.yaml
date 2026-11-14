@@ -1,0 +1,47 @@
+vendor: ELPRO
+vendorSlug: elpro
+model: EL-415U-2-CX (Condor)
+productType: wireless-io-module
+slug: elpro-el-415u-2-cx
+status: active
+protocols:
+  - proprietary-licensed
+frequencyBands:
+  - "148-174 MHz"
+  - "340-400 MHz"
+  - "400-480 MHz"
+  - "470-520 MHz"
+  - "928-960 MHz"
+txPowerDbm: 40
+txPowerCondition: "Peak; QPSK 4 W on C1-C5 variants, 2.5 W on C9 (datasheet)"
+rxSensitivityDbm: -116
+rxSensitivityCondition: "QPSK with FEC; C9 variant -112 dBm"
+rangeClass:
+  value: "100"
+  unit: km
+  conditions: "At 4 W transmit power (datasheet EL-DS-415U-2-CX, Feb 2025)"
+  sourceRef: "EL-DS-415U-2-CX (Feb 2025)"
+antenna: null
+io:
+  di: 8
+  do: 8
+  ai: 4
+  ao: 2
+  relay: null
+  pulse: 4
+ioNotes: "The digital points are one shared block of 8 configurable inputs/outputs, plus 4 analog inputs, 2 analog outputs and 4 pulse inputs (datasheet). Frequency bands are by model variant."
+upstreamInterfaces:
+  - "Ethernet (Modbus TCP)"
+  - "RS-232 / RS-485 serial (Modbus RTU, DNP3)"
+powerSupply: null
+powerConsumption: null
+batteryLife: null
+ipRating: IP20
+operatingTemp: null
+certifications: []
+hazardousArea: null
+sourceUrl: https://elprotech.com/wp-content/uploads/2024/06/EL-DS-415U-2-Cx_Feb25.pdf
+sourceType: datasheet
+sourceDocId: "EL-DS-415U-2-CX (Feb 2025)"
+dateChecked: 2026-11-14
+notes: "Figures per the current ELPRO datasheet (Feb 2025). The 2016 Eaton-era 415U-2 table is a different document and is not merged."

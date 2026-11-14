@@ -1,0 +1,41 @@
+vendor: Advantech
+vendorSlug: advantech
+model: WISE-4051
+productType: wireless-io-module
+slug: advantech-wise-4051
+status: active
+protocols:
+  - wifi
+frequencyBands:
+  - "2.4 GHz (IEEE 802.11b/g/n)"
+txPowerDbm: null
+rxSensitivityDbm: null
+rangeClass:
+  value: "110"
+  unit: m
+  conditions: "Line of sight (manufacturer datasheet)"
+  sourceRef: "WISE-4051-B datasheet (last updated 21-Dec-2021)"
+antenna: null
+io:
+  di: 8
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "8 digital inputs; the RS-485 port acts as a Modbus RTU master for attached serial devices (datasheet)."
+upstreamInterfaces:
+  - "RS-485 (Modbus RTU master)"
+  - Wi-Fi
+powerSupply: "10-30 VDC"
+powerConsumption: "2.2 W @ 24 VDC"
+batteryLife: null
+ipRating: null
+operatingTemp: "-25 °C to +70 °C"
+certifications: []
+hazardousArea: null
+sourceUrl: https://buy.advantech.com/I-O-Devices-Communication/Remote-I-O-Modules-IoT-Wireless-I-O/AUS_31398.products.htm
+sourceType: technical-info
+sourceDocId: "WISE-4051-B datasheet, last updated 21-Dec-2021"
+dateChecked: 2026-11-14
+notes: "Values per the WISE-4051-B datasheet as published by Advantech. The datasheet states no IP rating, transmit power or sensitivity, so those fields are left blank."

@@ -1,0 +1,48 @@
+vendor: Milesight
+vendorSlug: milesight
+model: UG67
+productType: gateway
+slug: milesight-ug67
+status: active
+protocols:
+  - lorawan
+frequencyBands:
+  - RU864
+  - IN865
+  - EU868
+  - US915
+  - AU915
+  - KR920
+  - AS923
+txPowerDbm: null
+rxSensitivityDbm: null
+rangeClass:
+  value: "15"
+  unit: km
+  conditions: "Up to 15 km in rural areas and 2 km in urban environments (manufacturer product page)"
+  sourceRef: Milesight UG67 product page
+antenna: null
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "Outdoor gateway; supports more than 2,000 end devices (manufacturer product page)."
+upstreamInterfaces:
+  - Ethernet (RJ45)
+  - Wi-Fi
+  - Cellular (4G)
+powerSupply: null
+powerConsumption: null
+batteryLife: null
+ipRating: IP67
+operatingTemp: "-40 °C to +70 °C"
+certifications: []
+hazardousArea: null
+sourceUrl: https://www.milesight.com/iot/product/lorawan-gateway/ug67
+sourceType: product-page
+sourceDocId: null
+dateChecked: 2026-11-14
+notes: "Transmit power and sensitivity for the UG67 are published in the Milesight datasheet rather than the product-page specification transcribed here, so both are left blank rather than taken from distributor mirrors."

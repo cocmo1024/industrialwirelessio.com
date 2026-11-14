@@ -1,0 +1,41 @@
+vendor: Banner Engineering
+vendorSlug: banner-engineering
+model: DXM700-B1R1
+productType: gateway
+slug: banner-dxm700-b1r1
+status: active
+protocols:
+  - proprietary-900
+frequencyBands:
+  - "902-928 MHz ISM"
+txPowerDbm: 27
+txPowerCondition: "Conducted, 900 MHz Performance/MultiHop radio at 500 mW; 2.4 GHz variant models are below 18 dBm conducted (datasheet 207893 Rev. P)"
+rxSensitivityDbm: null
+rangeClass: null
+antenna: "External RP-SMA, 50 ohm; a 2 dB antenna ships with the device"
+io:
+  di: null
+  do: 4
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "4 PNP discrete outputs on the controller; further I/O is provided by attached DX80 nodes (datasheet)."
+upstreamInterfaces:
+  - "Ethernet (Modbus TCP, EtherNet/IP)"
+  - "RS-485 (Modbus RTU)"
+powerSupply: "12-30 V DC"
+powerConsumption: "35 mA average at 12 V DC (exclusive of load)"
+batteryLife: null
+ipRating: IP20
+operatingTemp: "-20 °C to +60 °C"
+certifications:
+  - "FCC Part 15 via SX7023EXT radio module (FCC ID UE3SX7023EXT)"
+  - "ISED Canada (IC 7044A-SX7023EXT)"
+  - "CE / UKCA (2.4 GHz models only)"
+hazardousArea: null
+sourceUrl: https://info.bannerengineering.com/cs/groups/public/documents/literature/207893.pdf
+sourceType: datasheet
+sourceDocId: "207893 Rev. P"
+dateChecked: 2026-11-14
+notes: "Transmit power per datasheet 207893 Rev. P: the 900 MHz radio is a 500 mW (27 dBm conducted) unit. Earlier revisions describing a 1 W radio are not merged. The same datasheet lists the DXM700-B2 variant as discontinued. No numeric range is stated in Rev. P, so rangeClass is left blank."
