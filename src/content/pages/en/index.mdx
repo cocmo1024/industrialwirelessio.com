@@ -1,0 +1,256 @@
+---
+title: Industrial Wireless I/O
+description: Field-oriented reference system for remote telemetry, industrial wireless architecture, network paths, and site reliability.
+template: splash
+referenceType: home
+adProfile: foundation
+commercialIntent: medium
+reviewCadence: Monthly review
+hero:
+  title: |
+    Industrial Wireless I/O
+  tagline: Field-oriented reference system for remote telemetry, industrial wireless architecture, network paths, and site reliability.
+  actions:
+    - text: Browse applications
+      link: /applications/
+      icon: right-arrow
+    - text: Compare network paths
+      link: /network-paths/
+      variant: minimal
+primaryKeyword: industrial wireless io
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Telemetry engineers
+  - Controls engineers
+  - Utilities teams
+  - System integrators
+contentStatus: cornerstone
+contentCluster: home
+canonicalCluster: home
+pageType: home
+lifecycle: hub
+refreshPriority: low
+authorKey: editorial-desk
+editorKey: review-desk
+lastReviewed: 2026-05-09
+problemSolved: Helps readers understand how Industrial Wireless I/O is organized and where to start for the main reference paths.
+readerTakeaway: You should leave knowing the main sections of Industrial Wireless I/O and which path to open next.
+---
+
+import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
+
+<CardGrid stagger>
+	<Card title="Applications" icon="open-book">
+		Remote telemetry environments organized around asset behavior, maintenance reality, and data goals.
+	</Card>
+	<Card title="Product families" icon="add-document">
+		Gateways, remote I/O, RTU-class hardware, antennas, and edge-adjacent building blocks organized by deployment role.
+	</Card>
+	<Card title="Vendors" icon="open-book">
+		Portfolio-oriented vendor pages where ecosystem fit matters more than spec-sheet breadth.
+	</Card>
+	<Card title="Network paths" icon="random">
+		Cellular, LoRaWAN, satellite, and hybrid backhaul choices framed by terrain, uptime, and operating constraints.
+	</Card>
+	<Card title="Protocols" icon="forward-slash">
+		Data transport and interoperability paths tied to field devices, gateways, and upstream monitoring systems.
+	</Card>
+	<Card title="Hardware" icon="document">
+		Remote I/O, gateways, power systems, antennas, enclosures, and edge footprints evaluated as a deployment stack.
+	</Card>
+	<Card title="Reliability" icon="approve-check-circle">
+		Site survivability, failure reduction, maintenance access, and long-term field resilience planning.
+	</Card>
+</CardGrid>
+
+## Navigate by field decision
+
+<div class="portal-links">
+	<LinkCard
+		title="Start with applications"
+		href="/applications/"
+		description="Define the remote asset, site conditions, and monitoring objective before narrowing hardware or network choices."
+	/>
+	<LinkCard
+		title="Review product families"
+		href="/product-families/"
+		description="Map gateways, remote I/O, and field hardware categories to the job the site actually has to do."
+	/>
+	<LinkCard
+		title="Study vendors"
+		href="/vendors/"
+		description="Compare ecosystem depth, industrial fit, and portfolio logic without relying on marketing copy."
+	/>
+	<LinkCard
+		title="Compare network paths"
+		href="/network-paths/"
+		description="Choose the backhaul model that fits terrain, duty cycle, power availability, and service expectations."
+	/>
+	<LinkCard
+		title="Review protocol fit"
+		href="/protocols/"
+		description="Separate field-layer and upstream data movement decisions before locking in the stack."
+	/>
+	<LinkCard
+		title="Plan the hardware stack"
+		href="/hardware/"
+		description="Connect gateways, I/O, power, enclosures, antennas, and service features into a site-ready footprint."
+	/>
+	<LinkCard
+		title="Pressure-test reliability"
+		href="/reliability/"
+		description="Use survivability planning to catch the field realities that kill remote projects after install."
+	/>
+</div>
+
+## What "industrial wireless" means here
+
+This site treats **industrial wireless** as a field-architecture problem, not only a radio choice. The useful decisions usually involve:
+
+- remote pump stations, tanks, generators, pipelines, valves, and unattended cabinets;
+- cellular, private APN, LoRaWAN, satellite, and dual-path backhaul tradeoffs;
+- remote I/O, RTU, gateway, router, antenna, and cabinet design as one deployment stack;
+- alarm behavior, stale-data rules, local buffering, and field recovery after outages.
+
+The goal is not to make every site more connected. The goal is to make remote assets visible, supportable, and recoverable when site access, weather, power, and communications are imperfect.
+
+## Current priority clusters
+
+The homepage stays curated. New field telemetry pages should enter the appropriate hub first; this page promotes only durable cluster entrances with clear remote-site search intent.
+
+<div class="portal-links">
+	<LinkCard
+		title="Remote water and utility telemetry"
+		href="/applications/remote-pump-stations-and-water-sites/"
+		description="Pump stations, pressure zones, valves, stormwater, and utility-distribution telemetry where alarm credibility matters."
+	/>
+	<LinkCard
+		title="Critical-site generator and fuel telemetry"
+		href="/applications/remote-generator-and-fuel-tank-telemetry-for-critical-sites/"
+		description="A critical-site cluster around outage visibility, fuel assurance, remote alarming, and service dispatch economics."
+	/>
+	<LinkCard
+		title="Pipeline and unattended cabinet telemetry"
+		href="/applications/pipeline-cathodic-protection-and-remote-cabinet-telemetry/"
+		description="Sparse-access sites where cabinet health, CP visibility, event buffering, and alarm credibility define the architecture."
+	/>
+	<LinkCard
+		title="Oil and gas wellhead telemetry"
+		href="/applications/wellhead-and-chemical-injection-site-telemetry-for-unattended-oil-and-gas-assets/"
+		description="Unattended wellhead and chemical-injection sites where buffering, field service, and site health matter more than dashboards."
+	/>
+	<LinkCard
+		title="Cellular architecture for fixed sites"
+		href="/hardware/cellular-router-selection-for-fixed-site-telemetry/"
+		description="Industrial router class, antenna path, serviceability, and remote-site connectivity decisions."
+	/>
+	<LinkCard
+		title="Remote telemetry cabinet design"
+		href="/hardware/what-should-a-remote-telemetry-cabinet-contain/"
+		description="Cabinet contents, DC power, fusing, battery isolation, grounding, surge paths, environment control, and service access."
+	/>
+	<LinkCard
+		title="Antenna path and physical layer"
+		href="/hardware/antenna-cable-loss-and-mounted-height-for-remote-telemetry/"
+		description="Antenna gain, mounted height, feedline loss, grounding, enclosure placement, and coverage decisions that decide usable uptime."
+	/>
+	<LinkCard
+		title="Telemetry data-plan economics"
+		href="/network-paths/telemetry-data-plan-budgeting-for-remote-sites/"
+		description="Reporting intervals, alarm traffic, deadbands, payload size, and cellular cost behavior for remote sites."
+	/>
+	<LinkCard
+		title="Alarm behavior and protocol timing"
+		href="/protocols/alarm-priority-and-deadband-design-for-remote-telemetry/"
+		description="Alarm priority, deadband design, reporting intervals, state changes, buffering, and upstream telemetry behavior."
+	/>
+	<LinkCard
+		title="LEO satellite versus cellular"
+		href="/network-paths/leo-satellite-vs-cellular-for-remote-industrial-telemetry/"
+		description="A current but durable path-selection cluster for sites where coverage pressure makes satellite a real option."
+	/>
+	<LinkCard
+		title="Local fallback and outage response"
+		href="/reliability/out-of-band-management-and-local-fallback-for-unattended-sites/"
+		description="Out-of-band access, local autonomy, outage playbooks, and what the team should do when a site disappears."
+	/>
+	<LinkCard
+		title="Buffering, stale data, and event continuity"
+		href="/reliability/alarm-latching-last-known-state-and-local-buffering-for-unattended-sites/"
+		description="Last-known state, heartbeat timers, event buffering, immediate alarms, and supervisory-loss rules."
+	/>
+</div>
+
+## High-intent question paths
+
+<div class="portal-links">
+	<LinkCard
+		title="What should a remote telemetry cabinet contain?"
+		href="/hardware/what-should-a-remote-telemetry-cabinet-contain/"
+		description="A practical field checklist for gateways, I/O, power, protection, antenna, and service features."
+	/>
+	<LinkCard
+		title="How often should remote telemetry sites report?"
+		href="/protocols/how-often-should-remote-telemetry-sites-report-data/"
+		description="Choose reporting intervals by asset behavior, alarm urgency, battery budget, and data-plan economics."
+	/>
+	<LinkCard
+		title="When should a site alarm immediately?"
+		href="/reliability/when-should-a-remote-site-alarm-immediately-vs-buffer-locally/"
+		description="Decide what must leave the site now and what should be preserved locally for later reconstruction."
+	/>
+	<LinkCard
+		title="How should stale data be handled?"
+		href="/reliability/heartbeat-timers-stale-data-rules-and-supervisory-loss-handling/"
+		description="Use heartbeat and stale-data rules to distinguish quiet sites, broken links, and true loss of view."
+	/>
+	<LinkCard
+		title="When is LEO satellite better than cellular?"
+		href="/network-paths/leo-satellite-vs-cellular-for-remote-industrial-telemetry/"
+		description="Compare coverage, install burden, latency, recurring cost, and reliability expectations for remote fixed sites."
+	/>
+	<LinkCard
+		title="How should alarm-first telemetry buffer events?"
+		href="/reliability/digital-input-event-buffering-for-alarm-first-telemetry/"
+		description="Preserve discrete event sequence when the site can only reconnect later."
+	/>
+</div>
+
+## What this site optimizes
+
+<div class="signal-strip">
+	<div>
+		<strong>Research model</strong>
+		<p>Application first, network path second, hardware and reliability after that. Field reality drives the architecture.</p>
+	</div>
+	<div>
+		<strong>Reader value</strong>
+		<p>The strongest pages help teams reduce outages, support burden, and reliability surprises at unattended remote sites.</p>
+	</div>
+	<div>
+		<strong>Long-term edge</strong>
+		<p>Field architecture pages stay valuable because remote deployment mistakes repeat across industries and site types.</p>
+	</div>
+</div>
+
+## How to use this reference
+
+<Steps>
+	1. Start with the asset type, site conditions, and data or control objective.
+	2. Narrow the likely network path before choosing the rest of the stack.
+	3. Match protocols and hardware to the field architecture instead of treating them as isolated choices.
+	4. Finish with reliability planning to see whether the design can survive real operating conditions.
+</Steps>
+
+<p class="footnote-links">
+	<a href="/about/">About</a>
+	<span aria-hidden="true"> / </span>
+	<a href="/contact/">Contact</a>
+	<span aria-hidden="true"> / </span>
+	<a href="/privacy/">Privacy</a>
+	<span aria-hidden="true"> / </span>
+	<a href="/terms-of-use/">Terms</a>
+	<span aria-hidden="true"> / </span>
+	<a href="/disclaimer/">Disclaimer</a>
+</p>

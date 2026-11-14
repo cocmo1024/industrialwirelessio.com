@@ -1,0 +1,206 @@
+---
+/**
+ * Content route — generated ONLY from the route manifest
+ * (blueprint §5.1): every (page, locale) pair that exists on disk,
+ * and nothing else. There is no fallback rendering.
+ *
+ * Phase 0 scope: the new article anatomy (nameplate rail + main
+ * column) renders frontmatter-driven slots — title, lede, key
+ * questions, review dates. Legacy MDX bodies still import Starlight
+ * components, so bodies are NOT rendered in this phase; each page
+ * carries a migration panel pointing at the live version. Bodies
+ * migrate into this anatomy in Phase 4, when the Starlight component
+ * imports are replaced by native components.
+ */
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { brand } from '../data/brand';
+import { buildSeo, type PageKind } from '../utils/seo';
+import {
+	buildRouteManifest,
+	hreflangLinksFor,
+	pagePath,
+	parseEntryId,
+	type RouteEntry,
+} from '../utils/routes';
+
+const NOINDEX_IDS = new Set([
+	'privacy',
+	'terms-of-use',
+	'disclaimer',
+	'advertising',
+	'affiliate-disclosure',
+]);
+const FOUNDATION_IDS = new Set(['about', 'contact', 'editorial-policy', 'editorial-desk', 'review-desk']);
+
+export async function getStaticPaths() {
+	const entries = await getCollection('pages');
+	const manifest = buildRouteManifest(entries);
+	const byId = new Map(entries.map((entry) => [entry.id, entry]));
+
+	return manifest
+		.filter((route) => !(route.locale === 'en' && route.slug === '')) // en home = src/pages/index.astro
+		.map((route) => {
+			const entry = byId.get(
+				route.slug === '' ? `${route.locale}/index` : `${route.locale}/${route.slug}`,
+			) ?? byId.get(`${route.locale}/${route.slug}/index`);
+			return {
+				params: { slug: route.path.replace(/^\/+|\/+$/g, '') },
+				props: { route, entry },
+			};
+		})
+		.filter((item) => item.props.entry);
+}
+
+interface Props {
+	route: RouteEntry;
+	entry: CollectionEntry<'pages'>;
+}
+
+const { route, entry } = Astro.props;
+const data = entry.data;
+const slug = route.slug;
+
+function kindFor(id: string, entrySlug: string): PageKind {
+	if (NOINDEX_IDS.has(id)) return 'policy';
+	if (FOUNDATION_IDS.has(id)) return 'foundation';
+	if (entrySlug.split('/').length <= 1) return 'section';
+	return 'content';
+}
+
+const kind = kindFor(slug.split('/').at(-1) ?? slug, slug);
+const seo = buildSeo(
+	{
+		id: slug || 'index',
+		locale: route.locale,
+		title: data.title,
+		description: data.description,
+		kind,
+		datePublished: data.datePublished,
+		dateModified: data.lastReviewed,
+		authorKey: data.authorKey,
+		editorKey: data.editorKey,
+	},
+	route.path,
+);
+
+const entries = await getCollection('pages');
+const manifest = buildRouteManifest(entries);
+const hreflang = hreflangLinksFor(manifest, slug);
+const sectionLabel = brand.sectionLabels[slug.split('/')[0]] ?? null;
+const liveUrl = `https://industrialwirelessio.com${pagePath('en', slug)}`;
+---
+
+<BaseLayout seo={seo} hreflang={hreflang} hasRail>
+	<Fragment slot="rail">
+		<div class="panel nameplate">
+			<div class="panel-head">{sectionLabel ?? brand.name}</div>
+			<div class="panel-body">
+				<dl>
+					<dt>Page</dt>
+					<dd>{data.title}</dd>
+					{
+						data.contentStatus && (
+							<>
+								<dt>Coverage</dt>
+								<dd>{data.contentStatus}</dd>
+							</>
+						)
+					}
+					{
+						data.datePublished && (
+							<>
+								<dt>Published</dt>
+								<dd class="num">{data.datePublished.toISOString().slice(0, 10)}</dd>
+							</>
+						)
+					}
+					{
+						data.lastReviewed && (
+							<>
+								<dt>Last reviewed</dt>
+								<dd class="num">{data.lastReviewed.toISOString().slice(0, 10)}</dd>
+							</>
+						)
+					}
+					<dt>Source standard</dt>
+					<dd>{brand.sourcing}</dd>
+				</dl>
+			</div>
+		</div>
+	</Fragment>
+
+	<article>
+		<h1>{data.title}</h1>
+		{data.description && <p class="lede">{data.description}</p>}
+		{
+			data.readerTakeaway && (
+				<section class="panel">
+					<div class="panel-head">Quick answer</div>
+					<div class="panel-body">
+						<p>{data.readerTakeaway}</p>
+					</div>
+				</section>
+			)
+		}
+		{
+			data.keyQuestions && data.keyQuestions.length > 0 && (
+				<section>
+					<h2>Key questions</h2>
+					<ul>
+						{data.keyQuestions.map((question) => (
+							<li>{question}</li>
+						))}
+					</ul>
+				</section>
+			)
+		}
+		<section class="panel migration-note">
+			<div class="panel-head">Rebuild in progress</div>
+			<div class="panel-body">
+				<p>
+					This page is being migrated into the new reference anatomy. Its full text is
+					already compiled into <a href="/llms-full.txt">llms-full.txt</a>, and the live
+					version remains available while the rebuild proceeds.
+				</p>
+				<a class="btn" href={liveUrl}>Read the live version</a>
+			</div>
+		</section>
+	</article>
+</BaseLayout>
+
+<style>
+	.lede {
+		font-size: var(--fs-lg);
+		color: var(--ink-2);
+		max-width: 68ch;
+	}
+
+	.nameplate dl {
+		margin: 0;
+	}
+
+	.nameplate dt {
+		font-size: var(--fs-xs);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		margin-top: 0.6rem;
+	}
+
+	.nameplate dt:first-child {
+		margin-top: 0;
+	}
+
+	.nameplate dd {
+		margin: 0.15rem 0 0;
+	}
+
+	article section {
+		margin-bottom: 1.2rem;
+	}
+
+	.migration-note p {
+		margin-bottom: 0.6rem;
+	}
+</style>

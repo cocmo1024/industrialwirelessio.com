@@ -1,0 +1,176 @@
+---
+title: Lift Stations and Sewer Network Telemetry
+description: A practical application guide for lift station and sewer telemetry projects where alarm visibility, low-power resilience, and field serviceability matter more than feature density.
+referenceType: application
+adProfile: application
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: lift station telemetry architecture
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Utility engineers
+  - Telemetry designers
+  - Integrators
+  - Operations teams
+contentStatus: cornerstone
+problemSolved: How to design lift-station telemetry that is reliable enough for unattended sewer and wastewater assets without overspending on the wrong communications or hardware layer.
+readerTakeaway: You should leave with a practical architecture, a realistic sense of where hardware and recurring connectivity costs sit, and a clearer checklist for what lift-station telemetry must prove before it scales.
+keyQuestions:
+  - Which hardware and backhaul choices are usually enough for lift-station telemetry?
+  - How much do public hardware and SIM prices really change the project compared with outage and service costs?
+  - Which design mistakes create noisy alarms, weak field recovery, or recurring truck rolls?
+notFor:
+  - Indoor plantwide SCADA networking projects with staffed local operations
+  - Sites where the control system can be redesigned as part of a full capital rebuild
+  - Teams looking for carrier redundancy before they have stable site power and alarm logic
+updateTriggers:
+  - Public price changes in common telemetry gateway and connectivity offerings
+  - New utility-sector telemetry hardware releases
+  - New deployment lessons about low-power, outage handling, or unattended-site alarming
+contentCluster: remote-telemetry-applications
+canonicalCluster: remote-telemetry-applications
+pageType: application-guide
+lifecycle: evergreen
+refreshPriority: high
+authorKey: editorial-desk
+editorKey: review-desk
+lastReviewed: 2026-05-09
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Lift Stations and Sewer Network Telemetry
+
+Lift-station telemetry is a high-value field-connectivity problem because the cost of weak visibility is immediate. Overflow risk, pump health, wet-well level, power loss, and sparse service windows all push teams toward architectures that are simple, durable, and easy to recover when the site is unattended. Buyers in this category are not looking for novelty. They are looking for timely alarms and enough field truth to avoid unnecessary emergency visits.
+
+## What matters first
+
+Most lift-station telemetry systems should start with a conservative design: one durable field controller or telemetry gateway, one cellular path unless the site consequence is unusually high, local alarm handling with event buffering, and very disciplined reporting behavior. The goal is not constant chatter. It is dependable alarm visibility plus enough trend and status data to support operations. If the architecture needs heavy compute, continuous polling, or complex network customization before the first site is live, the design is probably overshooting the job.
+
+## What a useful lift-station telemetry system actually needs
+
+For most unattended sewer and wastewater assets, the first-phase system should be able to answer:
+
+- is the site healthy right now;
+- is the wet well rising abnormally;
+- did power drop or recover;
+- did a pump fail to start, short-cycle, or run too long;
+- can the system preserve and forward events after a communications interruption.
+
+That is enough to create operational value. It is not necessary to turn the site into a miniature datacenter.
+
+## Public hardware and connectivity snapshot checked April 4, 2026
+
+These public prices are useful because they show how modest the connectivity layer can be relative to truck rolls and incident response:
+
+| Public listing or plan | Published price snapshot | Why it matters |
+| --- | --- | --- |
+| [Digi IX10-00G4 industrial cellular router on DigiKey](https://www.digikey.com/en/products/detail/digi/IX10-00G4/13278039) | $419.00 | A real industrial cellular boundary device does not have to start in the four-figure range |
+| [Banner DXM1200-X2 IIoT gateway on DigiKey](https://www.digikey.com/en/products/detail/banner-engineering-corporation/DXM1200-X2/24397556) | $637.00 | A telemetry gateway with local logic and field I/O integration is still a manageable capital item |
+| [Hologram pricing](https://www.hologram.io/pricing/) | $3 SIM, $1 monthly recurring charge, and $0.03 per MB on the self-service plan | A low-data site can keep recurring cellular cost very low if reporting is disciplined |
+| [Telnyx IoT pricing](https://telnyx.com/pricing/iot-data-plans) | $1 SIM, $2 monthly recurring charge, and usage from $0.078 per MB for the first 100 MB | A second public benchmark for low-data cellular economics |
+
+Those figures matter because they clarify something important: in lift-station telemetry, recurring connectivity is often not the expensive part. Misconfigured alarming, weak site power, and avoidable field visits are usually more expensive than the SIM bill.
+
+## What the monthly data bill often looks like
+
+If a site is engineered to report by exception and transmit moderate trend data, it might use only tens of megabytes per month. At 20 MB per month:
+
+- Hologram is roughly $1.60 per month in usage plus the $1 MRC, before taxes and extras;
+- Telnyx is roughly $3.56 per month including the $2 MRC at the published first-tier usage rate.
+
+That does not mean every utility should choose those plans. It does mean network behavior and alarm discipline often matter more than raw carrier cost.
+
+## The architecture that usually works
+
+The cleanest lift-station pattern is:
+
+1. local collection of wet-well level, pump status, power state, and alarm conditions;
+2. local alarm prioritization and event logging;
+3. cellular backhaul with store-and-forward behavior;
+4. remote dashboarding and notification tuned around alarms, not around constant traffic;
+5. enough local observability that a field technician can understand the site quickly.
+
+This is why lift-station telemetry is as much an operations-design problem as a networking problem.
+
+## What teams usually get wrong
+
+The common mistakes are:
+
+- treating every measurement change as an event worth transmitting;
+- overcomplicating the network layer before site power and surge protection are stable;
+- assuming more telemetry volume automatically improves decision quality;
+- designing the dashboard without field-recovery context;
+- forgetting that the site may be serviced by technicians who did not help commission it.
+
+These are not minor issues. They directly affect whether the system becomes trusted or ignored.
+
+## Hardware selection should follow field reality
+
+Use a lighter cellular boundary when:
+
+- the job is mostly alarming and a handful of telemetry points;
+- local logic is simple;
+- the plant wants a replaceable, supportable field unit.
+
+Use a richer telemetry gateway when:
+
+- more I/O integration is needed;
+- local event handling and data conditioning matter;
+- the site may aggregate multiple field devices or sensors.
+
+The published prices above show that both options can still be modest relative to integration labor and service cost. That is why the device class should be chosen for fit, not prestige.
+
+## The real economic driver: avoided field cost
+
+One unnecessary after-hours site visit can exceed several months of connectivity cost. That is why a durable telemetry design should optimize for:
+
+- meaningful alarms;
+- buffered event history after outages;
+- quick field diagnosis;
+- low-noise reporting that keeps operators attentive.
+
+If the telemetry layer is noisy, the utility still pays the operational cost even if the hardware was inexpensive.
+
+## Implementation checklist
+
+The design is ready when:
+
+- alarm priorities are defined before dashboarding is polished;
+- local buffering exists for communications loss;
+- cellular cost has been estimated using realistic low-data assumptions;
+- device choice matches the site's actual telemetry and I/O burden;
+- field technicians can recover basic site state without calling the original integrator.
+
+If several of those are still unclear, fix the field model before scaling the fleet.
+
+## Related paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Remote pump stations and water sites"
+		href="/applications/remote-pump-stations-and-water-sites/"
+		description="Place lift-station telemetry inside the broader remote water-asset architecture pattern."
+	/>
+	<LinkCard
+		title="Private APN vs public cellular"
+		href="/network-paths/private-apn-vs-public-cellular-for-remote-sites/"
+		description="Pressure-test whether the network operating model should stay simple or become more managed."
+	/>
+	<LinkCard
+		title="Report by exception and store-and-forward"
+		href="/protocols/report-by-exception-and-store-and-forward/"
+		description="Shape telemetry behavior around event discipline instead of constant network chatter."
+	/>
+	<LinkCard
+		title="Solar, battery, and low-power planning"
+		href="/reliability/solar-battery-and-low-power-site-planning/"
+		description="Make sure the power model is as durable as the data path."
+	/>
+	<LinkCard
+		title="Sensors in water and wastewater plants"
+		href="https://sensorcatalog.com/industries/water-wastewater/"
+		description="The sensor-layer view of the same plants — level, pressure, and flow instruments — on SensorCatalog."
+	/>
+</div>

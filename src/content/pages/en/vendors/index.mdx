@@ -1,0 +1,74 @@
+---
+title: Vendors
+description: Vendor-focused reference pages for remote telemetry, field connectivity, and industrial wireless portfolios compared through real site constraints.
+referenceType: foundation
+adProfile: foundation
+commercialIntent: low
+reviewCadence: Semiannual review
+primaryKeyword: vendors
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Telemetry engineers
+  - Controls engineers
+  - Utilities teams
+  - System integrators
+contentStatus: cornerstone
+contentCluster: vendor-portfolio-fit
+canonicalCluster: vendor-portfolio-fit
+pageType: hub
+lifecycle: hub
+refreshPriority: medium
+authorKey: editorial-desk
+editorKey: review-desk
+lastReviewed: 2026-05-09
+problemSolved: Helps readers solve the practical question behind Vendors instead of stopping at a generic definition or feature list.
+readerTakeaway: "You should leave with a clearer decision model, implementation boundary, or next-step checklist for Vendors."
+---
+
+import { LinkCard, Steps } from '@astrojs/starlight/components';
+
+# Vendors
+
+Vendor pages are useful only when the site, asset, and hardware category are already clear enough to compare real strengths. Otherwise the reader ends up comparing brands with different field assumptions and pretending the choice is objective.
+
+## What vendor pages should answer
+
+- Which parts of the field stack the vendor is strongest in
+- Whether the vendor fits the service model and site conditions
+- How much ecosystem consistency matters after commissioning
+- Where the vendor is merely adjacent to the category being researched
+
+## Core paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Phoenix Contact field connectivity"
+		href="/vendors/phoenix-contact-field-connectivity/"
+		description="Use this page when panel, power, modular field hardware, and telemetry have to work as one field stack."
+	/>
+	<LinkCard
+		title="Siemens remote connectivity"
+		href="/vendors/siemens-remote-connectivity/"
+		description="Use this page when broader automation alignment and lifecycle support may matter more than narrow field modularity."
+	/>
+	<LinkCard
+		title="Applications"
+		href="/applications/"
+		description="Return to the application if the vendor conversation is getting ahead of the asset definition."
+	/>
+	<LinkCard
+		title="Reliability"
+		href="/reliability/"
+		description="Stress-test the vendor choice against cabinet, power, outage, and maintenance reality."
+	/>
+</div>
+
+## Vendor review flow
+
+<Steps>
+	1. Define the asset type, maintenance pattern, and field environment first.
+	2. Confirm the real device class before comparing brands.
+	3. Compare portfolio fit, support posture, and implementation burden.
+	4. Let vendor preference refine the shortlist, not replace the architecture decision.
+</Steps>

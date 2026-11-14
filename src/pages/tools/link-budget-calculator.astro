@@ -1,0 +1,102 @@
+---
+/**
+ * Link budget calculator — tool page anatomy skeleton (blueprint
+ * §2.3 tool anatomy, §4.5 T1). The calculation engine, worked example
+ * and mini-embed mechanism land in Phase 3; this Phase 0 page fixes
+ * the route and the anatomy slots so protocol pages can already link
+ * here (R2: one canonical entry for the calculation).
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { buildSeo } from '../../utils/seo';
+
+const seo = buildSeo(
+	{
+		id: 'tools/link-budget-calculator',
+		locale: 'en',
+		title: 'Link Budget Calculator',
+		description:
+			'Link budget calculator for industrial wireless links: transmit power, antenna gains, free-space path loss, cable loss and fade margin against receiver sensitivity.',
+		kind: 'tool',
+	},
+	'/tools/link-budget-calculator/',
+);
+---
+
+<BaseLayout seo={seo} hasRail>
+	<Fragment slot="rail">
+		<div class="panel nameplate">
+			<div class="panel-head">Tool</div>
+			<div class="panel-body">
+				<dl>
+					<dt>Solves</dt>
+					<dd>Will this link close, and with how much margin?</dd>
+					<dt>Method</dt>
+					<dd>Free-space path loss per ITU-R conventions; every constant states its source on the tool page.</dd>
+					<dt>Defaults</dt>
+					<dd>None preset — no unsourced numbers are prefilled.</dd>
+				</dl>
+			</div>
+		</div>
+	</Fragment>
+
+	<article>
+		<h1>Link budget calculator</h1>
+		<p class="lede">
+			Add up transmit power and antenna gains, subtract free-space path loss, cable loss
+			and fade margin, and compare the result with receiver sensitivity. The difference
+			is the link margin — the number that decides whether a wireless link survives
+			weather, foliage and time.
+		</p>
+		<section class="panel">
+			<div class="panel-head">Calculator</div>
+			<div class="panel-body">
+				<div class="empty-state">
+					<p class="empty-title">The calculator engine is under construction.</p>
+					<p class="empty-reason">
+						It lands in Phase 3 of the rebuild, together with a worked example whose
+						inputs are stated as example assumptions and a variable table that cites
+						a source for every constant.
+					</p>
+					<a class="btn" href="/tools/">Browse the tools hub</a>
+				</div>
+			</div>
+		</section>
+		<section>
+			<h2>How the result is used</h2>
+			<p>
+				A positive margin is not a guarantee — it is a budget. How much margin a site
+				needs depends on path obstructions, antenna mounting and how critical the data
+				is; the protocol and reliability pages on this site link back here when a
+				selection decision turns on that number.
+			</p>
+		</section>
+	</article>
+</BaseLayout>
+
+<style>
+	.lede {
+		font-size: var(--fs-lg);
+		color: var(--ink-2);
+		max-width: 68ch;
+	}
+
+	.nameplate dl {
+		margin: 0;
+	}
+
+	.nameplate dt {
+		font-size: var(--fs-xs);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		margin-top: 0.6rem;
+	}
+
+	.nameplate dt:first-child {
+		margin-top: 0;
+	}
+
+	.nameplate dd {
+		margin: 0.15rem 0 0;
+	}
+</style>

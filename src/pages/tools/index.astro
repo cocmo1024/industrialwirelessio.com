@@ -1,0 +1,96 @@
+---
+/**
+ * Tools hub — organized by link problem, not as a bare calculator
+ * list (blueprint §3 item 6, §4.5). Phase 0 skeleton: the hub route
+ * and slot structure exist; engines land in Phase 3 (T1 link budget,
+ * T2 Fresnel), T3/T4 follow in Q2.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { buildSeo } from '../../utils/seo';
+
+const problems = [
+	{
+		problem: 'Will the link close?',
+		tool: 'Link budget calculator',
+		href: '/tools/link-budget-calculator/',
+		detail: 'Transmit power and gains against path, cable and fade losses, checked against receiver sensitivity.',
+		phase: 'Phase 3',
+	},
+	{
+		problem: 'Is the path clear?',
+		tool: 'Fresnel zone calculator',
+		href: '/tools/fresnel-zone-calculator/',
+		detail: 'First Fresnel zone radius and clearance ratio for a given path and frequency (ITU-R P.526 basis).',
+		phase: 'Phase 3',
+	},
+	{
+		problem: 'What does the feedline eat?',
+		tool: 'Antenna cable loss calculator',
+		href: null,
+		detail: 'Attenuation from manufacturer cable tables, transcribed line by line with sources.',
+		phase: 'Q2',
+	},
+	{
+		problem: 'Will the payload fit the airtime rules?',
+		tool: 'LoRaWAN payload & airtime calculator',
+		href: null,
+		detail: 'Spreading factor, bandwidth and payload to time-on-air and duty-cycle checks (LoRa Alliance regional parameters).',
+		phase: 'Q2',
+	},
+];
+
+const seo = buildSeo(
+	{
+		id: 'tools',
+		locale: 'en',
+		title: 'Link Engineering Tools',
+		description:
+			'Engineering calculators for industrial wireless links: link budget, Fresnel clearance, antenna cable loss and LoRaWAN airtime — organized by the link problem they solve.',
+		kind: 'section',
+	},
+	'/tools/',
+);
+---
+
+<BaseLayout seo={seo}>
+	<h1>Link engineering tools</h1>
+	<p class="lede">
+		Each tool answers one link problem, shows its formula and sources, and works inside the
+		articles that use it — the same engine serves the full tool page and the embedded mini
+		version on protocol and guide pages.
+	</p>
+	<div class="table-wrap">
+		<table class="data">
+			<thead>
+				<tr>
+					<th scope="col">Link problem</th>
+					<th scope="col">Tool</th>
+					<th scope="col">What it computes</th>
+					<th scope="col">Status</th>
+				</tr>
+			</thead>
+			<tbody>
+				{
+					problems.map((item) => (
+						<tr>
+							<td>{item.problem}</td>
+							<td>
+								{item.href ? <a href={item.href}>{item.tool}</a> : item.tool}
+							</td>
+							<td>{item.detail}</td>
+							<td>{item.phase}</td>
+						</tr>
+					))
+				}
+			</tbody>
+		</table>
+	</div>
+</BaseLayout>
+
+<style>
+	.lede {
+		font-size: var(--fs-lg);
+		color: var(--ink-2);
+		max-width: 68ch;
+	}
+</style>

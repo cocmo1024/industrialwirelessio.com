@@ -1,0 +1,89 @@
+---
+/**
+ * Fresnel zone calculator — tool page anatomy skeleton (blueprint
+ * §4.5 T2). Engine lands in Phase 3 with the link budget calculator;
+ * this page fixes the route and slots (R2).
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { buildSeo } from '../../utils/seo';
+
+const seo = buildSeo(
+	{
+		id: 'tools/fresnel-zone-calculator',
+		locale: 'en',
+		title: 'Fresnel Zone Calculator',
+		description:
+			'Fresnel zone calculator for industrial wireless paths: first Fresnel zone radius and clearance ratio by path length and frequency, on an ITU-R P.526 basis.',
+		kind: 'tool',
+	},
+	'/tools/fresnel-zone-calculator/',
+);
+---
+
+<BaseLayout seo={seo} hasRail>
+	<Fragment slot="rail">
+		<div class="panel nameplate">
+			<div class="panel-head">Tool</div>
+			<div class="panel-body">
+				<dl>
+					<dt>Solves</dt>
+					<dd>How much clearance does this path need around the line of sight?</dd>
+					<dt>Method</dt>
+					<dd>First Fresnel zone geometry per ITU-R P.526 conventions; constants cite sources on the tool page.</dd>
+					<dt>Defaults</dt>
+					<dd>None preset — no unsourced numbers are prefilled.</dd>
+				</dl>
+			</div>
+		</div>
+	</Fragment>
+
+	<article>
+		<h1>Fresnel zone calculator</h1>
+		<p class="lede">
+			A radio link needs more than visual line of sight: the first Fresnel zone — an
+			ellipsoid around the path — must stay largely clear of obstructions, or the link
+			budget quietly loses decibels that no transmitter setting can buy back.
+		</p>
+		<section class="panel">
+			<div class="panel-head">Calculator</div>
+			<div class="panel-body">
+				<div class="empty-state">
+					<p class="empty-title">The calculator engine is under construction.</p>
+					<p class="empty-reason">
+						It lands in Phase 3 of the rebuild, together with a worked example and the
+						same source-cited variable table standard as the link budget tool.
+					</p>
+					<a class="btn" href="/tools/">Browse the tools hub</a>
+				</div>
+			</div>
+		</section>
+	</article>
+</BaseLayout>
+
+<style>
+	.lede {
+		font-size: var(--fs-lg);
+		color: var(--ink-2);
+		max-width: 68ch;
+	}
+
+	.nameplate dl {
+		margin: 0;
+	}
+
+	.nameplate dt {
+		font-size: var(--fs-xs);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		margin-top: 0.6rem;
+	}
+
+	.nameplate dt:first-child {
+		margin-top: 0;
+	}
+
+	.nameplate dd {
+		margin: 0.15rem 0 0;
+	}
+</style>

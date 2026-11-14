@@ -1,0 +1,83 @@
+/* Design tokens — Industrial Wireless I/O (rebuild stack).
+   Source: Industrial UI Standard template scaffold `tokens.css` v1
+   (~/workspace/industrial-ui-standard/template/tokens.css), adopted
+   2026-11-14 in Phase 0 of the v2 rebuild.
+   Semantic classes are marked per token (R6): consume a token only
+   within its class.
+   TEXT = text colors · SURFACE = backgrounds · LINE = borders
+   SIGNAL = actionable/current · STATE = status semantics only
+   (ISA-101: color means state, never decoration).
+
+   RECORDED ADAPTATION (blueprint v2 Phase 0): the scaffold's dark
+   theme block is intentionally NOT carried over — this site ships a
+   single light theme, so L0 contrast is judged on this one
+   environment, token pair by token pair (see the Phase 0 completion
+   note for the computed pairs). If a dark theme is ever added, every
+   token must be redeclared for it and re-judged per environment (L0),
+   and no TEXT token may be consumed as a surface (R6 supplement). */
+
+:root {
+  /* SURFACE */
+  --bg: #e9ebed;          /* app base, cold steel gray */
+  --panel: #f7f8f9;       /* panel face */
+  --card: #ffffff;        /* card face */
+  --sunken: #dee1e4;      /* recessed areas */
+  --hover: #eff1f3;       /* row hover */
+  --sidebar: #14161a;     /* graphite rail */
+
+  /* TEXT */
+  --ink: #16181b;         /* primary text — TEXT class only, never a surface */
+  --ink-2: #454b52;       /* secondary text */
+  --mute: #6d747c;        /* muted text — L0-verified on --card only; do not place on --bg/--panel */
+
+  /* TEXT on the graphite rail (--sidebar surface) — site extension */
+  --rail-ink: #e8eaed;    /* primary text on --sidebar */
+  --rail-mute: #9aa1a8;   /* secondary text on --sidebar */
+
+  /* LINE */
+  --line: #c9ced3;
+  --line-strong: #9aa1a8;
+
+  /* SIGNAL — one signal color, steel cyan */
+  --accent: #0b7285;
+  --accent-hover: #095a6b;
+  --accent-soft: #e2eef1; /* tint of the signal, for selected washes */
+
+  /* STATE — reserved for status, priority, danger; on this site the
+     only content-level use is link-margin state (blueprint §2.2) */
+  --ok: #2e7d46;
+  --warn: #b25e09;
+  --err: #b3372b;
+  --err-soft: #f6e3e0;
+
+  /* Type — IBM Plex family, numerals always mono with tabular figures */
+  --sans: "IBM Plex Sans", "Noto Sans SC", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", "Noto Sans SC", ui-monospace, monospace;
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-md: 13px;          /* base */
+  --fs-lg: 16px;
+  --fs-xl: 20px;
+  --fs-2xl: 22px;
+  --fs-3xl: 24px;
+
+  /* Form — hard corners, hairline structure, no decorative shadow */
+  --r-sm: 2px;
+  --r-md: 3px;
+  --h: 30px;              /* control height baseline */
+
+  /* Layout — site extension (blueprint §2.2 nameplate-rail skeleton) */
+  --rail-w: 17rem;        /* nameplate rail column */
+  --content-w: 78rem;     /* max content width */
+  --gutter: 1.25rem;
+}
+
+/* Chinese micro-label compensation: CJK glyphs fill the em box,
+   so the two smallest sizes step up under zh. Token-internal, documented exception (R6). */
+html:lang(zh) {
+  --fs-xs: 12px;
+  --fs-sm: 12px;
+}
+
+/* Print is a frozen output surface (R10). Any @media print block in a project
+   gets a baseline hash from the checker on day one and is never edited casually. */

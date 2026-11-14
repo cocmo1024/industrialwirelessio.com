@@ -1,0 +1,152 @@
+---
+title: Industrial Telemetry Gateways
+description: A product-family guide to telemetry gateways, including where they fit in remote architectures and what buyers should evaluate before choosing one.
+referenceType: product-family
+adProfile: product-family
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: industrial telemetry gateways
+searchIntent: select
+decisionStage: shortlist
+targetRoles:
+  - Telemetry architects
+  - Controls engineers
+  - Technical buyers
+  - System integrators
+contentStatus: cornerstone
+problemSolved: Helps teams shortlist industrial telemetry gateways by field protocol burden, buffering, remote diagnostics, power/cabinet fit, and ownership after commissioning.
+readerTakeaway: You should leave with a gateway evaluation model that separates telemetry gateways from routers, RTUs, and heavier edge computers.
+keyQuestions:
+  - When is a telemetry gateway the right device class?
+  - What should be tested before deploying gateways across remote sites?
+  - How do backhaul, buffering, and diagnostics change the shortlist?
+notFor:
+  - Sites that only need unmanaged network transport with no field data responsibility
+  - Projects that require full local application hosting and edge compute ownership
+updateTriggers:
+  - New industrial telemetry gateway releases
+  - Changes in store-and-forward, remote management, cellular, satellite, and RTU gateway patterns
+contentCluster: telemetry-device-selection
+canonicalCluster: telemetry-device-selection
+pageType: product-family
+lifecycle: evergreen
+refreshPriority: high
+authorKey: editorial-desk
+editorKey: review-desk
+lastReviewed: 2026-05-09
+---
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+# Industrial Telemetry Gateways
+
+Telemetry gateways sit where field signals, remote asset context, buffering, translation, and upstream transport all meet. In many remote monitoring designs, the gateway is the architectural center of the site. That makes this one of the strongest long-term product-family categories for buyer research: teams are often trying to decide which device should own the boundary between field equipment and the wider monitoring system.
+
+## What a telemetry gateway usually does
+
+The category usually exists to:
+
+- collect and normalize field data;
+- translate between field protocols and upstream platforms;
+- buffer data when the backhaul is unstable;
+- provide local diagnostics or light logic near the site.
+
+When those responsibilities are weak or undefined, teams often buy the wrong class of hardware.
+
+## When this category is the right fit
+
+Telemetry gateways are usually strongest when:
+
+- field devices and upstream systems speak different languages;
+- communications are not reliable enough for direct pass-through assumptions;
+- the deployment needs store-and-forward resilience;
+- the site should stay simpler than a full edge-compute footprint.
+
+That makes gateways especially relevant for utilities, water sites, pump stations, environmental monitoring, and distributed industrial assets.
+
+## Where buyers go wrong
+
+Teams often mis-buy in two directions:
+
+- they deploy generic networking gear that cannot handle field translation or buffering cleanly;
+- they deploy a heavier edge system when a gateway would be easier to support and secure.
+
+The correct choice depends on who should own protocol shaping, local resilience, and diagnostics at the site.
+
+## What to evaluate before buying
+
+The most important evaluation questions usually include:
+
+- which field protocols and upstream protocols must be bridged;
+- how the device handles store-and-forward behavior;
+- what remote management and diagnostics are available;
+- whether power, enclosure, and site-access realities match the hardware footprint;
+- how stable the vendor’s lifecycle and support model appear.
+
+In remote sites, those operational questions matter more than broad spec-sheet ambition.
+
+## Gateway vs router vs RTU vs edge computer
+
+The category decision should be explicit:
+
+| Device class | Better fit | Warning sign |
+| --- | --- | --- |
+| Router | Transport and secure access are the main job | Field data buffering or protocol translation is being bolted on later |
+| Telemetry gateway | Field data, buffering, translation, and upstream delivery are the main job | The site needs heavy local apps or control autonomy |
+| RTU | Remote control, sparse communications, and field autonomy matter | The project only needs data forwarding |
+| Edge computer | Local application hosting, analytics, or containerized workloads matter | The site team cannot support OS, patches, and app lifecycle |
+
+Buying the wrong class creates long-term support cost. A telemetry gateway should own the data boundary without becoming an unmanaged computer.
+
+## Field acceptance tests
+
+Before standardizing a gateway, test:
+
+1. field-device restart while the gateway remains powered;
+2. backhaul outage while local events occur;
+3. buffer replay after reconnect;
+4. stale-data and heartbeat behavior at the supervisory layer;
+5. remote configuration backup and restore;
+6. firmware rollback or known-good configuration recovery;
+7. cabinet power interruption and clean restart.
+
+These tests expose whether the device is a real remote-site gateway or only a good demo box.
+
+## Shortlist scoring
+
+Score each device on:
+
+- exact field protocols and tag capacity;
+- local storage and timestamp handling;
+- diagnostics visible to remote operators;
+- security model and credential management;
+- power draw and enclosure fit;
+- carrier, LoRaWAN, Ethernet, or satellite compatibility;
+- supportability by field technicians after the integrator leaves.
+
+The best gateway is often the one that reduces support ambiguity, not the one with the longest feature sheet.
+
+## Related paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Telemetry protocol fit"
+		href="/protocols/telemetry-protocol-fit/"
+		description="Decide where translation and data shaping should happen before choosing hardware."
+	/>
+	<LinkCard
+		title="Cellular vs LoRaWAN vs satellite"
+		href="/network-paths/cellular-vs-lorawan-vs-satellite/"
+		description="Backhaul design strongly changes what the gateway must handle locally."
+	/>
+	<LinkCard
+		title="Remote pump stations and water sites"
+		href="/applications/remote-pump-stations-and-water-sites/"
+		description="See how field application context changes gateway requirements faster than product marketing does."
+	/>
+	<LinkCard
+		title="Industrial gateways as IIoT devices"
+		href="https://iiotdevices.com/product-families/industrial-gateways/"
+		description="The device-layer view of the same gateway class — protocol conversion, edge roles, and retrofit fit — on our sister reference, IIoT Devices."
+	/>
+</div>

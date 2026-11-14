@@ -1,0 +1,112 @@
+---
+title: Reliability
+description: Reliability planning for remote telemetry, industrial wireless architecture, maintenance access, and long-term site survivability.
+referenceType: foundation
+adProfile: foundation
+commercialIntent: low
+reviewCadence: Semiannual review
+primaryKeyword: reliability
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Telemetry engineers
+  - Controls engineers
+  - Utilities teams
+  - System integrators
+contentStatus: cornerstone
+contentCluster: telemetry-reliability
+canonicalCluster: telemetry-reliability
+pageType: hub
+lifecycle: hub
+refreshPriority: medium
+authorKey: editorial-desk
+editorKey: review-desk
+lastReviewed: 2026-05-09
+problemSolved: Helps readers solve the practical question behind Reliability instead of stopping at a generic definition or feature list.
+readerTakeaway: "You should leave with a clearer decision model, implementation boundary, or next-step checklist for Reliability."
+---
+
+import { LinkCard, Steps } from '@astrojs/starlight/components';
+
+# Reliability
+
+Reliability is the page set that turns an interesting telemetry design into a field-worthy one. This section is about failure reduction, serviceability, maintenance access, and long-term survivability in remote industrial deployments.
+
+## Core paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Site survivability planning"
+		href="/reliability/site-survivability-planning/"
+		description="A practical framework for designing remote telemetry systems that can survive both environment and operations."
+	/>
+	<LinkCard
+		title="Remote telemetry commissioning and site acceptance checklist"
+		href="/reliability/remote-telemetry-commissioning-and-site-acceptance-checklist/"
+		description="A field-ready acceptance page for proving cabinet, signal, protocol, alarm, buffering, stale-data, and handoff behavior before unattended operation."
+	/>
+	<LinkCard
+		title="Internet-facing PLC exposure checklist"
+		href="/network-paths/internet-facing-plc-exposure-checklist-for-remote-telemetry-sites/"
+		description="Add public-exposure checks to site acceptance before a remote cabinet is trusted for unattended operation."
+	/>
+	<LinkCard
+		title="Network outage playbooks"
+		href="/reliability/network-outage-playbooks-for-unattended-sites/"
+		description="An operations-grade page for deciding how unattended sites should behave when the link disappears."
+	/>
+	<LinkCard
+		title="Out-of-band management and local fallback"
+		href="/reliability/out-of-band-management-and-local-fallback-for-unattended-sites/"
+		description="A resilience page for deciding when unattended sites need secondary access, local autonomy, or both."
+	/>
+	<LinkCard
+		title="Alarm latching, last-known state, and local buffering"
+		href="/reliability/alarm-latching-last-known-state-and-local-buffering-for-unattended-sites/"
+		description="A continuity page for preserving the site's operating story during intermittent communications."
+	/>
+	<LinkCard
+		title="Digital-input event buffering for alarm-first telemetry"
+		href="/reliability/digital-input-event-buffering-for-alarm-first-telemetry/"
+		description="A continuity page for preserving discrete alarm and event sequence, not just the latest state, during communications loss."
+	/>
+	<LinkCard
+		title="Heartbeat timers, stale-data rules, and supervisory loss handling"
+		href="/reliability/heartbeat-timers-stale-data-rules-and-supervisory-loss-handling/"
+		description="A supervisory-continuity page for deciding how quickly unattended sites should declare lost visibility and stale data."
+	/>
+	<LinkCard
+		title="When should a remote site alarm immediately vs buffer locally?"
+		href="/reliability/when-should-a-remote-site-alarm-immediately-vs-buffer-locally/"
+		description="A high-value alarm-separation page for deciding which events deserve instant response and which belong in local continuity buffers."
+	/>
+	<LinkCard
+		title="Remote telemetry alarm flood reduction"
+		href="/reliability/remote-telemetry-alarm-flood-reduction-deadbands-persistence-and-operator-trust/"
+		description="A trust and reliability page for reducing nuisance alarms with deadbands, persistence, latching, stale-data rules, and actionability review."
+	/>
+	<LinkCard
+		title="Why do remote telemetry sites go offline?"
+		href="/reliability/why-do-remote-telemetry-sites-go-offline/"
+		description="A field-failure page for classifying repeat outages correctly before the team blames every loss on wireless coverage."
+	/>
+	<LinkCard
+		title="Hardware"
+		href="/hardware/"
+		description="Stress-test the physical stack against the actual field conditions and service model."
+	/>
+	<LinkCard
+		title="Network paths"
+		href="/network-paths/"
+		description="Confirm that the chosen backhaul model matches outage tolerance, coverage confidence, and response times."
+	/>
+</div>
+
+## Reliability review flow
+
+<Steps>
+	1. List the most likely environmental, power, and communications failure modes.
+	2. Decide which failures must be tolerated locally and which require intervention.
+	3. Design maintenance, recovery, and replacement paths before deployment.
+	4. Re-check whether the architecture is still reasonable after those realities are included.
+</Steps>

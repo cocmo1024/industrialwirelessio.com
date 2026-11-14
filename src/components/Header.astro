@@ -1,0 +1,135 @@
+---
+/**
+ * Header — brand block + three-axis navigation (blueprint §2.4).
+ * Axes: by protocol / by object / by task. There is deliberately no
+ * full-site document tree (the Starlight sidebar pattern is gone).
+ * Axis targets are hub routes; hubs land phase by phase (Phase 1:
+ * protocols; Phase 2: product database; Phase 3: tools).
+ */
+import { brand } from '../data/brand';
+
+const axes = [
+	{
+		label: 'By protocol',
+		links: [
+			{ label: 'Protocol matrix', href: '/protocols/' },
+			{ label: 'WirelessHART', href: '/protocols/wirelesshart/' },
+			{ label: 'ISA100.11a', href: '/protocols/isa100-11a/' },
+			{ label: 'LoRaWAN', href: '/protocols/lorawan/' },
+			{ label: 'IO-Link Wireless', href: '/protocols/io-link-wireless/' },
+		],
+	},
+	{
+		label: 'By object',
+		links: [
+			{ label: 'Product database', href: '/product-families/' },
+			{ label: 'Vendors', href: '/vendors/' },
+			{ label: 'Comparisons', href: '/compare/' },
+			{ label: 'Tools', href: '/tools/' },
+		],
+	},
+	{
+		label: 'By task',
+		links: [
+			{ label: 'Select wireless I/O', href: '/product-families/wireless-remote-io-and-rtu-modules/' },
+			{ label: 'Budget a link', href: '/tools/link-budget-calculator/' },
+			{ label: 'Troubleshoot a site', href: '/reliability/' },
+			{ label: 'Search', href: '/search/' },
+		],
+	},
+];
+---
+
+<header class="site-header">
+	<div class="brand-row">
+		<a class="brand-name" href="/">{brand.name}</a>
+		<span class="brand-tagline">{brand.tagline}</span>
+	</div>
+	<nav class="axis-nav" aria-label="Primary">
+		{
+			axes.map((axis) => (
+				<div class="axis">
+					<span class="axis-label">{axis.label}</span>
+					<ul>
+						{axis.links.map((link) => (
+							<li>
+								<a href={link.href}>{link.label}</a>
+							</li>
+						))}
+					</ul>
+				</div>
+			))
+		}
+	</nav>
+</header>
+
+<style>
+	.site-header {
+		background: var(--sidebar);
+		color: var(--rail-ink);
+	}
+
+	.brand-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.4rem 1rem;
+		max-width: var(--content-w);
+		margin: 0 auto;
+		padding: 0.8rem var(--gutter) 0.4rem;
+	}
+
+	.brand-name {
+		color: var(--rail-ink);
+		font-size: var(--fs-xl);
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.brand-name:hover {
+		color: var(--rail-ink);
+		text-decoration: underline;
+	}
+
+	.brand-tagline {
+		color: var(--rail-mute);
+		font-size: var(--fs-sm);
+	}
+
+	.axis-nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 2.5rem;
+		max-width: var(--content-w);
+		margin: 0 auto;
+		padding: 0.4rem var(--gutter) 0.8rem;
+	}
+
+	.axis-label {
+		display: block;
+		font-size: var(--fs-xs);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--rail-mute);
+		margin-bottom: 0.2rem;
+	}
+
+	.axis ul {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.2rem 1rem;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.axis a {
+		color: var(--rail-ink);
+		text-decoration: none;
+		font-size: var(--fs-md);
+	}
+
+	.axis a:hover {
+		text-decoration: underline;
+	}
+</style>

@@ -1,0 +1,262 @@
+---
+/**
+ * Homepage (hub) — blueprint §2.3 anatomy, Phase 0 skeleton:
+ *   page head (name + positioning + ONE primary action, R4)
+ *   → spectrum rail panel (signature component lands in Phase 1;
+ *     this skeleton renders the band axis the rail will carry)
+ *   → protocol matrix teaser (Phase 1, fed by protocol records)
+ *   → link-budget tool embed block (engine lands in Phase 3)
+ *   → object entries (protocols / product database / tools)
+ *   → three application scenarios
+ *   → most recently reviewed pages (route manifest, real data)
+ * No hero image, no marketing copy sections.
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { brand } from '../data/brand';
+import { buildSeo } from '../utils/seo';
+import { buildRouteManifest, hreflangLinksFor, parseEntryId } from '../utils/routes';
+
+const entries = await getCollection('pages');
+const manifest = buildRouteManifest(entries);
+const hreflang = hreflangLinksFor(manifest, '');
+
+const recent = entries
+	.map((entry) => ({ entry, parsed: parseEntryId(entry.id) }))
+	.filter((item) => item.parsed && item.parsed.locale === 'en' && item.parsed.slug !== '')
+	.sort(
+		(a, b) =>
+			(b.entry.data.lastReviewed?.getTime() ?? 0) - (a.entry.data.lastReviewed?.getTime() ?? 0),
+	)
+	.slice(0, 5);
+
+const bands = [
+	{ label: 'Sub-GHz', detail: 'LoRaWAN · NB-IoT/LTE-M bands' },
+	{ label: '900 MHz ISM', detail: 'Proprietary sub-GHz links' },
+	{ label: '2.4 GHz ISM', detail: 'WirelessHART · ISA100.11a · IO-Link Wireless' },
+	{ label: 'Licensed cellular', detail: 'LTE-M · NB-IoT · LTE backhaul' },
+	{ label: '3.5 GHz class', detail: 'Private 5G' },
+];
+
+const objects = [
+	{
+		name: 'Protocol graph',
+		href: '/protocols/',
+		detail: 'Protocol reference pages and the protocol matrix, organized by band and topology.',
+	},
+	{
+		name: 'Product database',
+		href: '/product-families/',
+		detail: 'Wireless I/O modules, gateways and routers as sourced spec records — not prose.',
+	},
+	{
+		name: 'Toolbox',
+		href: '/tools/',
+		detail: 'Link engineering calculators that live inside the reading flow.',
+	},
+];
+
+const scenarios = [
+	{ name: 'Factory automation', href: '/applications/' },
+	{ name: 'Process industry', href: '/applications/' },
+	{ name: 'Utility telemetry', href: '/applications/' },
+];
+
+const seo = buildSeo(
+	{ id: 'index', locale: 'en', title: brand.name, kind: 'home' },
+	'/',
+);
+---
+
+<BaseLayout seo={seo} hreflang={hreflang}>
+	<section class="page-head">
+		<h1>{brand.name}</h1>
+		<p class="positioning">{brand.positioning}</p>
+		<p>
+			<a class="btn primary" href="/tools/link-budget-calculator/">Open the link budget calculator</a>
+		</p>
+	</section>
+
+	<section class="panel spectrum" aria-label="Protocol spectrum">
+		<div class="panel-head">Spectrum rail — protocols by band</div>
+		<div class="panel-body">
+			<ol class="band-axis">
+				{
+					bands.map((band) => (
+						<li>
+							<a href="/protocols/">
+								<span class="band-label">{band.label}</span>
+								<span class="band-detail">{band.detail}</span>
+							</a>
+						</li>
+					))
+				}
+			</ol>
+		</div>
+	</section>
+
+	<section class="panel" aria-label="Protocol matrix preview">
+		<div class="panel-head">Protocol matrix</div>
+		<div class="panel-body">
+			<div class="empty-state">
+				<p class="empty-title">The full protocol matrix is being built from protocol records.</p>
+				<p class="empty-reason">
+					Matrix rows are generated from the same records as the protocol pages, so the
+					numbers can never drift apart. The first records land with the Phase 1
+					protocol pages.
+				</p>
+				<a class="btn" href="/protocols/">Browse the protocol reference pages</a>
+			</div>
+		</div>
+	</section>
+
+	<section class="panel" aria-label="Link budget tool">
+		<div class="panel-head">Link budget — will this link close?</div>
+		<div class="panel-body">
+			<p>
+				Transmit power and antenna gains against free-space path loss, cable loss and
+				fade margin, checked against receiver sensitivity. The calculator engine lands
+				in Phase 3; the same engine will serve the embedded mini version on protocol
+				and guide pages.
+			</p>
+			<a class="btn" href="/tools/link-budget-calculator/">Go to the tool page</a>
+		</div>
+	</section>
+
+	<section aria-label="Reference objects">
+		<h2>Reference objects</h2>
+		<div class="object-grid">
+			{
+				objects.map((object) => (
+					<article class="panel object-card">
+						<div class="panel-body">
+							<h3>
+								<a href={object.href}>{object.name}</a>
+							</h3>
+							<p>{object.detail}</p>
+						</div>
+					</article>
+				))
+			}
+		</div>
+	</section>
+
+	<section aria-label="Application scenarios">
+		<h2>Application scenarios</h2>
+		<ul class="scenario-list">
+			{
+				scenarios.map((scenario) => (
+					<li>
+						<a href={scenario.href}>{scenario.name}</a>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+
+	<section aria-label="Recently reviewed">
+		<h2>Recently reviewed</h2>
+		<ul class="recent-list">
+			{
+				recent.map(({ entry, parsed }) => (
+					<li>
+						<a href={`/${parsed!.slug}/`}>{entry.data.title}</a>
+						{entry.data.lastReviewed && (
+							<span class="recent-date num">
+								{entry.data.lastReviewed.toISOString().slice(0, 10)}
+							</span>
+						)}
+					</li>
+				))
+			}
+		</ul>
+	</section>
+</BaseLayout>
+
+<style>
+	.page-head {
+		margin-bottom: 1.2rem;
+	}
+
+	.positioning {
+		max-width: 62ch;
+		color: var(--ink-2);
+		font-size: var(--fs-lg);
+	}
+
+	.panel {
+		margin-bottom: 1.2rem;
+	}
+
+	.band-axis {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.band-axis li {
+		flex: 1 1 10rem;
+		border: 1px solid var(--line);
+		border-top: 3px solid var(--accent);
+		border-radius: var(--r-sm);
+		background: var(--panel);
+	}
+
+	.band-axis a {
+		display: block;
+		padding: 0.5rem 0.6rem;
+		color: var(--ink);
+		text-decoration: none;
+	}
+
+	.band-axis a:hover {
+		background: var(--hover);
+	}
+
+	.band-label {
+		display: block;
+		font-family: var(--mono);
+		font-weight: 600;
+	}
+
+	.band-detail {
+		display: block;
+		font-size: var(--fs-sm);
+		color: var(--ink-2);
+	}
+
+	.object-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+		gap: 1rem;
+		margin-bottom: 1.2rem;
+	}
+
+	.object-card .panel-body {
+		padding-bottom: 0.4rem;
+	}
+
+	.scenario-list,
+	.recent-list {
+		list-style: none;
+		margin: 0 0 1.2rem;
+		padding: 0;
+	}
+
+	.scenario-list li,
+	.recent-list li {
+		padding: 0.35rem 0;
+		border-bottom: 1px solid var(--line);
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	.recent-date {
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+	}
+</style>

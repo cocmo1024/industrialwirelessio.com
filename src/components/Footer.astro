@@ -1,75 +1,50 @@
 ---
-import EditLink from 'virtual:starlight/components/EditLink';
-import LastUpdated from 'virtual:starlight/components/LastUpdated';
-import Pagination from 'virtual:starlight/components/Pagination';
-import AdSlot from './AdSlot.astro';
-import { getAdPlan } from '../utils/ad-config';
-import { adPreviewEnabled } from '../utils/ad-runtime.mjs';
-import { siteMeta } from '../utils/site-meta.mjs';
-
-const route = Astro.locals.starlightRoute;
-const plan = getAdPlan(route.id, route.entry?.data);
+/**
+ * Footer — carries the brand-facts line (GEO List B-08): site name,
+ * positioning, contact email and an About link, plus the cluster and
+ * sourcing sentences. Every string is read from src/data/brand.ts —
+ * the single source of truth (B-13); nothing is hand-written here.
+ */
+import { brand } from '../data/brand';
 ---
 
-<footer class="sl-flex">
-	<div class="meta sl-flex" data-nosnippet>
-		<EditLink />
-		<LastUpdated />
+<footer class="site-footer">
+	<div class="footer-inner">
+		<p class="facts-line">
+			<strong>{brand.name}</strong> — {brand.positioning}
+		</p>
+		<p>{brand.cluster}</p>
+		<p>{brand.sourcing}</p>
+		<p class="facts-meta">
+			Contact: <a href={`mailto:${brand.email}`}>{brand.email}</a>
+			· <a href="/about/">About</a>
+			· <a href="/editorial-policy/">Editorial policy</a>
+			· <a href="/privacy/">Privacy</a>
+			· <a href="/terms-of-use/">Terms of use</a>
+		</p>
 	</div>
-	<Pagination />
-	<section class="footer-commercial" data-nosnippet>
-		<div class="footer-commercial__copy">
-			<h2>Editorial and commercial transparency</h2>
-			<p>
-				Future sponsorships, affiliate relationships, and display inventory are intended to remain
-				clearly disclosed and separate from editorial judgment.
-			</p>
-			<p>
-				Maintained by <strong>{siteMeta.editorialTeamName}</strong>. Major pages are reviewed against
-				the editorial method described in the site standards.
-			</p>
-			<p class="footer-commercial__links">
-				<a href="/advertising/">Advertising</a>
-				<span aria-hidden="true"> / </span>
-				<a href="/affiliate-disclosure/">Affiliate Disclosure</a>
-				<span aria-hidden="true"> / </span>
-				<a href="/editorial-policy/">Editorial Policy</a>
-				<span aria-hidden="true"> / </span>
-				<a href="/editorial-desk/">Editorial Desk</a>
-				<span aria-hidden="true"> / </span>
-				<a href="/review-desk/">Review Desk</a>
-			</p>
-		</div>
-		{
-			adPreviewEnabled && (
-				<div
-					data-nosnippet
-					data-ad-profile={route.entry?.data?.adProfile ?? 'unassigned'}
-					data-commercial-intent={route.entry?.data?.commercialIntent ?? 'unknown'}
-				>
-					<AdSlot {...plan.footer} />
-				</div>
-			)
-		}
-	</section>
 </footer>
 
 <style>
-	@layer starlight.core {
-		footer {
-			flex-direction: column;
-			gap: 1.5rem;
-		}
-		.meta {
-			gap: 0.75rem 3rem;
-			justify-content: space-between;
-			flex-wrap: wrap;
-			margin-top: 3rem;
-			font-size: var(--sl-text-sm);
-			color: var(--sl-color-gray-3);
-		}
-		.meta > :global(p:only-child) {
-			margin-inline-start: auto;
-		}
+	.site-footer {
+		border-top: 1px solid var(--line);
+		background: var(--panel);
+		color: var(--ink-2);
+		margin-top: 2rem;
+	}
+
+	.footer-inner {
+		max-width: var(--content-w);
+		margin: 0 auto;
+		padding: 1rem var(--gutter) 1.4rem;
+		font-size: var(--fs-sm);
+	}
+
+	.facts-line strong {
+		color: var(--ink);
+	}
+
+	.facts-meta {
+		margin-bottom: 0;
 	}
 </style>

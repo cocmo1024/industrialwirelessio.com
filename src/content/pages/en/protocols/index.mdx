@@ -1,0 +1,82 @@
+---
+title: Protocols
+description: Protocol reference pages for remote telemetry systems, field devices, gateways, and upstream industrial monitoring stacks.
+referenceType: foundation
+adProfile: foundation
+commercialIntent: low
+reviewCadence: Semiannual review
+primaryKeyword: protocols
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Telemetry engineers
+  - Controls engineers
+  - Utilities teams
+  - System integrators
+contentStatus: cornerstone
+contentCluster: telemetry-protocol-fit
+canonicalCluster: telemetry-protocol-fit
+pageType: hub
+lifecycle: hub
+refreshPriority: medium
+authorKey: editorial-desk
+editorKey: review-desk
+lastReviewed: 2026-05-09
+problemSolved: Helps readers solve the practical question behind Protocols instead of stopping at a generic definition or feature list.
+readerTakeaway: "You should leave with a clearer decision model, implementation boundary, or next-step checklist for Protocols."
+---
+
+import { LinkCard, Steps } from '@astrojs/starlight/components';
+
+# Protocols
+
+Protocol decisions in remote telemetry are best understood as architecture boundaries. This section separates field communication needs from upstream data transport and explains how the gateway or edge layer often bridges the two.
+
+## Core paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Telemetry protocol fit"
+		href="/protocols/telemetry-protocol-fit/"
+		description="A practical layer-by-layer frame for deciding where field protocols, gateway translation, buffering, and upstream transport belong."
+	/>
+	<LinkCard
+		title="LoRaWAN to OPC UA architecture"
+		href="/protocols/lorawan-to-opc-ua-for-remote-telemetry-architecture/"
+		description="Use this page when low-power remote sensors need to enter SCADA, historian, or industrial data layers with stronger meaning."
+	/>
+	<LinkCard
+		title="Remote telemetry commissioning checklist"
+		href="/reliability/remote-telemetry-commissioning-and-site-acceptance-checklist/"
+		description="Turn protocol choices into site acceptance evidence before unattended operation begins."
+	/>
+	<LinkCard
+		title="Network paths"
+		href="/network-paths/"
+		description="Use the chosen backhaul model to pressure-test which protocol layers make sense."
+	/>
+	<LinkCard
+		title="Hardware"
+		href="/hardware/"
+		description="Check which device classes and gateway footprints can own protocol translation cleanly."
+	/>
+	<LinkCard
+		title="How often should remote telemetry sites report data?"
+		href="/protocols/how-often-should-remote-telemetry-sites-report-data/"
+		description="A reporting-interval question page for separating immediate alarms, periodic updates, and local buffering."
+	/>
+	<LinkCard
+		title="Alarm priority and deadband design"
+		href="/protocols/alarm-priority-and-deadband-design-for-remote-telemetry/"
+		description="A practical tuning page for deciding which field signals should alarm now, wait, aggregate, or stay inside normal deadband."
+	/>
+</div>
+
+## Protocol review flow
+
+<Steps>
+	1. Confirm what happens at the field device layer and what happens upstream.
+	2. Decide where translation, buffering, and data shaping should occur.
+	3. Choose the simplest protocol mix that still supports the monitoring objective.
+	4. Avoid treating every layer of the architecture as if it needs the same protocol.
+</Steps>

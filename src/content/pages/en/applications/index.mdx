@@ -1,0 +1,117 @@
+---
+title: Applications
+description: Application-first reference pages for remote telemetry, field connectivity, and wireless industrial monitoring deployments.
+referenceType: foundation
+adProfile: foundation
+commercialIntent: low
+reviewCadence: Semiannual review
+primaryKeyword: applications
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Telemetry engineers
+  - Controls engineers
+  - Utilities teams
+  - System integrators
+contentStatus: cornerstone
+contentCluster: remote-telemetry-applications
+canonicalCluster: remote-telemetry-applications
+pageType: hub
+lifecycle: hub
+refreshPriority: medium
+authorKey: editorial-desk
+editorKey: review-desk
+lastReviewed: 2026-05-09
+problemSolved: Helps readers solve the practical question behind Applications instead of stopping at a generic definition or feature list.
+readerTakeaway: "You should leave with a clearer decision model, implementation boundary, or next-step checklist for Applications."
+---
+
+import { LinkCard, Steps } from '@astrojs/starlight/components';
+
+# Applications
+
+Applications are the right starting point for remote telemetry because site context dominates architecture. Asset behavior, terrain, service access, power constraints, and monitoring goals usually shape the winning design before hardware catalogs help.
+
+<div class="signal-strip">
+	<div>
+		<strong>Use this section for</strong>
+		<p>Remote pump stations, water sites, tanks, dispersed utility assets, and other environments where field reality dominates the stack.</p>
+	</div>
+	<div>
+		<strong>What it prevents</strong>
+		<p>Choosing radios or gateways too early without understanding access, power, enclosure, and maintenance constraints.</p>
+	</div>
+	<div>
+		<strong>Move next to</strong>
+		<p>Network paths once the site profile is stable, then protocols and hardware to refine the footprint.</p>
+	</div>
+</div>
+
+## Core paths
+
+<div class="portal-links">
+	<LinkCard
+		title="Remote pump stations and water sites"
+		href="/applications/remote-pump-stations-and-water-sites/"
+		description="A high-value lane for telemetry projects with sparse maintenance access and strong reliability demands."
+	/>
+	<LinkCard
+		title="Remote generator and fuel tank telemetry"
+		href="/applications/remote-generator-and-fuel-tank-telemetry-for-critical-sites/"
+		description="A critical-site lane where outage readiness and fuel assurance matter more than broad telemetry ambition."
+	/>
+	<LinkCard
+		title="Substation and distributed energy telemetry"
+		href="/applications/substation-and-distributed-energy-telemetry/"
+		description="A field architecture lane for remote energy assets where event clarity and survivability drive the design."
+	/>
+	<LinkCard
+		title="Pipeline cathodic protection and remote cabinet telemetry"
+		href="/applications/pipeline-cathodic-protection-and-remote-cabinet-telemetry/"
+		description="A remote cabinet and integrity-monitoring path where alarm credibility, sparse access, and power limits dominate the architecture."
+	/>
+	<LinkCard
+		title="Wellhead and chemical injection telemetry"
+		href="/applications/wellhead-and-chemical-injection-site-telemetry-for-unattended-oil-and-gas-assets/"
+		description="A remote oil and gas field path where low-power telemetry, sparse access, and alarm credibility drive the architecture."
+	/>
+	<LinkCard
+		title="Booster stations and pressure-zone telemetry"
+		href="/applications/booster-stations-and-pressure-zone-telemetry-for-distribution-networks/"
+		description="A water-distribution path for sites where pressure behavior, pump context, and alarm credibility must survive sparse field access."
+	/>
+	<LinkCard
+		title="Stormwater and flood-control site telemetry"
+		href="/applications/stormwater-and-flood-control-site-telemetry-for-unattended-assets/"
+		description="An event-first water-infrastructure path for sites where flood response, alarm order, and cabinet survivability matter more than steady bandwidth."
+	/>
+	<LinkCard
+		title="Valve position and pressure-reducing station telemetry"
+		href="/applications/valve-position-and-pressure-reducing-station-telemetry-for-water-and-gas-networks/"
+		description="A distribution-asset path for valve and PRS sites where state sequence, pressure context, and remote visibility have to survive sparse maintenance conditions."
+	/>
+	<LinkCard
+		title="Tank farms and environmental monitoring"
+		href="/applications/tank-farms-and-environmental-monitoring/"
+		description="A field-heavy path for sites where cabinet survivability, alarm credibility, and sparse maintenance access matter more than feature count."
+	/>
+	<LinkCard
+		title="Network paths"
+		href="/network-paths/"
+		description="Choose the backhaul model that matches the site instead of forcing the site to fit the preferred network."
+	/>
+	<LinkCard
+		title="Reliability"
+		href="/reliability/"
+		description="Use survivability planning to catch the hidden field assumptions early."
+	/>
+</div>
+
+## Decision flow
+
+<Steps>
+	1. Define the remote asset, site access pattern, and business or operational outcome.
+	2. Separate sensing needs from control needs and local buffering needs.
+	3. Narrow the likely network path and hardware footprint.
+	4. Validate the design against power, enclosure, antenna, and maintenance reality.
+</Steps>
