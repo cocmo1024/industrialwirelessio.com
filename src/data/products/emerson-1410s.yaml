@@ -1,0 +1,43 @@
+vendor: Emerson
+vendorSlug: emerson
+model: 1410S
+productType: gateway
+slug: emerson-1410s
+status: active
+protocols:
+  - wirelesshart
+  - isa100
+frequencyBands:
+  - "2.4 GHz (IEEE 802.15.4)"
+txPowerDbm: 16
+txPowerCondition: "EIRP, 781S smart antenna configuration (PDS 00813-0600-4410 Rev. AG)"
+rxSensitivityDbm: null
+rangeClass: null
+antenna: 781S smart antenna
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "Gateway capacity figures differ between sources: PDS Rev. AG states up to 200 devices (25 per 781S antenna), while the product page states up to 500 network devices and up to 1,000 ISA100 devices. The figures are recorded here, not merged."
+upstreamInterfaces:
+  - Ethernet
+  - RS-485 serial
+  - Native DeltaV and Ovation integration
+powerSupply: "10.5-30 VDC"
+powerConsumption: null
+batteryLife: null
+ipRating: IP66
+operatingTemp: null
+certifications:
+  - "ATEX / IECEx Zone 2 (1410S2)"
+  - "Class I Division 2 (1410S2)"
+  - "FM / CSA ordinary locations (1410S1)"
+hazardousArea: "Zone 2 / Class I Division 2 variants (1410S2)"
+sourceUrl: https://www.emerson.com/Wireless1410S
+sourceType: datasheet
+sourceDocId: "00813-0600-4410 Rev. AG"
+dateChecked: 2026-11-14
+notes: "Values transcribed from Product Data Sheet 00813-0600-4410 Rev. AG, reached via the Emerson product page. The Phase 1 protocol record cites Rev. AJ; figures from the two revisions are not merged. Power consumption is left blank: the PDS gives different figures for the S1 (7.74 W) and S2 (15 W) variants and no single value is asserted. Ingress rating is the 1410S2 figure."

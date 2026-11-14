@@ -1,0 +1,47 @@
+vendor: Endress+Hauser
+vendorSlug: endress-hauser
+model: SWA70 WirelessHART Adapter
+productType: adapter
+slug: endress-hauser-swa70
+status: active
+protocols:
+  - wirelesshart
+frequencyBands: []
+txPowerDbm: 10
+txPowerCondition: "Configurable 0 dBm or 10 dBm output (TI00026S)"
+rxSensitivityDbm: null
+rangeClass:
+  value: "250"
+  unit: m
+  conditions: "Outdoor free-field reference range; 50 m indoors (TI00026S)"
+  sourceRef: "TI00026S/04/EN/22.17"
+antenna: null
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "Battery-powered adapter that adds WirelessHART to a wired HART field device."
+upstreamInterfaces:
+  - WirelessHART (to a FieldGate SWG50)
+powerSupply: "Internal battery pack (adapter version)"
+powerConsumption: null
+batteryLife:
+  value: "Up to 10 years"
+  conditions: "Depends on the update rate, the connected field device and ambient conditions (manufacturer wording in TI00026S)"
+  sourceRef: "TI00026S/04/EN/22.17"
+ipRating: "IP65 / IP66 / IP67 depending on housing (F32 / F33 / F39)"
+operatingTemp: null
+certifications:
+  - ATEX
+  - IECEx
+  - FM
+  - CSA
+hazardousArea: "Explosion-protection approvals per TI00026S variant list"
+sourceUrl: https://www.endress.com/SWA70
+sourceType: technical-info
+sourceDocId: "TI00026S/04/EN/22.17"
+dateChecked: 2026-11-14
+notes: "Data row only under blueprint §4.3: a single upstream interface and no local I/O counts. Frequency band is left empty in this pass rather than inferred from the protocol."

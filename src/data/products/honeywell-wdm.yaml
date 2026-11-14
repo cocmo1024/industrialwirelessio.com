@@ -1,0 +1,36 @@
+vendor: Honeywell
+vendorSlug: honeywell
+model: OneWireless Wireless Device Manager (WDM)
+productType: gateway
+slug: honeywell-wdm
+status: active
+protocols:
+  - isa100
+  - wirelesshart
+  - lorawan
+frequencyBands: []
+txPowerDbm: null
+rxSensitivityDbm: null
+rangeClass: null
+antenna: null
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "Network manager for OneWireless networks; ISA100.11a, WirelessHART and LoRaWAN devices are managed through FDAP access points. The WDM itself has no radio."
+upstreamInterfaces: []
+powerSupply: null
+powerConsumption: "24 W typical"
+batteryLife: null
+ipRating: null
+operatingTemp: null
+certifications: []
+hazardousArea: "Class I Division 2"
+sourceUrl: "https://prod-edam.honeywell.com/content/dam/honeywell-edam/pmt/hps/products/pas/wireless/wireless-device-manager/OneWireless-Wireless-Device-Manager-Specification.pdf?download=false"
+sourceType: datasheet
+sourceDocId: "OW03 650 330"
+dateChecked: 2026-11-14
+notes: "Data row only under blueprint §4.3: a network manager with no radio of its own, so the wireless-identity gate cannot be met."

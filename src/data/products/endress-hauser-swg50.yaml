@@ -1,0 +1,37 @@
+vendor: Endress+Hauser
+vendorSlug: endress-hauser
+model: SWG50 FieldGate
+productType: gateway
+slug: endress-hauser-swg50
+status: active
+protocols:
+  - wirelesshart
+frequencyBands: []
+txPowerDbm: null
+rxSensitivityDbm: null
+rangeClass: null
+antenna: null
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "Supports up to 100 WirelessHART field devices (manufacturer documentation)."
+upstreamInterfaces:
+  - Ethernet
+  - Modbus TCP
+  - HART-IP
+powerSupply: null
+powerConsumption: null
+batteryLife: null
+ipRating: null
+operatingTemp: null
+certifications: []
+hazardousArea: null
+sourceUrl: https://bdih-download.endress.com/file/3ea13778b8168d790b1e1b6c4f2df47b/BA02235SEN_0225-00.pdf
+sourceType: technical-info
+sourceDocId: "BA02235S/EN"
+dateChecked: 2026-11-14
+notes: "Data row only under blueprint §4.3: the radio band was not transcribed from the SWG50 Technical Information in this pass, so frequencyBands is left empty rather than inferred from the protocol. Radio values will be added from the Technical Information when transcribed."

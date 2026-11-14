@@ -1,0 +1,38 @@
+vendor: Yokogawa
+vendorSlug: yokogawa
+model: YFGW510
+productType: gateway
+slug: yokogawa-yfgw510
+status: discontinued
+protocols:
+  - isa100
+frequencyBands:
+  - "2400-2483.5 MHz (IEEE 802.15.4 field network)"
+txPowerDbm: 12
+txPowerCondition: "Maximum, measured at the N-type connector (GS 01W02E01-01EN)"
+rxSensitivityDbm: null
+rangeClass: null
+antenna: null
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "Field wireless access point. The 500 m figure in the General Specifications is the backbone link length, not a field-device radio range, so rangeClass is deliberately left blank."
+upstreamInterfaces:
+  - "100BASE-TX / FX backbone"
+  - "IEEE 802.11a/b/g WLAN (option)"
+powerSupply: null
+powerConsumption: "Max. 3.5 W"
+batteryLife: null
+ipRating: "IP66 (Type 4X)"
+operatingTemp: null
+certifications: []
+hazardousArea: null
+sourceUrl: https://web-material3.yokogawa.com/GS01W02E01-01EN.pdf
+sourceType: datasheet
+sourceDocId: "GS 01W02E01-01EN"
+dateChecked: 2026-11-14
+notes: "Yokogawa lists the YFGW510 as discontinued; the successor is the YFGW520. Radio values per GS 01W02E01-01EN; power consumption per the Yokogawa product page."

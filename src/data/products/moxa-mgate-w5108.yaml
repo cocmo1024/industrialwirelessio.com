@@ -1,0 +1,33 @@
+vendor: Moxa
+vendorSlug: moxa
+model: MGate W5108
+productType: gateway
+slug: moxa-mgate-w5108
+status: legacy
+protocols: []
+frequencyBands: []
+txPowerDbm: null
+rxSensitivityDbm: null
+rangeClass: null
+antenna: null
+io:
+  di: 2
+  do: 2
+  ai: null
+  ao: null
+  relay: 1
+  pulse: null
+ioNotes: "Wireless Modbus gateway with 2 DI, 2 DO and 1 relay output (Moxa-published material). Moxa security advisory MPSA-269540 lists the series as phased out."
+upstreamInterfaces: []
+powerSupply: null
+powerConsumption: null
+batteryLife: null
+ipRating: null
+operatingTemp: null
+certifications: []
+hazardousArea: null
+sourceUrl: https://www.moxa.com/en/products/industrial-edge-connectivity/protocol-gateways/modbus-tcp-gateways/mgate-w5108-w5208-series
+sourceType: product-page
+sourceDocId: null
+dateChecked: 2026-11-14
+notes: "Data row only in this pass. Values were transcribed from Moxa-published material during research and have not yet been re-verified value-by-value against the current datasheet v1.1 on the Moxa CDN. Promotion path: verify each value against datasheet v1.1, complete the wireless identity fields from it, and the record can take a page. The 100 m figure in the datasheet carries no stated conditions, so no rangeClass is recorded."
