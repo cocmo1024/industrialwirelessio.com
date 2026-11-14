@@ -1,0 +1,86 @@
+---
+title: "ISA100.11a (IEC 62734): The IPv6 Process Wireless Standard"
+description: "ISA100.11a — IEC 62734 — is ISA's process wireless standard: IEEE 802.15.4 radios, backbone routers, native IPv6 and an object application model. Definition and architecture."
+referenceType: protocol
+adProfile: none
+commercialIntent: low
+reviewCadence: Semiannual review
+primaryKeyword: ISA100.11a
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Process engineers
+  - Instrumentation engineers
+  - Controls engineers
+  - System integrators
+contentStatus: cornerstone
+contentCluster: protocol-graph
+canonicalCluster: protocol-graph
+pageType: protocol
+lifecycle: evergreen
+refreshPriority: high
+authorKey: editorial-desk
+editorKey: review-desk
+datePublished: 2026-11-14
+lastReviewed: 2026-11-14
+problemSolved: ISA100.11a is usually introduced through one vendor's product line, which hides the standard's actual architecture — backbone routers, a system manager assigning communication contracts, native IPv6, and a security manager role. This page describes the standard as its own bodies publish it, with vendor figures attributed to the vendors.
+readerTakeaway: "ISA100.11a — published internationally as IEC 62734 — is the International Society of Automation's wireless standard for process industry field devices: IEEE 802.15.4 radios in the 2.4 GHz band, a star-mesh architecture in which backbone routers carry traffic to the gateway, native IPv6 addressing down to the field device, an object-based application model that can tunnel other protocols, and a two-layer AES-128 security model run by a dedicated security manager."
+keyQuestions:
+  - What is ISA100.11a (IEC 62734) and where is it used?
+  - How many devices can one ISA100.11a gateway support?
+  - What does native IPv6 mean for a field instrument network?
+protocolSlug: isa100
+relatedProtocols:
+  - wirelesshart
+faq:
+  - question: What is ISA100.11a (IEC 62734) and where is it used?
+    answer: "ISA100.11a is the International Society of Automation's wireless standard for process automation — ANSI/ISA-100.11a-2011, adopted by the IEC as IEC 62734. It connects battery field instruments (pressure, temperature, level, analysers, valve monitors) to control and asset systems over 2.4 GHz IEEE 802.15.4 radios, using backbone routers and a system manager, with native IPv6 addressing and an object-based application layer. Its installed base is concentrated in plants standardized on Yokogawa or Honeywell field wireless systems."
+  - question: How many devices can one ISA100.11a gateway support?
+    answer: "As with WirelessHART, capacity is a function of update rate, and each vendor rates its own equipment. Yokogawa's YFGW410 management station is specified at 200 devices at a 1-second update rate and 500 at 5 seconds, with per-subnet caps of 20 and 100 devices respectively; Honeywell's Wireless Device Manager is rated at 500 ISA100 and/or WirelessHART instruments depending on update rates. The standard itself sets no device limit."
+  - question: What does native IPv6 mean for a field instrument network?
+    answer: "Each ISA100.11a field device is an IPv6 node, compressed onto the radio link by 6LoWPAN. Host systems and gateways address devices with ordinary IP networking instead of a protocol-specific addressing scheme, and the wireless subnets hang off an IP backbone of access points and backbone routers — the same architectural pattern as a plant IT network, applied at instrument level."
+---
+
+## How an ISA100 Wireless network is put together
+
+An ISA100.11a network separates roles that WirelessHART folds into fewer boxes. **Field devices** come in two kinds: *routing devices*, which relay other devices' traffic and pay for it in power, and *I/O devices* (non-routing), which only send their own measurements and are the battery-life class. Field devices do not talk to the gateway directly as a rule; they reach **backbone routers** — mains-powered infrastructure nodes that interconnect devices with each other and with the gateway, and can be deployed redundantly. A device can even transmit to **two backbone routers simultaneously** (duocast), so a single router failure does not interrupt its path.
+
+Above the routers sit the management roles, often integrated into one product but distinct in the standard. The **system manager** runs the network: it admits and removes devices, assigns timeslots and channels, distributes system time, and creates the **contracts** under which any two devices communicate — a contract is the manager-granted agreement that specifies a communication relationship, and it is created, modified and terminated centrally. The **security manager** generates and distributes the key hierarchy (below). The **gateway** translates between the field network and the host world of control systems and device-management tools. Yokogawa's YFGW410 is a management station that combines system manager, security manager and gateway, working through YFGW510 access points as backbone routers; Honeywell's Wireless Device Manager hosts the same three roles for its OneWireless network. The earlier Yokogawa YFGW710 integrated all roles including the backbone router in one unit — and is now discontinued, a reminder to check lifecycle status when a design cites it.
+
+Communication is scheduled and hopped: the channel changes with every transmission, adaptive hopping steers away from unreliable channels, and blacklisting removes channels that collide with site Wi-Fi. Timeslots are assigned in advance by the system manager — the WCI's published material defines TDMA and CSMA access modes but no single fixed slot duration, which is a genuine architectural difference from WirelessHART's fixed 10 ms grid: ISA100 trades a uniform timing grid for manager-assigned flexibility.
+
+## The IP difference: IPv6, objects and tunneling
+
+ISA100.11a was designed IP-first. Every device holds an IPv6 address, carried over the radio by 6LoWPAN header compression, and the backbone above the access points is an ordinary IP network. For plants, the practical consequences are addressing and integration: host applications reach devices through IP infrastructure, and the wireless network extends the plant's network architecture to the instrument instead of terminating it at a protocol boundary.
+
+The application layer is **object-based**: devices expose their data as objects in a model the standard defines, and that model is also the vehicle for carrying *other* protocols. WCI describes two mechanisms — the object model itself, which lets a device type present a non-native protocol's semantics natively (a HART adapter is the canonical example), and **tunneling**, which encapsulates foreign protocols — Profibus, Foundation Fieldbus, HART, Modbus, OPC are the ones the WCI guide names — and transfers them between device and host. Yokogawa's YFGW410 implements tunneling for HART and Modbus and can even carry PROFIsafe traffic toward a safety system. This is the feature that most distinguishes ISA100.11a in brownfield plants whose instrument base is a museum of protocols: one wireless infrastructure can, in principle, fetch data from all of them.
+
+## Security: two layers, a key hierarchy, a dedicated manager
+
+ISA100.11a security is AES-128 applied at **two layers**: the data-link layer protects the network hop by hop, and the transport layer protects process data end to end — with a time element added to defeat replay attacks. The key hierarchy is richer than a single network key: a unique **join key** per device (stored at provisioning), a **master key**, a shared **data-link key** per subnet, and **session keys** for device-to-gateway and device-to-system-manager communication, all with defined expiry and renewal, administered by the security manager role. WCI's own summary of the model is "policy-based" and "scalable" — the architecture gives the operator policy choices about key handling rather than a single fixed regime.
+
+Provisioning — getting the join key into a device — is specified two ways: **infrared**, with a handheld at the device (Honeywell's route, which requires physical proximity by design), and **over the air**, which Yokogawa supports and which the WCI promotes as eliminating the wired provisioning interface entirely. Honeywell's FDAP specification states the floor both standards stand on: ISA100 Wireless and WirelessHART alike require all process data to be AES-128 encrypted and every device authenticated before joining. The popular claim that ISA100 security is "optional" is not supported by the standards bodies' own publications, and this page does not repeat it.
+
+## Contracts, subnets and backbone design
+
+The contract mechanism deserves a closer look, because it is where ISA100.11a's central-management philosophy becomes concrete. In a WirelessHART mesh, a device's communication pattern emerges from the network manager's schedule; in ISA100.11a, any periodic communication between two endpoints — device to gateway, device to device — runs under a **contract** the system manager creates, specifying endpoints and the resources committed to them, and the manager can modify or terminate contracts as plant conditions change. Engineering consequence: the network's behaviour is an explicit, auditable configuration rather than an emergent property, which suits plants whose management-of-change culture wants communications documented the way loops are documented. It also means adding a fast-reporting device is a deliberate act with visible resource cost, not just a join.
+
+Subnet design follows from the capacity table. A Yokogawa-style network is a set of field wireless subnets, each served by its access points (backbone routers), each with its own device cap that tightens sharply at fast update rates — 20 devices per subnet at 1-second reporting. The designer's real units are therefore subnets per process area, placed so that the fast devices cluster near their access point and the slow majority fills the remaining slots. Backbone placement is an infrastructure decision with a power feed and a network drop, closer in spirit to placing a marshalling cabinet than to placing a gateway antenna — and duocast, where a critical device transmits to two backbone routers at once, is bought with that same infrastructure, not with device battery.
+
+The routing-device split shapes the field layout too. Because non-routing I/O devices cannot relay, coverage gaps are filled with routing devices or backbone infrastructure, never by hoping a nearby transmitter will forward traffic. Battery planning inverts accordingly: the devices that report and sleep last longest, and the routing layer — the part a WirelessHART design distributes across every instrument — is a separately engineered, mostly mains-powered stratum in an ISA100 network.
+
+## Provisioning in practice
+
+Getting join keys into devices is where the two lead ecosystems visibly differ, and the choice has a workflow cost either way. Honeywell provisions ISA100 devices by **infrared** from a handheld: the technician stands at the device, which guarantees the key went into the instrument in front of them and nowhere else, and costs a site visit per device. Yokogawa supports **over-the-air** provisioning, where an un-provisioned device can be accepted from the management interface — faster at scale, and the reason the WCI promotes OTA as eliminating a whole class of wired provisioning interfaces. Honeywell's own specification notes OTA (re)provisioning as an ISA100-only capability in its dual-standard networks. Neither method is free: infrared is labour, OTA is trust management. Plants with strong permit-to-work cultures often prefer the physical act; plants commissioning hundreds of devices across a turnaround usually cannot afford it.
+
+## Capacity, again, is a rate
+
+The gateway capacity table above makes the same point as the [WirelessHART page](/protocols/wirelesshart/), with ISA100 numbers: Yokogawa's YFGW410 doubles-plus its rated network size — 200 to 500 devices — when the update period relaxes from 1 to 5 seconds, and the binding constraint at fast rates is actually the **per-subnet cap** (20 devices per subnet at 1-second updates, 100 at 5 seconds, up to 20 subnets), so network design is subnet design. Honeywell rates its manager at 500 instruments *depending on update rates* and up to 40 access points — the same rate-dependence, stated in one clause. Any ISA100 design conversation that starts from a device count instead of an update-rate mix and a subnet map is starting from the wrong end.
+
+## Ecosystem, honestly stated
+
+ISA100 Wireless is a two-vendor-centred ecosystem. The WCI's certified product listing is led by **Yokogawa** (gateways, access points, transmitters, adapters) and **Honeywell** (device manager, access points, SmartLine/XYR transmitters), followed by a tail of specialists — Armstrong, Cosasco, Flowserve, Spirax Sarco, TLV and others, mostly in steam, corrosion and monitoring niches. Certification by the WCI is real and interoperability has been demonstrated across vendors, but a plant choosing ISA100.11a is in practice choosing one of the two lead ecosystems for its infrastructure and taking the certified tail where it fits. That is neither a flaw nor a secret — it is the fact that should drive the decision, which is why the [WirelessHART comparison](/protocols/wirelesshart-vs-isa100/) treats ecosystem, not radio parameters, as the deciding layer.
+
+## Where ISA100.11a fits — and where it does not
+
+It fits **process plants that want IP architecture at the instrument layer**, plants with **mixed legacy protocols** to harvest through tunneling, and plants already standardized on **Yokogawa or Honeywell** control systems, where the wireless network lands inside an existing support and spares structure. It fits the same monitoring and slow-control envelope as WirelessHART — WCI positions it for applications tolerating latencies on the order of 100 ms — and it does not fit fast or safety-critical control loops, high-bandwidth devices, or any site whose real requirement is a multi-vendor instrument market as wide as HART's. For scattered, slow, wide-area telemetry beyond the plant fence, neither process standard is the tool; that is [LoRaWAN](/protocols/lorawan/) territory, and the [protocol matrix](/protocols/) draws the whole map.

@@ -1,0 +1,88 @@
+---
+title: "IO-Link Wireless: 5 ms Cycles for Sensors and Actuators, Without the Cable"
+description: "IO-Link Wireless extends IO-Link (IEC 61131-9) over a 2.4 GHz radio: 5 ms cycle time, up to 40 devices per master, PER of 10⁻⁹. Definition, parameters, cell planning."
+referenceType: protocol
+adProfile: none
+commercialIntent: low
+reviewCadence: Semiannual review
+primaryKeyword: IO-Link Wireless
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Machine builders
+  - Controls engineers
+  - Factory automation engineers
+  - System integrators
+contentStatus: cornerstone
+contentCluster: protocol-graph
+canonicalCluster: protocol-graph
+pageType: protocol
+lifecycle: evergreen
+refreshPriority: high
+authorKey: editorial-desk
+editorKey: review-desk
+datePublished: 2026-11-14
+lastReviewed: 2026-11-14
+problemSolved: IO-Link Wireless is usually explained by vendors selling masters or bridges, which blurs what the standard itself guarantees — the 5 ms cycle, the retry structure, the 40-device master limit and the cell rules. This page states the standard's own figures, traced to the IO-Link Community specification.
+readerTakeaway: "IO-Link Wireless is the IO-Link Community's wireless extension of IO-Link (the IEC 61131-9 single-drop interface): a W-Master serves up to 40 battery-free sensors and actuators in a 2.4 GHz star, exchanging up to 32 bytes of process data per device on a 5 ms cycle with in-cycle retransmissions that hold the packet error rate at 10⁻⁹ — cable-class reliability for moving machine parts, over a cell of at most 20 metres."
+keyQuestions:
+  - What is IO-Link Wireless, and how is it different from wired IO-Link?
+  - What is the cycle time of IO-Link Wireless?
+  - How many devices can one IO-Link Wireless master support?
+protocolSlug: io-link-wireless
+relatedProtocols:
+  - wirelesshart
+faq:
+  - question: What is IO-Link Wireless, and how is it different from wired IO-Link?
+    answer: "IO-Link Wireless keeps the IO-Link application interface — process data, on-request data, ISDU parameters, device profiles and data-storage replacement — and replaces the cable with a 2.4 GHz radio link between a W-Master and its W-Devices. What changes is everything below that interface: pairing instead of plugging, a 5 ms radio cycle with in-cycle retries instead of a wired point-to-point link, per-cell master limits, and no power delivered over the link, so devices carry their own supply."
+  - question: What is the cycle time of IO-Link Wireless?
+    answer: "The minimum cycle time is 5 ms. One W-Cycle consists of three sub-cycles of 1.664 ms each; if a packet fails, the master retries it inside the same cycle on a different channel, so a retry never stretches the cycle. Capacity left over in a cycle carries acyclic data such as parameters and events."
+  - question: How many devices can one IO-Link Wireless master support?
+    answer: "Up to 40 W-Devices: a W-Master runs up to 5 parallel radio tracks, and each track serves at most 8 devices. A cell may contain up to 3 W-Masters — 120 devices in total — and cells closer than 40 m to each other must use different MasterIDs so their frequency-hopping tables do not collide."
+---
+
+## How IO-Link Wireless works
+
+The technology is standardized internationally as IEC 61139-3:2023, built on the IO-Link Community's System Extensions specification. The topology is a star with a working centre. A **W-Master** — typically a fieldbus-connected unit that looks like an ordinary IO-Link master to the PLC — runs up to five parallel radio **tracks**. Each track is a frequency channel serving up to eight **W-Devices** in a time-division pattern: the master broadcasts a downlink, then each device answers in its own slot. A **W-Bridge** is the third hardware form: it adapts an existing wired IO-Link device to the radio, so installed sensors can join a wireless cell without being replaced.
+
+Time is organized into **W-Cycles of 5 ms**, each made of three sub-cycles of 1.664 ms. The first sub-cycle carries the scheduled exchange. The remaining sub-cycles are the reliability mechanism: every packet is CRC-checked and acknowledged, and if an acknowledgement is missing, the master retransmits **inside the same cycle**, on a different frequency channel. A retry therefore costs a sub-cycle, never a stretched cycle — the application still sees a 5 ms rhythm, and only if every attempt in the cycle fails does the system report a communication error. When no retries are needed, the spare sub-cycle capacity is not wasted: it carries the acyclic traffic — on-request data, parameters and events — that IO-Link devices generate alongside their process data.
+
+The radio itself is deliberately plain: GFSK modulation at 1 Mbit/s, a radio design based on Bluetooth 4.2 LE technology (with, the specification is careful to note, no Bluetooth compatibility), 80 channels spaced 1 MHz apart across the 2.4 GHz ISM band, transmit power capped at 10 dBm EIRP, and a frequency change for every transmission, with hopping tables computed from each master's unique MasterID. Reliability does not come from power; it comes from the combination of hopping, in-cycle retries and short range, which is how the specification reaches its packet error rate of 10⁻⁹ — the figure it states as equal to a wired connection.
+
+## What carries over from wired IO-Link — and what changes
+
+If you already engineer with IO-Link, most of your mental model survives. The **application interface is compatible**: cyclic process data and acyclic on-request data behave the same from the controller's side, the ISDU parameter channel is retained, device profiles such as the Smart Sensor Profile apply, and the data-storage mechanism still supports faulty-device replacement — swap a failed W-Device, re-pair it, and its parameters download automatically. Device descriptions carry over as W-IODD, a wireless variant of the wired IODD file.
+
+What changes is everything the cable used to hide. **Commissioning** becomes discovery and pairing: devices are scanned for, connected and given their air-interface parameters, instead of simply being plugged into a port. **Capacity** becomes a planning quantity: 8 devices per track, 5 tracks per master, 3 masters per cell are hard structural limits, not port counts you can extend with a hub. **Slot size** becomes a trade: pairing two single slots into a double slot gives one device a larger process-data payload and reduces how many devices the track can serve. **Power** is no longer delivered by the link — a wired IO-Link device is fed by its cable; a W-Device needs its own supply, which on moving machine parts usually means engineering a local feed or energy harvesting, and is a real line item in retrofit projects. And **range** becomes a cell concept: up to 20 m with a single track in use, up to 10 m when several tracks are active, always subject to the machine environment.
+
+## Where IO-Link Wireless fits — and where it does not
+
+The design centre is the **moving, rotating or interchangeable part of a machine**: gripper and tool changers on robots, rotary and indexing tables, automated guided vehicle decks, packaging-machine format parts — anywhere a cable chain is the failure point, a slip ring is the maintenance item, or a sensor must exist on a part that is swapped between shifts. In those places the 5 ms cycle is fast enough to sit inside the machine's control rhythm for sensing and actuation that is not hard-real-time motion control, and the 10–20 m cell is a feature: the link is supposed to end at the machine boundary.
+
+It does not fit **plant-wide instrumentation** — that is the territory of [WirelessHART](/protocols/wirelesshart/) and ISA100.11a, battery meshes that trade milliseconds for years of battery life and hundreds of metres of routed coverage. It does not fit **hard motion-control loops** that need sub-millisecond determinism. It does not fit **long distances** of any kind: a 20 m ceiling is structural, and no antenna changes it, because transmit power is capped by the specification at 10 mW. And it does not fit **battery telemetry** — there is no multi-year battery class here; devices are powered, and the comparison figure the standard publishes is reliability, not energy. Scattered slow sensing across a site belongs to [LoRaWAN](/protocols/lorawan/), a different layer of the graph entirely.
+
+A useful way to hold the boundary: IO-Link Wireless replaces a *cable*, where WirelessHART and LoRaWAN replace a *trench*. If the wired version of your link would be a few metres of cable inside one machine, IO-Link Wireless is the candidate; if it would be a cable run across a plant or a site, it is not.
+
+## Coexistence and cell planning
+
+The 2.4 GHz band is crowded, and the specification plans for it rather than hoping. **Blacklisting** is the main tool: channels heavily used by other systems — the specification's worked examples use WLAN channels — can be masked out of a master's hopping table before commissioning, so the wireless cell simply never transmits there. Between IO-Link Wireless systems themselves, coexistence comes from the MasterID: hopping tables are derived from it, neighbouring masters get disjoint tables, and the specification allows at most **three W-Masters per cell**; cells less than 40 m apart must use distinct MasterIDs, while cells farther apart may reuse one.
+
+Two planning rules follow. First, **survey the WLAN plan before placing masters** — the time to blacklist a plant's Wi-Fi channels is at commissioning, and the PDCT tooling supports a coexistence layout for exactly this. Second, **count tracks, not just devices**: a master serving a gripper with eight fast devices uses one track fully; a second cell area on the same machine may need its own master even at low device counts, because range derates to 10 m when multiple tracks are active.
+
+## From the radio to the controller
+
+Above the W-Master, IO-Link Wireless deliberately stops being interesting — and that is the point. The specification maps the wireless cell onto the fieldbuses a machine already runs: the W-Master presents its W-Devices to the PLC the way a wired master presents its ports, with the same process-data image and the same parameter channels. A controls engineer integrating a wireless gripper sensor works with the device's W-IODD in the usual engineering tool, sets the same ISDU parameters, and reads the same diagnostics; the wireless engineering — tracks, slots, blacklists — lives in the master's configuration, one layer below the control program. Retrofits through a **W-Bridge** go further in the same direction: the wired device keeps its own IODD, the bridge contributes the wireless description, and the merged device appears to the controller as one instrument.
+
+Commissioning follows the specification's three verbs: **scan, pair, parameterize**. The master scans its configuration channels for unpaired devices, pairing binds a device to a master and a track/slot and transfers its frequency-hopping table (derived from the MasterID), and the W-Parameter set configures the air interface itself. Because a device is paired to exactly one master, a wireless cell is a configured object, not an emergent one — moving a sensor between machines is a re-pairing task in the tool, and the cell layout on paper stays true to the cell on the machine. For maintenance this is the honest trade against mesh protocols: no self-organization magic, and no self-organization surprises either.
+
+## A cell, laid out
+
+A realistic first cell makes the arithmetic concrete without inventing performance figures. Take a robot cell: a gripper with four sensors and two actuators, a tool-stand with presence sensing, and a rotary table with six devices — fourteen W-Devices in total. They fit on two tracks of one W-Master (eight per track), leaving three tracks of headroom; the devices that exchange the largest process data may take double slots, which is exactly the trade the slot system prices in — payload per device against devices per track. The master's cell must cover the table's full rotation and the gripper's full travel, so master placement is surveyed against the machine's moving envelope, not its centre point, and the range derating for multi-track operation (10 m rather than 20 m) is the figure to design against, since this cell uses two tracks from day one. If the neighbouring cell's master sits within 40 m — in a machine hall, it will — the two masters get distinct MasterIDs and, where the plant WLAN is dense, coordinated blacklists. Nothing in this layout required a number that the specification does not publish; that is what designing from the standard rather than from brochures feels like.
+
+## Engineering notes
+
+**Retries are budgeted, not free.** The in-cycle retry structure holds the 5 ms cycle under interference, but a cell that retries constantly is a cell whose spare capacity — the sub-cycles that would carry parameter and event traffic — is being spent on repairs. Treat rising retry behaviour as a survey finding: something changed in the RF environment.
+
+**Acyclic data rides the same cycle.** Parameter writes, ISDU reads and events share the cycle's leftover capacity with process data. Commissioning work — bulk parameter downloads to forty devices — will feel slower than the 5 ms headline suggests; that is the design working as intended, with cyclic data protected first.
+
+**Start from the standard, not the brochure.** Implementation examples from master and bridge vendors are useful for enclosure, fieldbus and tooling choices, but the figures that decide a design — cycle, capacity, range, error rate — are the specification's, and they are the ones quoted on this page. The [protocol matrix](/protocols/) places IO-Link Wireless beside the process and wide-area protocols on the same sourced basis.

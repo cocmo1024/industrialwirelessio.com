@@ -1,0 +1,102 @@
+---
+title: "WirelessHART: IEC 62591 Process Wireless, Defined and Sized"
+description: "WirelessHART (IEC 62591) is the wireless extension of HART: a self-organizing 2.4 GHz mesh for process instruments. Definition, sourced parameters, gateway sizing rules."
+referenceType: protocol
+adProfile: none
+commercialIntent: low
+reviewCadence: Semiannual review
+primaryKeyword: WirelessHART
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Process engineers
+  - Instrumentation engineers
+  - Controls engineers
+  - System integrators
+contentStatus: cornerstone
+contentCluster: protocol-graph
+canonicalCluster: protocol-graph
+pageType: protocol
+lifecycle: evergreen
+refreshPriority: high
+authorKey: editorial-desk
+editorKey: review-desk
+datePublished: 2026-11-14
+lastReviewed: 2026-11-14
+problemSolved: Engineers evaluating WirelessHART usually meet it inside a vendor catalogue, where the definition, the capacity figures and the design rules are scattered across a gateway datasheet and an engineering guide. This page assembles the definition and the numbers that matter — each one traced to the standard's owner or a manufacturer document.
+readerTakeaway: "WirelessHART is the wireless extension of the HART protocol, standardized as IEC 62591 by the FieldComm Group: battery-powered process instruments form a self-organizing, self-healing mesh in the 2.4 GHz band, communicating in 10 ms TDMA slots with channel hopping and AES-128 encryption, and report to a host system through a gateway that also runs the network. It is built for plant-wide monitoring and slow control — not for fast closed-loop control."
+keyQuestions:
+  - What is WirelessHART and how does it work?
+  - How many devices can one WirelessHART gateway support?
+  - Is WirelessHART fast enough for closed-loop control, or is it only for monitoring?
+  - When should I use a WirelessHART adapter instead of a native wireless transmitter?
+protocolSlug: wirelesshart
+relatedProtocols:
+  - isa100
+faq:
+  - question: What is WirelessHART and how does it work?
+    answer: "WirelessHART is the wireless part of the HART 7 protocol family, standardized as IEC 62591 by the FieldComm Group. Battery field devices form a self-organizing mesh on IEEE 802.15.4 radios in the 2.4 GHz band: they communicate in 10 ms TDMA time slots, hop channels every slot, encrypt with AES-128, and can relay each other's messages, while a gateway with an integrated network manager builds and heals the network's communication schedule."
+  - question: How many devices can one WirelessHART gateway support?
+    answer: "It depends on the gateway model and — decisively — on how fast the devices report. Emerson's 1410S gateway is rated from 12 devices at a 1-second update period up to 200 devices at 16-second updates, and 500 at 60-second updates with its High Capacity option; Endress+Hauser's FieldGate SWG50 is rated at 100 devices. There is no vendor-independent number: read the capacity table for your gateway at your update rate."
+  - question: Is WirelessHART fast enough for closed-loop control, or is it only for monitoring?
+    answer: "WirelessHART is designed for monitoring and for slow, non-critical control. Supported update rates run from 1 second to 60 minutes, and every mesh hop adds latency and jitter that a fast loop cannot tolerate. Use it for process monitoring, diagnostics and slow supervisory adjustments; keep fast or safety-related closed-loop control on wired loops."
+  - question: When should I use a WirelessHART adapter instead of a native wireless transmitter?
+    answer: "Use an adapter when the installed wired HART instrument is healthy, its measurement is trusted, and only the data path is missing — the adapter mounts on the existing device, powers from the loop or a battery depending on model, and also relays mesh traffic. Choose a native wireless transmitter for new points, for instruments due for replacement anyway, and where you want the device's own power module sized for the update rate without a second enclosure on the loop."
+---
+
+## How WirelessHART works
+
+A WirelessHART network has five working parts. **Field devices** are the battery-powered transmitters and actuators that measure and, in limited cases, act. **Adapters** attach to existing wired HART instruments and give them a radio. **Access points and the gateway** form the boundary to the wired world: the gateway connects the mesh to the host system over Ethernet protocols such as HART-IP and Modbus TCP. The **network manager** — software that usually runs inside the gateway — is the part most descriptions skip: it builds the communication schedule, assigns time slots and channels, computes redundant mesh routes, and continuously re-plans as conditions change. A handheld or asset-management application is the fifth element, used for joining devices and reading diagnostics.
+
+Communication is scheduled, not contention-based. Time is divided into 10 ms slots; in each slot one pair of devices exchanges one packet on one channel, and the channel changes pseudo-randomly from slot to slot across the 15 channels of the 2.4 GHz band. Because every transmission is pre-scheduled by the network manager and every device knows when to wake, listen and sleep, battery devices spend almost all of their time asleep — which is where the multi-year power-module life comes from. The same scheduling is what makes the mesh deterministic enough for process data: a device that loses its preferred neighbour already holds alternate routes the manager computed earlier, so an obstruction — a parked truck, a new vessel — degrades the network gracefully instead of dropping instruments.
+
+Security is not an option layered on top. Joining requires a 128-bit join key, traffic is AES-128 encrypted, and separate network and session keys protect the mesh and end-to-end communication. A device that cannot authenticate does not join, and there is no unencrypted mode to fall back to — a point that matters when [comparing WirelessHART with ISA100.11a](/protocols/wirelesshart-vs-isa100/), where the security model is configured differently.
+
+## Where WirelessHART fits — and where it does not
+
+WirelessHART fits **plant-wide process monitoring**: temperatures, pressures, levels, valve positions, corrosion and vibration points that were never instrumented because trenching cable to them cost more than the measurement was worth. It fits **diagnostics harvesting** from smart wired instruments whose HART data nobody reads because the multiplexer was never installed. It fits **slow supervisory control** — setpoint adjustments and open/close commands where a few seconds of latency are irrelevant.
+
+It does not fit **fast closed-loop control**. The fastest supported device update rate is 1 second, mesh routing adds variable delay on top, and control engineers size loops around predictable scan times. It does not fit **safety instrumented functions**, and it does not fit **high-bandwidth devices** — analysers, imaging, or anything that produces more than a handful of process values per report. Those boundaries are not a criticism of the protocol; they are the design centre that makes the battery life and the mesh reliability possible.
+
+One nuance worth stating plainly: "monitoring only" undersells it. A large installed base runs WirelessHART in control-adjacent roles — monitoring the control loop itself, feeding advanced diagnostics into maintenance systems, and closing slow loops on tank levels and utility headers. The honest boundary is speed and criticality, not the word "control".
+
+## Gateway sizing: capacity is a rate, not a number
+
+The most misquoted figure in WirelessHART is gateway capacity, because vendors publish it honestly and readers strip the conditions. The capacity table above comes straight from Emerson's 1410S datasheet, and its shape is the lesson: the same gateway supports 12 devices reporting every second, 100 devices at 8-second updates, 200 at 16 seconds, and — with the High Capacity option — 500 devices at a 60-second update period. Capacity is consumed by transmissions, not by device count: every report a device sends, plus every packet it relays for its neighbours, spends scheduled slots. A network of slow-reporting temperature points and a network of fast-reporting pressure points are different loads even at the same device count.
+
+Three consequences follow for sizing. First, **plan from the update-rate mix, not the instrument count** — write down how many devices need 4-second, 16-second and 60-second reporting before you count gateways. Second, **leave headroom for relay traffic**: devices near the gateway spend part of their battery and bandwidth forwarding other devices' packets, which is why the design rules below push a healthy share of devices into direct gateway range. Third, **compare gateways only at equal conditions** — a competitor's larger headline number is usually just a slower assumed update rate. Endress+Hauser's FieldGate SWG50, rated at 100 devices without a published rate ladder in its operating instructions, is a gateway for a unit area, not a plant; the 1410S numbers describe a different product class. Neither number is a property of the WirelessHART standard itself.
+
+### The design rules that keep a mesh healthy
+
+Emerson's *System Engineering Guidelines* for IEC 62591 — a document Emerson states applies to all brands of WirelessHART installation — reduces network design to four rules, and they are worth more than any range figure:
+
+- **Rule of Three.** Every device should have at least three neighbours within effective range. That guarantees at least two live connections per device and room for the mesh to re-route as conditions change.
+- **Rule of Percentages.** In networks of more than five devices, at least 25% of devices should sit within effective range of the gateway. If more than a fifth of the devices update faster than every 2 seconds, raise that share to 50% — fast devices need short paths.
+- **Rule of Five Minimum.** At least five devices should be within effective range of the gateway, so the network keeps the redundancy the mesh exists for even in small installations.
+- **Minimize hops.** The guide sets no maximum hop count; instead it directs designers to keep paths short, because every hop adds latency and spends another device's battery. Devices updating faster than 2 seconds should be within twice the effective range of the gateway.
+
+Note what these rules are measured in: **effective range**, the distance a link actually closes at a given site with its antennas, mounting heights and obstructions — not a catalogue radius. That is why this page's parameter table gives no fixed single-hop distance: a defensible number comes from a site survey, not a datasheet, and any source quoting one universal WirelessHART range is quoting a test condition, not your plant.
+
+## Adapters versus native wireless instruments
+
+The adapter question (FAQ above) has a capacity side-effect worth knowing: an adapter-mounted instrument joins the mesh like any other device and can relay traffic, but its power usually comes from the 4–20 mA loop or a small battery pack that was not sized with the same freedom as a native transmitter's power module. On fast update rates, check the adapter's power budget explicitly. Native devices publish their life against update rate directly — the Rosemount 648 in the parameter table is rated at 10 years on a 1-minute update at reference conditions, and that rating already assumes the device is routing data for three neighbours. Both figures move fast when conditions change: routing load, temperature extremes and update rate are the three levers, in that order of surprise.
+
+## Commissioning and living with the network
+
+A device joins a WirelessHART network by being given the network ID and the join key — through a HART handheld or an asset-management tool, at the bench or in the field. On power-up it listens, finds neighbours advertising the network, authenticates with the join key, and receives its schedule and its session keys from the network manager. From the technician's side the visible work is the same as any instrument loop check; the invisible work — route computation, slot allocation, redundancy — is the manager's, and it never stops: the manager keeps measuring link quality and re-planning as the plant changes around the network.
+
+Day-to-day health is read from the same diagnostics the manager uses. The metrics that matter are a device's neighbour count (the Rule of Three made visible), its path stability, and the power module's remaining life estimate against its actual routing load. A device quietly reduced to one neighbour is a maintenance task this week, not an outage next month; a device whose battery drains faster than its datasheet curve is usually relaying more than the design assumed, which points back at network shape, not at the battery. This is the operational argument for the mesh that rarely appears in selection debates: the network reports its own weak points continuously, in the same tools used for the instruments themselves.
+
+Power modules are the network's one true consumable. They are field-replaceable and intrinsically safe designs (the Rosemount example in the parameter table uses a lithium-thionyl chloride SmartPower module), and replacement planning belongs in the turnaround scope: modules are cheap, access is not. The design-stage lever remains the update rate — every doubling of the reporting interval buys back a large share of module life — which is why the sizing conversation and the battery conversation are the same conversation.
+
+## Engineering notes
+
+**Coexistence.** WirelessHART shares 2.4 GHz with Wi-Fi and every other ISM user. Its defences are DSSS, per-slot channel hopping, clear-channel assessment and channel blacklisting, and in practice it coexists well in process plants because its transmissions are short, scheduled and spread across 15 channels. Site surveys still matter: a gateway placed beside a high-power Wi-Fi access point is a self-inflicted problem.
+
+**Start-up order.** Bring the gateway and its nearest instruments up first, then let the mesh grow outward as devices join and find neighbours. A network commissioned device-by-device across a unit lets the manager build redundant paths incrementally; a network switched on all at once still self-organizes, but its early schedules are built on whatever paths happened to form first, and the settling period is longer.
+
+**One network, one process unit.** Emerson's guide scopes each network to a single process unit. Practically, that keeps failure domains, schedules and maintenance aligned with how plants are actually operated, and it keeps any single gateway's capacity table honest.
+
+**Redundancy is a gateway decision too.** Networks that matter run redundant gateways or dual networks; the 1410S line supports this with dual-antenna configurations that run two networks from one gateway chassis. Decide the redundancy model before the device count, because it changes which capacity column you are reading.
+
+**What to read next.** If the alternative on your shortlist is ISA100.11a, the [comparison page](/protocols/wirelesshart-vs-isa100/) works through the differences that actually decide selections, and the [ISA100.11a protocol page](/protocols/isa100/) gives that standard the same sourced treatment. For assets scattered beyond the plant fence — the points a mesh cannot reach — [LoRaWAN](/protocols/lorawan/) is the complementary technology, not a competitor. If you are counting devices for a specific unit, the [telemetry gateway category page](/product-families/industrial-telemetry-gateways/) covers the wider gateway landscape, and the [protocol matrix](/protocols/) places WirelessHART against every other protocol this hub tracks.

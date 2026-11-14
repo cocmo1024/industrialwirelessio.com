@@ -1,0 +1,90 @@
+---
+title: "LoRaWAN for Industrial Sites: Payload, Duty-Cycle and Range Limits"
+description: "LoRaWAN is the LoRa Alliance network layer over Semtech's LoRa radio. What it can carry, the payload and duty-cycle limits by region, and honest in-plant range."
+referenceType: protocol
+adProfile: none
+commercialIntent: low
+reviewCadence: Semiannual review
+primaryKeyword: LoRaWAN industrial
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Telemetry engineers
+  - Controls engineers
+  - Plant engineers
+  - System integrators
+contentStatus: cornerstone
+contentCluster: protocol-graph
+canonicalCluster: protocol-graph
+pageType: protocol
+lifecycle: evergreen
+refreshPriority: high
+authorKey: editorial-desk
+editorKey: review-desk
+datePublished: 2026-11-14
+lastReviewed: 2026-11-14
+problemSolved: "LoRaWAN marketing quotes kilometre ranges and decade battery lives without the regional rules that actually govern an industrial deployment. This page works from the LoRa Alliance specification and regional parameters: payload ceilings, duty-cycle and dwell-time limits, and range stated only with its conditions attached."
+readerTakeaway: "LoRaWAN is the LoRa Alliance's MAC and network specification running over LoRa, Semtech's chirp-spread-spectrum physical layer: battery end devices send small payloads in a single hop to gateways, which relay them to a network server. Its industrial envelope is set by regional law, not by the radio — in Europe a sub-1% duty cycle and payload ceilings as low as 51 bytes at the most robust setting; in the US a 400 ms dwell-time cap — and its range claims only hold with their conditions attached."
+keyQuestions:
+  - What is LoRaWAN, and can it actually be used inside an industrial plant?
+  - How far can LoRaWAN reach in an industrial environment with buildings and metal structures?
+  - What is the maximum payload size in LoRaWAN?
+  - What is the difference between LoRa and LoRaWAN?
+  - Does LoRaWAN need line of sight to work?
+protocolSlug: lorawan
+relatedProtocols:
+  - wirelesshart
+faq:
+  - question: What is LoRaWAN, and can it actually be used inside an industrial plant?
+    answer: "Yes — for the class of work it was designed for. LoRaWAN suits slow-changing, small-volume telemetry inside a plant: tank levels, temperatures, pulse counts, door and alarm states, utility metering. You deploy your own gateways, so coverage is yours to engineer. It is the wrong tool for control loops, for continuous waveforms and for anything that must be acknowledged quickly, because payload sizes, duty-cycle limits and Class A downlink behaviour rule those out by design."
+  - question: How far can LoRaWAN reach in an industrial environment with buildings and metal structures?
+    answer: "There is no honest single number. The LoRa Alliance states up to 15 km in rural areas; inside a plant, steel structures, vessels and cladding cut that to a small fraction, and coverage is planned per gateway and per area rather than per site. The levers are antenna height and placement, spreading factor (a more robust setting reaches further and costs more airtime), and how much reinforced concrete and metal sits between device and gateway. Survey with a gateway in place before committing device locations."
+  - question: What is the maximum payload size in LoRaWAN?
+    answer: "It depends on region and data rate, per the LoRa Alliance regional parameters. In EU868 the application payload ceiling is 51 bytes at DR0–DR2 (the robust, long-reach settings) and rises to 222 bytes at DR5; in US915 the 400 ms dwell-time rule caps it at 11 bytes at DR0 and 53 bytes at DR1. The full sourced table is on this page — always design against the data rate your worst-positioned device will actually use."
+  - question: What is the difference between LoRa and LoRaWAN?
+    answer: "LoRa is the physical layer: a chirp spread spectrum radio modulation developed by Semtech, sold as chips and modules. LoRaWAN is the network specification maintained by the LoRa Alliance that runs on top of it — the MAC layer, device classes, security, regional parameters and the gateway-to-network-server architecture. You buy LoRa radios; you deploy a LoRaWAN network."
+  - question: Does LoRaWAN need line of sight to work?
+    answer: "No. LoRa's spread-spectrum link budget tolerates obstructed paths that would kill a higher-frequency link, which is why it works through buildings at all. But 'does not need line of sight' is not 'ignores obstructions': every wall, vessel and metal structure spends link budget, and the practical effect inside industrial buildings is much shorter range per gateway. Treat line of sight as the condition behind the headline figures, not as a requirement for operation."
+---
+
+## LoRa and LoRaWAN are two different layers
+
+Most confusion about this technology starts with the name covering two things. **LoRa** is a radio modulation — chirp spread spectrum, developed by Semtech — that trades data rate for sensitivity: by spreading a signal and integrating it over a long symbol time, a LoRa receiver can decode transmissions far below the noise levels that defeat conventional narrowband radios. **LoRaWAN** is the LoRa Alliance's specification for everything above that radio: how devices join a network, how they are addressed and encrypted, the three device classes, the regional channel plans and payload ceilings, and the architecture in which gateways are simple relays forwarding traffic to a central network server that owns the intelligence.
+
+The architecture is a **star-of-stars**. End devices transmit in a single hop to any gateway in range — there is no mesh and no routing through other devices — and gateways relay those frames over ordinary IP backhaul to the network server, which deduplicates copies received by several gateways, manages each device's data rate and transmit power through ADR (adaptive data rate), and passes application data onward. A device is therefore never "connected" to a particular gateway; it is heard by whichever gateways its link budget reaches, which is what makes coverage a matter of gateway placement rather than network planning in the mesh sense.
+
+## The three device classes decide what a device can hear
+
+Every LoRaWAN device implements **Class A**: it transmits when it has something to say, then opens two short receive windows (1 and 2 seconds after the uplink) before going back to sleep. Downlink traffic — commands, acknowledgements, configuration — can only arrive inside those windows, so a Class A device that reports hourly can be commanded at most hourly. Class A is also where the battery life comes from: the receiver, the expensive part energetically, is off almost all the time.
+
+**Class B** adds beacon-synchronized receive slots: gateways broadcast a time beacon and devices open extra scheduled windows, buying bounded downlink latency (the specification's ping-slot structure runs to a maximum latency of 128 seconds) at a modest power cost. **Class C** keeps the receiver open whenever the device is not transmitting — downlink latency effectively disappears, and so does battery operation: the Alliance's own description puts the receiver's draw at up to about 50 mW, which is why Class C is for mains-powered points. In industrial practice, battery telemetry is Class A, actuated points are rare and usually wired or Class C, and any design that assumes prompt downlink to a battery device has already failed on paper.
+
+## The limits that actually govern an industrial design
+
+The payload table above is the page to design against, and it teaches the central fact about LoRaWAN: **the ceiling depends on the data rate, and the data rate depends on where the device sits.** A sensor deep inside a plant will be served at a robust, slow setting — DR0 to DR2 in Europe — where the application payload ceiling is 51 bytes and the bit rate is 250 to 980 bit/s. A device with a clean path to a rooftop gateway may run DR5, with 222 bytes and 5,470 bit/s. Both are "LoRaWAN range"; they are different products. Application design follows: a reading must fit in tens of bytes at the worst position, so LoRaWAN payloads are engineered values — a few process values, a status word, a counter — not documents.
+
+Europe adds a second, harder constraint: **duty cycle**. The EU863-870 band plan operates under ETSI duty-cycled transmission rules; the default channels carry a limit of under 1%, which is at most about 36 seconds of airtime per hour for any transmitter — including the gateway, whose downlink budget is therefore a shared, scarce resource across every device it serves. The United States replaces the duty cycle with a **400 ms dwell-time** cap per uplink, which is what crushes US payload sizes at slow data rates (11 application bytes at DR0) regardless of how much the application would like to send. Neither limit is a vendor choice or a firmware setting; both are the regulatory price of the licence-free band, and any capacity plan that ignores them is fiction.
+
+Acknowledgements deserve the same realism. A confirmed uplink that is not acknowledged inside its two receive windows is retried by the device (the specification's default is a single transmission, configurable via NbTrans), and every retry spends the same scarce airtime. In a healthy design, confirmed traffic is reserved for the few messages whose loss matters — alarm state changes, daily totals — and routine readings go unconfirmed, with the application tolerating gaps because the next reading is coming anyway.
+
+## Range, stated honestly
+
+This hub does not publish a maximum LoRaWAN range for industrial sites, because the specification does not contain one and the environment decides it. What exists on the record: the LoRa Alliance states **up to 15 km in rural areas**. Semtech, describing the LoRa physical layer, claims connections up to 30 miles apart in rural areas. Both statements carry their condition in plain sight — *rural* — meaning elevated antennas, open paths and slow data rates. Inside a plant, the same physics runs the other way: steel cladding reflects and absorbs, vessels shadow whole areas, and reinforced concrete floors separate levels into different radio worlds. Experienced integrators plan in-plant LoRaWAN as gateway cells per building or per area, verify by survey with a gateway in its intended position, and treat any per-site kilometre figure — including optimistic ones in vendor decks — as a test condition, not a design input.
+
+Two levers genuinely move range. **Antenna height and placement** dominate everything else: a gateway antenna above roofline clutter hears devices that an in-cabinet gateway never will. **Spreading factor** is the second: stepping from SF7 to SF12 buys substantial link budget and is exactly what ADR does automatically for distant devices — at the price of airtime, which is why a network full of SF12 devices has a fraction of the capacity of a network at SF7. Range and capacity are the same budget spent two ways.
+
+## Running a private industrial network
+
+Most industrial LoRaWAN is private: the operator owns the gateways and the network server, and treats both as plant infrastructure. That ownership is the technology's real industrial feature — coverage, capacity and data stay inside the fence, and no operator's roadmap can retire your band plan — but it also means the operator inherits the network engineering that a public operator would otherwise hide.
+
+**Gateway siting is the design.** Because devices are heard by any gateway in range, gateway placement is a coverage exercise, not a pairing exercise: antennas high and outside metal cladding where possible, one gateway's cell overlapping the next so a single failure thins coverage instead of deleting it, and backhaul (Ethernet where it exists, cellular where it does not) planned with the same care as the radio side. A site survey with a portable gateway and a test device at the worst positions — inside the tank farm's steel, behind the boiler house — is worth more than any propagation model at this scale.
+
+**ADR is the capacity manager.** With adaptive data rate enabled, the network server pushes each static device toward the fastest data rate and lowest transmit power its link supports, which is simultaneously the battery policy and the capacity policy: a network whose devices sit at SF7 has several times the airtime headroom of the same network at SF12. The specification's own guidance is to leave ADR on for stationary devices (with its back-off behaviour when conditions degrade) and to disable it for mobile ones, whose changing attenuation the algorithm cannot track. In practice this means the commissioning task is verifying, a week after installation, that devices have actually settled at the data rates their positions should allow — a device stuck at SF12 on a good path is a placement or antenna fault announcing itself.
+
+**Airtime is the budget everything draws on.** Do the arithmetic once and the design rules stop being mysterious. At DR0 in Europe the channel runs at 250 bit/s, so a single maximum-size frame — roughly 60 bytes on air — occupies it for on the order of two seconds. Under a 1% duty-cycle limit, that one message is a measurable fraction of a device's hourly allowance, and the same seconds are subtracted from the gateway's downlink budget when an acknowledgement is sent. Multiply by a shift's worth of reporting and the conclusions write themselves: report at the slowest rate the process tolerates, keep payloads to the values that matter, confirm only the messages whose loss has a consequence, and let ADR keep devices off the slow data rates wherever the link allows. None of this is a defect in the technology — it is the explicit trade LoRaWAN offers: spectrum nobody licenses, in exchange for discipline nobody can automate away.
+
+## Where LoRaWAN fits — and where it does not
+
+LoRaWAN fits **distributed slow telemetry**: tank and silo levels across a tank farm, temperatures in warehousing, utility and effluent metering, pump-run and door states, environmental monitoring around a site perimeter — readings that change slowly, tolerate minutes of latency, and were previously read by a person walking a route. It fits **retrofit sensing** where pulling cable to each point is the project's whole cost. It fits multi-building campuses and utility sites where one operator can run gateways as its own infrastructure.
+
+It does not fit **control** of any kind — no update guarantee, no bounded latency, downlink rationed by duty cycle. It does not fit **dense high-rate sensing**: vibration waveforms, power-quality data, anything whose raw form is larger than a few hundred bytes a minute. And it does not fit **as a plant's only wireless story**: inside process units, [WirelessHART](/protocols/wirelesshart/) and ISA100.11a meshes carry the instrument layer with managed schedules and per-device diagnostics, while LoRaWAN covers the scattered remainder. The [protocol matrix](/protocols/) sets the boundary on one page. For the specific question of how LoRaWAN data enters SCADA once collected, the companion architecture page — [LoRaWAN to OPC UA for remote telemetry](/protocols/lorawan-to-opc-ua-for-remote-telemetry-architecture/) — covers the network-server-to-OPC UA mapping in detail.
