@@ -47,6 +47,8 @@ faq:
     answer: "No. LoRa's spread-spectrum link budget tolerates obstructed paths that would kill a higher-frequency link, which is why it works through buildings at all. But 'does not need line of sight' is not 'ignores obstructions': every wall, vessel and metal structure spends link budget, and the practical effect inside industrial buildings is much shorter range per gateway. Treat line of sight as the condition behind the headline figures, not as a requirement for operation."
 ---
 
+import LinkBudgetMiniForProtocol from '../../../../components/LinkBudgetMiniForProtocol.astro';
+
 ## LoRa and LoRaWAN are two different layers
 
 Most confusion about this technology starts with the name covering two things. **LoRa** is a radio modulation — chirp spread spectrum, developed by Semtech — that trades data rate for sensitivity: by spreading a signal and integrating it over a long symbol time, a LoRa receiver can decode transmissions far below the noise levels that defeat conventional narrowband radios. **LoRaWAN** is the LoRa Alliance's specification for everything above that radio: how devices join a network, how they are addressed and encrypted, the three device classes, the regional channel plans and payload ceilings, and the architecture in which gateways are simple relays forwarding traffic to a central network server that owns the intelligence.
@@ -72,6 +74,10 @@ Acknowledgements deserve the same realism. A confirmed uplink that is not acknow
 This hub does not publish a maximum LoRaWAN range for industrial sites, because the specification does not contain one and the environment decides it. What exists on the record: the LoRa Alliance states **up to 15 km in rural areas**. Semtech, describing the LoRa physical layer, claims connections up to 30 miles apart in rural areas. Both statements carry their condition in plain sight — *rural* — meaning elevated antennas, open paths and slow data rates. Inside a plant, the same physics runs the other way: steel cladding reflects and absorbs, vessels shadow whole areas, and reinforced concrete floors separate levels into different radio worlds. Experienced integrators plan in-plant LoRaWAN as gateway cells per building or per area, verify by survey with a gateway in its intended position, and treat any per-site kilometre figure — including optimistic ones in vendor decks — as a test condition, not a design input.
 
 Two levers genuinely move range. **Antenna height and placement** dominate everything else: a gateway antenna above roofline clutter hears devices that an in-cabinet gateway never will. **Spreading factor** is the second: stepping from SF7 to SF12 buys substantial link budget and is exactly what ADR does automatically for distant devices — at the price of airtime, which is why a network full of SF12 devices has a fraction of the capacity of a network at SF7. Range and capacity are the same budget spent two ways.
+
+That budget is arithmetic, and you can run it for your own worst-positioned device here — free-space figures, so read the result as the ceiling that obstructions then spend down:
+
+<LinkBudgetMiniForProtocol protocolSlug="lorawan" frequencyMhz={868} contextNote="LoRaWAN uplink, end device to gateway (868 MHz is the EU band — set 915 for the US band)." />
 
 ## Running a private industrial network
 

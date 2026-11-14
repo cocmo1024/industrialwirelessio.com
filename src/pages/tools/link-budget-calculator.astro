@@ -1,13 +1,78 @@
 ---
 /**
- * Link budget calculator — tool page anatomy skeleton (blueprint
- * §2.3 tool anatomy, §4.5 T1). The calculation engine, worked example
- * and mini-embed mechanism land in Phase 3; this Phase 0 page fixes
- * the route and the anatomy slots so protocol pages can already link
- * here (R2: one canonical entry for the calculation).
+ * Link budget calculator — tool page (blueprint §2.3 tool anatomy,
+ * §4.5 T1, GEO asset A8). The worked example below is computed at
+ * build time with the same engine the calculator runs
+ * (src/utils/link-engine.ts), so the printed arithmetic can never
+ * drift from the tool. Receiver-sensitivity presets are pulled
+ * live from the product database — records whose datasheets state
+ * a sensitivity figure — never typed in here.
  */
+import { getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import LinkBudgetCalculator from '../../components/LinkBudgetCalculator.astro';
+import FaqSection from '../../components/FaqSection.astro';
 import { buildSeo } from '../../utils/seo';
+import { sensitivityPresets } from '../../utils/products';
+import {
+	computeLinkBudget,
+	fmtDb,
+	fmtSignedDb,
+	freeSpacePathLossDb,
+} from '../../utils/link-engine';
+
+const productEntries = await getCollection('products');
+const presets = sensitivityPresets(productEntries.map((entry) => entry.data));
+
+/* Worked example (asset A8): a LoRaWAN uplink, end device to
+ * gateway, EU868. Figures marked "record" are transcribed in the
+ * product/protocol records; the rest are stated example
+ * assumptions, labelled as such on the page. */
+const exampleInputs = {
+	frequencyMhz: 868,
+	distanceKm: 2,
+	txPowerDbm: 14,
+	txAntennaGainDbi: 2,
+	rxAntennaGainDbi: 3,
+	txCableLossDb: 0.5,
+	rxCableLossDb: 0.5,
+	rxSensitivityDbm: -140,
+};
+const example = computeLinkBudget({ ...exampleInputs, model: 'free-space' });
+const exampleLogDistance = computeLinkBudget({
+	...exampleInputs,
+	model: 'log-distance',
+	pathLossExponent: 3,
+});
+const fspl1km868 = freeSpacePathLossDb(1, 868);
+
+const faq = [
+	{
+		question: 'How do you calculate a link budget for an industrial wireless link?',
+		answer:
+			'Add everything the signal gains and subtract everything it loses, in decibels: transmit power, plus transmitting antenna gain, plus receiving antenna gain, minus cable and connector losses at both ends, minus the path loss over the distance — free-space path loss for a clear line-of-sight path, or a log-distance model for an obstructed one. Compare the received power that leaves with the receiver sensitivity from the device datasheet: the difference is the link margin. The calculator above performs exactly this arithmetic and shows every intermediate value.',
+	},
+	{
+		question: 'What link margin is enough for an industrial wireless link?',
+		answer:
+			'No standard sets the number — it is a planning judgement, and this page labels its verdict bands as rules of thumb, not thresholds. Under 10 dB of margin leaves almost nothing for rain, wet foliage, misalignment or a path that gains obstructions; many fixed industrial links are planned in the 10–20 dB band; above 20 dB the link can absorb substantial fading. How much a given site needs depends on how critical the data is and how hostile the path is, which is a site-survey decision.',
+	},
+	{
+		question: 'When is the free-space model wrong, and what should I use instead?',
+		answer:
+			'Free-space path loss assumes an unobstructed path with the first Fresnel zone substantially clear. Inside a plant — through steelwork, vessels, cladding and reinforced concrete — real loss grows faster with distance than the free-space formula predicts. The log-distance model in this calculator covers that case: it anchors to the free-space loss at 1 km and grows at 10·n dB per decade of distance, with the exponent n chosen by you: around 2 outdoors with clear paths, higher for obstructed industrial interiors. The tool requires you to state n rather than hiding a default, because the choice moves the answer by many decibels.',
+	},
+	{
+		question: 'Why does this calculator not prefill typical values?',
+		answer:
+			'Because a prefilled "typical" sensitivity or antenna gain would be a number without a source, and this site does not publish those. The one exception proves the rule: the receiver-sensitivity presets are transcribed from manufacturer datasheets held in the product database, each labelled with the product and the datasheet condition it was measured at. Everything else is yours to enter from the datasheets of the equipment you are actually deploying.',
+	},
+	{
+		question: 'Does a positive link margin guarantee the link will work?',
+		answer:
+			'No. A link budget is a power accounting exercise: it says nothing about whether the path is physically clear, about interference from other users of the band, or about multipath inside a metal building. A link can hold 20 dB of margin on paper and still fail because a silo sits inside its first Fresnel zone. Pair this calculator with the Fresnel zone calculator for the geometry, and with a site survey for everything neither formula can see.',
+	},
+];
 
 const seo = buildSeo(
 	{
@@ -20,6 +85,31 @@ const seo = buildSeo(
 	},
 	'/tools/link-budget-calculator/',
 );
+seo.structuredData.push(
+	{
+		'@context': 'https://schema.org',
+		'@type': 'WebApplication',
+		'@id': `${seo.canonicalUrl}#application`,
+		name: 'Link Budget Calculator',
+		url: seo.canonicalUrl,
+		applicationCategory: 'EngineeringApplication',
+		operatingSystem: 'Any (web browser)',
+		isAccessibleForFree: true,
+		offers: { '@type': 'Offer', price: 0, priceCurrency: 'USD' },
+		description:
+			'Calculates path loss (free-space per ITU-R P.525, or a log-distance model), received power and link margin for an industrial wireless link. Formulas and constant sources are stated on the page.',
+	},
+	{
+		'@context': 'https://schema.org',
+		'@type': 'FAQPage',
+		'@id': `${seo.canonicalUrl}#faq`,
+		mainEntity: faq.map((item) => ({
+			'@type': 'Question',
+			name: item.question,
+			acceptedAnswer: { '@type': 'Answer', text: item.answer },
+		})),
+	},
+);
 ---
 
 <BaseLayout seo={seo} hasRail>
@@ -31,9 +121,11 @@ const seo = buildSeo(
 					<dt>Solves</dt>
 					<dd>Will this link close, and with how much margin?</dd>
 					<dt>Method</dt>
-					<dd>Free-space path loss per ITU-R conventions; every constant states its source on the tool page.</dd>
+					<dd>Free-space path loss per ITU-R P.525; log-distance variant anchored at 1 km. Every constant states its source below.</dd>
 					<dt>Defaults</dt>
-					<dd>None preset — no unsourced numbers are prefilled.</dd>
+					<dd>None prefilled. The only one-click values are receiver sensitivities transcribed from manufacturer datasheets in the product database.</dd>
+					<dt>Data</dt>
+					<dd>Computed in your browser; nothing is uploaded or stored.</dd>
 				</dl>
 			</div>
 		</div>
@@ -47,29 +139,204 @@ const seo = buildSeo(
 			is the link margin — the number that decides whether a wireless link survives
 			weather, foliage and time.
 		</p>
+
+		<section class="panel">
+			<div class="panel-head">Quick answer</div>
+			<div class="panel-body">
+				<p>
+					<strong>A link budget is the decibel arithmetic that decides whether a
+					wireless link closes:</strong> received power = transmit power + transmit
+					antenna gain + receive antenna gain − cable losses − path loss, and the
+					link margin is that received power minus the receiver sensitivity from the
+					device's datasheet. For a clear path, path loss is the free-space figure —
+					20·log<sub>10</sub>(distance in km) + 20·log<sub>10</sub>(frequency in MHz)
+					+ 32.44 dB. A positive margin means the link closes on paper; how much
+					margin a site actually needs is a planning judgement, not a standard's
+					number.
+				</p>
+			</div>
+		</section>
+
 		<section class="panel">
 			<div class="panel-head">Calculator</div>
 			<div class="panel-body">
-				<div class="empty-state">
-					<p class="empty-title">The calculator engine is under construction.</p>
-					<p class="empty-reason">
-						It lands in Phase 3 of the rebuild, together with a worked example whose
-						inputs are stated as example assumptions and a variable table that cites
-						a source for every constant.
-					</p>
-					<a class="btn" href="/tools/">Browse the tools hub</a>
-				</div>
+				<LinkBudgetCalculator presets={presets} />
 			</div>
 		</section>
+
+		<section>
+			<h2>The formula and its variables</h2>
+			<p>
+				The budget is the Friis transmission equation written in decibels, with the
+				path-loss term taken from the free-space attenuation model of ITU-R
+				Recommendation P.525. In the unit system this page uses throughout —
+				distance in kilometres, frequency in megahertz — the free-space term is:
+			</p>
+			<p class="formula">
+				FSPL (dB) = 20·log<sub>10</sub>(d<sub>km</sub>) + 20·log<sub>10</sub>(f<sub>MHz</sub>) + 32.44
+			</p>
+			<p>
+				The constant needs no citation to a measurement: it is 20·log<sub>10</sub>(4π/c)
+				with the speed of light c = 299,792,458 m/s (exact, by SI definition), scaled
+				to kilometres and megahertz, which evaluates to 32.4478… and is stated as
+				32.44. Using the unrounded value would change any result here by less than
+				0.01 dB. The log-distance variant replaces the FSPL term with
+				FSPL at 1 km + 10·n·log<sub>10</sub>(d / 1 km) — an anchor convention this
+				tool states openly, chosen so both models agree at 1 km for any exponent.
+			</p>
+			<div class="table-wrap">
+				<table class="data">
+					<thead>
+						<tr>
+							<th scope="col">Variable</th>
+							<th scope="col">Unit</th>
+							<th scope="col">Where the figure comes from</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row">Transmit power</th>
+							<td>dBm</td>
+							<td>The transmitting device's datasheet — conducted power at the antenna port, not EIRP, or the antenna gain is counted twice.</td>
+						</tr>
+						<tr>
+							<th scope="row">Antenna gains</th>
+							<td>dBi</td>
+							<td>The antenna manufacturer's datasheet, at your frequency and in the direction the antenna actually points.</td>
+						</tr>
+						<tr>
+							<th scope="row">Cable &amp; connector losses</th>
+							<td>dB</td>
+							<td>Cable length × the cable manufacturer's attenuation table at your frequency, plus an allowance per connector and surge protector — see the antenna and cable guide linked below.</td>
+						</tr>
+						<tr>
+							<th scope="row">Path loss</th>
+							<td>dB</td>
+							<td>Computed here: free-space per ITU-R P.525 for clear paths, or the log-distance model with an exponent you state.</td>
+						</tr>
+						<tr>
+							<th scope="row">Receiver sensitivity</th>
+							<td>dBm</td>
+							<td>The receiving device's datasheet, at the data rate and modulation you will actually run — sensitivity is meaningless without its condition. The presets in the calculator are transcribed from datasheets in this site's product database.</td>
+						</tr>
+						<tr>
+							<th scope="row">Fade-margin allowance</th>
+							<td>dB</td>
+							<td>Your planning decision. No standard fixes it; it prices the weather, foliage, misalignment and ageing you expect the link to survive.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<section>
+			<h2>Worked example: a LoRaWAN uplink over 2 km</h2>
+			<p>
+				A battery end device reports to a rooftop gateway, EU868, 2 km apart with a
+				clear path. Figures marked <em>record</em> are transcribed in this site's
+				database; the rest are example assumptions, labelled as such — they are
+				illustrations, not recommendations and not measurements.
+			</p>
+			<div class="table-wrap">
+				<table class="data">
+					<thead>
+						<tr>
+							<th scope="col">Input</th>
+							<th scope="col">Value</th>
+							<th scope="col">Basis</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row">Frequency</th>
+							<td class="num">868 MHz</td>
+							<td>Record — EU868 band, per the LoRaWAN protocol record.</td>
+						</tr>
+						<tr>
+							<th scope="row">Distance</th>
+							<td class="num">2 km</td>
+							<td>Example assumption.</td>
+						</tr>
+						<tr>
+							<th scope="row">Transmit power</th>
+							<td class="num">14 dBm</td>
+							<td>Example assumption (a device-side figure; check your own device's datasheet).</td>
+						</tr>
+						<tr>
+							<th scope="row">Device antenna gain</th>
+							<td class="num">2 dBi</td>
+							<td>Example assumption.</td>
+						</tr>
+						<tr>
+							<th scope="row">Gateway antenna gain</th>
+							<td class="num">3 dBi</td>
+							<td>Record — Kerlink Wirnet iFemtoCell-evolution swivel antenna, 3 dBi peak gain, per its datasheet.</td>
+						</tr>
+						<tr>
+							<th scope="row">Cable losses</th>
+							<td class="num">0.5 + 0.5 dB</td>
+							<td>Example assumption.</td>
+						</tr>
+						<tr>
+							<th scope="row">Receiver sensitivity</th>
+							<td class="num">−140 dBm</td>
+							<td>Record — Kerlink Wirnet iFemtoCell-evolution, at SF12, per its datasheet.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<p>The arithmetic, in full:</p>
+			<ol class="steps">
+				<li>
+					Path loss = 20·log<sub>10</sub>(2) + 20·log<sub>10</sub>(868) + 32.44
+					= 6.02 + 58.77 + 32.44 = <strong class="num">{fmtDb(example.pathLossDb)} dB</strong>
+				</li>
+				<li>
+					Received power = 14 + 2 + 3 − 0.5 − 0.5 − {fmtDb(example.pathLossDb)}
+					= <strong class="num">{fmtDb(example.receivedPowerDbm)} dBm</strong>
+				</li>
+				<li>
+					Link margin = {fmtDb(example.receivedPowerDbm)} − (−140)
+					= <strong class="num">{fmtSignedDb(example.linkMarginDb)} dB</strong>
+				</li>
+			</ol>
+			<p>
+				Read that margin correctly: it is enormous because two kind assumptions are
+				stacked — a genuinely clear 2 km path, and the SF12 sensitivity figure, which
+				LoRa radios earn by transmitting extremely slowly (250 bit/s at that setting
+				in EU868, per the LoRa Alliance regional parameters). Run the same link
+				through the log-distance model with an exponent of 3 — an example assumption
+				for a path with obstructions — and the path loss rises to
+				{fmtDb(exampleLogDistance.pathLossDb)} dB (FSPL at 1 km is {fmtDb(fspl1km868)} dB,
+				plus 30·log<sub>10</sub>(2) = 9.03 dB), leaving a margin of
+				{fmtSignedDb(exampleLogDistance.linkMarginDb)} dB. The model choice is worth
+				decibels; the survey decides which model your path deserves.
+			</p>
+		</section>
+
 		<section>
 			<h2>How the result is used</h2>
 			<p>
-				A positive margin is not a guarantee — it is a budget. How much margin a site
-				needs depends on path obstructions, antenna mounting and how critical the data
-				is; the protocol and reliability pages on this site link back here when a
-				selection decision turns on that number.
+				A positive margin is not a guarantee — it is a budget. The verdict bands this
+				tool prints (under 10 dB, 10–20 dB, over 20 dB) are field rules of thumb for
+				fixed links, labelled as such because no standard sets them: how much margin
+				a site needs depends on path obstructions, antenna mounting and how critical
+				the data is. Two disciplined habits matter more than the band edges. First,
+				never mix conducted power and EIRP in the same budget — if the transmit
+				figure already includes an antenna, entering the gain again counts it twice.
+				Second, treat any deficit as a geometry problem before a power problem:
+				raising an antenna or clearing the Fresnel zone buys decibels that no
+				transmitter setting can, which is why this tool pairs with the
+				<a href="/tools/fresnel-zone-calculator/">Fresnel zone calculator</a>. The
+				protocol and reliability pages on this site link back here when a selection
+				decision turns on that number — and the
+				<a href="/protocols/lorawan/">LoRaWAN</a> and
+				<a href="/protocols/wirelesshart/">WirelessHART</a> pages embed a mini version
+				of this same calculator in their range discussions.
 			</p>
 		</section>
+
+		<FaqSection items={faq} />
 	</article>
 </BaseLayout>
 
@@ -98,5 +365,18 @@ const seo = buildSeo(
 
 	.nameplate dd {
 		margin: 0.15rem 0 0;
+	}
+
+	.formula {
+		font-family: var(--mono);
+		font-size: var(--fs-lg);
+		border: 1px solid var(--line);
+		border-radius: var(--r-md);
+		padding: 0.8rem 1rem;
+		max-width: 72ch;
+	}
+
+	.steps li {
+		margin-bottom: 0.4rem;
 	}
 </style>

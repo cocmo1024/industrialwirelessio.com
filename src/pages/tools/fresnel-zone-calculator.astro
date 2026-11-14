@@ -1,11 +1,53 @@
 ---
 /**
- * Fresnel zone calculator — tool page anatomy skeleton (blueprint
- * §4.5 T2). Engine lands in Phase 3 with the link budget calculator;
- * this page fixes the route and slots (R2).
+ * Fresnel zone calculator — tool page (blueprint §2.3 tool anatomy,
+ * §4.5 T2, GEO asset A18). Worked-example figures are computed at
+ * build time with the same engine the calculator runs
+ * (src/utils/link-engine.ts). The 60% clearance figure is presented
+ * throughout as what it is: a long-standing planning convention
+ * from vendor link-planning practice, consistent with the ITU-R
+ * P.526 diffraction model — not a limit set by any standard.
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import FresnelCalculator from '../../components/FresnelCalculator.astro';
+import FaqSection from '../../components/FaqSection.astro';
 import { buildSeo } from '../../utils/seo';
+import { computeFresnel, fmtDb, fmtM, wavelengthM } from '../../utils/link-engine';
+
+/* Worked example: a 5 km, 915 MHz point-to-point path; a tank roof
+ * crosses the path 1.5 km from end A, with the sight line passing
+ * 12 m above it. Inputs are stated example assumptions. */
+const example = computeFresnel({
+	frequencyMhz: 915,
+	pathLengthM: 5000,
+	obstacleFromAM: 1500,
+	clearanceM: 12,
+});
+const exampleLambda = wavelengthM(915);
+/* Short in-plant check used in the FAQ: 100 m at 2.4 GHz, midpoint. */
+const shortPath = computeFresnel({ frequencyMhz: 2400, pathLengthM: 100 });
+
+const faq = [
+	{
+		question: 'What is a Fresnel zone and why does it matter for industrial wireless links?',
+		answer:
+			'The first Fresnel zone is an ellipsoid-shaped volume around the straight line between two antennas, inside which most of the signal energy travels. An obstacle that stays outside the visual line of sight can still intrude into this zone and diffract the signal, costing decibels that show up as unexplained link loss. For industrial point-to-point links — between buildings, across tank farms, from a plant to a remote well or pump station — the zone geometry decides how high antennas must be mounted, which is why it is checked alongside the link budget, not after it.',
+	},
+	{
+		question: 'How much of the first Fresnel zone has to be clear?',
+		answer:
+			'Link-planning practice aims to keep at least 60% of the first Fresnel zone clear of obstructions; at that clearance, diffraction loss is small enough to treat the path as unobstructed. It is a convention, not a standard\'s limit: it comes from vendor link-planning guides and is consistent with the ITU-R P.526 diffraction model, which already puts the loss at roughly 6 dB when an obstacle merely grazes the line of sight. Below 60%, budget the extra loss explicitly; below the line of sight itself, no budget fixes the geometry.',
+	},
+	{
+		question: 'Is visual line of sight enough for a point-to-point wireless link?',
+		answer:
+			'No — visual line of sight is necessary, not sufficient. The first Fresnel zone at the midpoint of a 5 km, 915 MHz path is over 20 m in radius, so a path can look perfectly clear from the antenna mount and still have a tank roof, a pipe rack or tree growth sitting well inside the zone. "I can see the other antenna" answers the wrong question; the zone radius at the obstacle point is the right one, and it is what the calculator above computes.',
+	},
+	{
+		question: 'Does the Fresnel zone matter for short in-plant links?',
+		answer: `Much less, and the formula shows why: the radius grows with the square root of path length and shrinks with frequency. At the midpoint of a 100 m link at 2.4 GHz the first-zone radius is only about ${fmtM(shortPath.radiusAtMidpointM)} m, so ordinary mounting heights clear it without trying. Fresnel geometry becomes a design driver on the longer outdoor paths — hundreds of metres and up, at sub-GHz and 900 MHz frequencies — where radii reach tens of metres.`,
+	},
+];
 
 const seo = buildSeo(
 	{
@@ -18,6 +60,31 @@ const seo = buildSeo(
 	},
 	'/tools/fresnel-zone-calculator/',
 );
+seo.structuredData.push(
+	{
+		'@context': 'https://schema.org',
+		'@type': 'WebApplication',
+		'@id': `${seo.canonicalUrl}#application`,
+		name: 'Fresnel Zone Calculator',
+		url: seo.canonicalUrl,
+		applicationCategory: 'EngineeringApplication',
+		operatingSystem: 'Any (web browser)',
+		isAccessibleForFree: true,
+		offers: { '@type': 'Offer', price: 0, priceCurrency: 'USD' },
+		description:
+			'Calculates the first Fresnel zone radius at any point of a wireless path and the clearance ratio against the 60% planning convention, with the geometry per ITU-R P.526 conventions.',
+	},
+	{
+		'@context': 'https://schema.org',
+		'@type': 'FAQPage',
+		'@id': `${seo.canonicalUrl}#faq`,
+		mainEntity: faq.map((item) => ({
+			'@type': 'Question',
+			name: item.question,
+			acceptedAnswer: { '@type': 'Answer', text: item.answer },
+		})),
+	},
+);
 ---
 
 <BaseLayout seo={seo} hasRail>
@@ -29,9 +96,11 @@ const seo = buildSeo(
 					<dt>Solves</dt>
 					<dd>How much clearance does this path need around the line of sight?</dd>
 					<dt>Method</dt>
-					<dd>First Fresnel zone geometry per ITU-R P.526 conventions; constants cite sources on the tool page.</dd>
-					<dt>Defaults</dt>
-					<dd>None preset — no unsourced numbers are prefilled.</dd>
+					<dd>First Fresnel zone geometry per ITU-R P.526 conventions; every constant states its source below.</dd>
+					<dt>The 60% figure</dt>
+					<dd>A planning convention from vendor link-planning practice — stated as such, never as a standard's limit.</dd>
+					<dt>Data</dt>
+					<dd>Computed in your browser; nothing is uploaded or stored.</dd>
 				</dl>
 			</div>
 		</div>
@@ -44,19 +113,143 @@ const seo = buildSeo(
 			ellipsoid around the path — must stay largely clear of obstructions, or the link
 			budget quietly loses decibels that no transmitter setting can buy back.
 		</p>
+
+		<section class="panel">
+			<div class="panel-head">Quick answer</div>
+			<div class="panel-body">
+				<p>
+					<strong>The first Fresnel zone is the ellipsoid around the line of sight
+					that carries most of a radio signal's energy, and its radius at any point
+					is r = √(λ·d<sub>1</sub>·d<sub>2</sub> / (d<sub>1</sub>+d<sub>2</sub>))</strong>
+					— widest at the midpoint, where it reaches ½·√(λ·D). Link-planning practice
+					keeps at least 60% of that radius clear of obstructions; below that,
+					diffraction eats into the link budget, and an obstacle crossing the line of
+					sight itself is a geometry problem no power setting fixes. The 60% figure
+					is an engineering convention, not a standard's limit — this page treats it
+					as one.
+				</p>
+			</div>
+		</section>
+
 		<section class="panel">
 			<div class="panel-head">Calculator</div>
 			<div class="panel-body">
-				<div class="empty-state">
-					<p class="empty-title">The calculator engine is under construction.</p>
-					<p class="empty-reason">
-						It lands in Phase 3 of the rebuild, together with a worked example and the
-						same source-cited variable table standard as the link budget tool.
-					</p>
-					<a class="btn" href="/tools/">Browse the tools hub</a>
-				</div>
+				<FresnelCalculator />
 			</div>
 		</section>
+
+		<section>
+			<h2>The formula and its variables</h2>
+			<p>
+				Fresnel zones are a consequence of wave geometry: signals arriving via paths
+				slightly longer than the direct line reinforce or cancel depending on the
+				path difference, and the boundary of the first zone is the surface where
+				that difference is half a wavelength. The diffraction treatment follows
+				ITU-R Recommendation P.526 conventions.
+			</p>
+			<p class="formula">
+				r (m) = √( λ · d<sub>1</sub> · d<sub>2</sub> / (d<sub>1</sub> + d<sub>2</sub>) ), with λ = c / f
+			</p>
+			<div class="table-wrap">
+				<table class="data">
+					<thead>
+						<tr>
+							<th scope="col">Variable</th>
+							<th scope="col">Unit</th>
+							<th scope="col">Where the figure comes from</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row">λ (wavelength)</th>
+							<td>m</td>
+							<td>Computed from c = 299,792,458 m/s (exact, SI) divided by your frequency.</td>
+						</tr>
+						<tr>
+							<th scope="row">d<sub>1</sub>, d<sub>2</sub></th>
+							<td>m</td>
+							<td>Distances from the obstacle point to each end of the path — from your site survey or path profile.</td>
+						</tr>
+						<tr>
+							<th scope="row">Clearance</th>
+							<td>m</td>
+							<td>Height of the line of sight above the obstacle top at that point, from the survey. Vegetation growth and new structures change it after commissioning.</td>
+						</tr>
+						<tr>
+							<th scope="row">60% clearance target</th>
+							<td>—</td>
+							<td>An engineering convention from vendor link-planning practice (the planning guides of enterprise radio makers such as Cambium and Ubiquiti state it), cross-checked against the ITU-R P.526 diffraction model. No standard mandates it.</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<p>
+				Two assumptions ride along and are stated rather than hidden. The geometry is
+				flat: over multi-kilometre paths the earth's curvature lowers the effective
+				clearance at mid-path, and survey practice accounts for it separately — this
+				calculator does not. And the formula describes the first zone only; higher
+				zones exist, but planning works with the first because it carries the energy
+				that matters.
+			</p>
+		</section>
+
+		<section>
+			<h2>Worked example: a tank roof on a 5 km path</h2>
+			<p>
+				A 915 MHz point-to-point link runs 5 km between two sites. A tank roof
+				crosses the path 1.5 km from end A, and the line of sight passes 12 m above
+				it. Inputs are example assumptions for illustration.
+			</p>
+			<ol class="steps">
+				<li>
+					Wavelength: λ = 299,792,458 / 915,000,000 = <strong class="num">{fmtM(exampleLambda, 4)} m</strong>
+				</li>
+				<li>
+					First-zone radius at the tank roof: √(0.3276 × 1500 × 3500 / 5000)
+					= √(344.0) = <strong class="num">{fmtM(example.radiusAtObstacleM)} m</strong>
+					(at the midpoint it would be {fmtM(example.radiusAtMidpointM)} m)
+			 </li>
+				<li>
+					The 60% convention asks for 0.60 × {fmtM(example.radiusAtObstacleM)}
+					= <strong class="num">{fmtM(example.clearance60AtObstacleM)} m</strong> of clearance at that point.
+				</li>
+				<li>
+					Actual clearance is 12 m, a ratio of 12 / {fmtM(example.radiusAtObstacleM)}
+					= <strong class="num">{fmtDb(example.clearanceRatioPct ?? 0, 1)}%</strong> — the path
+					meets the convention at this obstacle, with about
+					{fmtM(12 - example.clearance60AtObstacleM)} m to spare before tree growth or a
+					new structure spends it.
+				</li>
+			</ol>
+			<p>
+				Note what the example teaches: the binding point is rarely the midpoint.
+				The zone is widest there, but obstacles are where they are — evaluate the
+				radius at each obstacle's own position, because a 12 m clearance that passes
+				at 1.5 km from the end would fail against the {fmtM(example.radiusAtMidpointM)} m
+				midpoint radius had the same roof stood at 2.5 km.
+			</p>
+		</section>
+
+		<section>
+			<h2>How the result is used</h2>
+			<p>
+				Clearance is decided at the survey, in metres of antenna height — which is
+				why this calculator and the <a href="/tools/link-budget-calculator/">link
+				budget calculator</a> are a pair: the budget prices the path in decibels,
+				the Fresnel geometry tells you whether those decibels survive contact with
+				the physical site. When a path fails the 60% convention, the honest options
+				are the geometric ones — raise an antenna, move an antenna, or relay around
+				the obstacle — and the
+				<a href="/hardware/antenna-cable-loss-and-mounted-height-for-remote-telemetry/">antenna
+				height and cable-loss guide</a> covers the trade those choices make against
+				feedline loss (a higher antenna spends cable loss to buy clearance). The
+				<a href="/protocols/lorawan/">LoRaWAN page</a> takes up the related question
+				of why a technology that tolerates obstructed paths still respects this
+				geometry.
+			</p>
+		</section>
+
+		<FaqSection items={faq} />
 	</article>
 </BaseLayout>
 
@@ -85,5 +278,18 @@ const seo = buildSeo(
 
 	.nameplate dd {
 		margin: 0.15rem 0 0;
+	}
+
+	.formula {
+		font-family: var(--mono);
+		font-size: var(--fs-lg);
+		border: 1px solid var(--line);
+		border-radius: var(--r-md);
+		padding: 0.8rem 1rem;
+		max-width: 72ch;
+	}
+
+	.steps li {
+		margin-bottom: 0.4rem;
 	}
 </style>

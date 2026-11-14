@@ -1,9 +1,8 @@
 ---
 /**
  * Tools hub — organized by link problem, not as a bare calculator
- * list (blueprint §3 item 6, §4.5). Phase 0 skeleton: the hub route
- * and slot structure exist; engines land in Phase 3 (T1 link budget,
- * T2 Fresnel), T3/T4 follow in Q2.
+ * list (blueprint §3 item 6, §4.5). T1 link budget and T2 Fresnel
+ * engines are live (Phase 3); T3/T4 follow in Q2.
  */
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { buildSeo } from '../../utils/seo';
@@ -14,14 +13,14 @@ const problems = [
 		tool: 'Link budget calculator',
 		href: '/tools/link-budget-calculator/',
 		detail: 'Transmit power and gains against path, cable and fade losses, checked against receiver sensitivity.',
-		phase: 'Phase 3',
+		phase: 'Live',
 	},
 	{
 		problem: 'Is the path clear?',
 		tool: 'Fresnel zone calculator',
 		href: '/tools/fresnel-zone-calculator/',
 		detail: 'First Fresnel zone radius and clearance ratio for a given path and frequency (ITU-R P.526 basis).',
-		phase: 'Phase 3',
+		phase: 'Live',
 	},
 	{
 		problem: 'What does the feedline eat?',

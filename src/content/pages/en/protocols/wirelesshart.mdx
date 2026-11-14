@@ -44,6 +44,8 @@ faq:
     answer: "Use an adapter when the installed wired HART instrument is healthy, its measurement is trusted, and only the data path is missing — the adapter mounts on the existing device, powers from the loop or a battery depending on model, and also relays mesh traffic. Choose a native wireless transmitter for new points, for instruments due for replacement anyway, and where you want the device's own power module sized for the update rate without a second enclosure on the loop."
 ---
 
+import LinkBudgetMiniForProtocol from '../../../../components/LinkBudgetMiniForProtocol.astro';
+
 ## How WirelessHART works
 
 A WirelessHART network has five working parts. **Field devices** are the battery-powered transmitters and actuators that measure and, in limited cases, act. **Adapters** attach to existing wired HART instruments and give them a radio. **Access points and the gateway** form the boundary to the wired world: the gateway connects the mesh to the host system over Ethernet protocols such as HART-IP and Modbus TCP. The **network manager** — software that usually runs inside the gateway — is the part most descriptions skip: it builds the communication schedule, assigns time slots and channels, computes redundant mesh routes, and continuously re-plans as conditions change. A handheld or asset-management application is the fifth element, used for joining devices and reading diagnostics.
@@ -76,6 +78,10 @@ Emerson's *System Engineering Guidelines* for IEC 62591 — a document Emerson s
 - **Minimize hops.** The guide sets no maximum hop count; instead it directs designers to keep paths short, because every hop adds latency and spends another device's battery. Devices updating faster than 2 seconds should be within twice the effective range of the gateway.
 
 Note what these rules are measured in: **effective range**, the distance a link actually closes at a given site with its antennas, mounting heights and obstructions — not a catalogue radius. That is why this page's parameter table gives no fixed single-hop distance: a defensible number comes from a site survey, not a datasheet, and any source quoting one universal WirelessHART range is quoting a test condition, not your plant.
+
+You can price one hop of that effective range here. The free-space model flatters a 2.4 GHz mesh hop — plant steelwork spends the margin down — but it fixes the scale: at a few hundred metres the budget is rarely the binding constraint, which is exactly why the rules above are written in neighbours and percentages rather than metres:
+
+<LinkBudgetMiniForProtocol protocolSlug="wirelesshart" frequencyMhz={2400} contextNote="One WirelessHART hop at 2.4 GHz, device to device or device to gateway." />
 
 ## Adapters versus native wireless instruments
 
