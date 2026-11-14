@@ -26,6 +26,7 @@ export type PageKind =
 	| 'foundation'
 	| 'policy'
 	| 'tool'
+	| 'product'
 	| 'not-found';
 
 export interface PageDescriptor {

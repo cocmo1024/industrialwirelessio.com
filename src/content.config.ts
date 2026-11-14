@@ -46,6 +46,8 @@ const pageSchema = z.looseObject({
 	relatedTools: z.array(z.string()).optional(),
 	/** Protocol anatomy wiring (Phase 1): the protocol record this page renders. */
 	protocolSlug: z.string().optional(),
+	/** Product-index anatomy wiring (Phase 2): this page renders the product database. */
+	productIndex: z.boolean().optional(),
 	/** Comparison anatomy wiring (Phase 1): protocol record slugs compared on this page. */
 	comparisonOf: z.array(z.string()).optional(),
 	/** FAQ block (GEO List A construction spec §4): questions verbatim from List C. */
@@ -135,6 +137,112 @@ const protocolSchema = z.object({
 	),
 });
 
+/**
+ * Product records (blueprint §4.2) — one YAML file per product in
+ * src/data/products/. The iron rule of §4.2 applies at the schema
+ * level: every spec field is either transcribed from the record's
+ * manufacturer primary source (sourceUrl / sourceType / sourceDocId /
+ * dateChecked are mandatory) or null, and null fields are never
+ * rendered. Whether a record also earns an indexable page is NOT a
+ * schema question — it is computed by the §4.3 gate in
+ * src/utils/products.ts and applied identically by the product route,
+ * the database index, the sitemap and the llms endpoints.
+ */
+const productSchema = z.object({
+	vendor: z.string(),
+	/** Vendor record slug (src/data/vendors/<vendorSlug>.yaml). */
+	vendorSlug: z.string(),
+	model: z.string(),
+	productType: z.enum([
+		'wireless-io-module',
+		'gateway',
+		'adapter',
+		'router',
+		'radio-modem',
+		'sensor-node',
+	]),
+	slug: z.string(),
+	status: z.enum(['active', 'legacy', 'discontinued']),
+	protocols: z.array(z.string()),
+	frequencyBands: z.array(z.string()),
+	txPowerDbm: z.number().nullable(),
+	/** Condition wording for the transmit-power figure, as stated in the source. */
+	txPowerCondition: z.string().optional(),
+	rxSensitivityDbm: z.number().nullable(),
+	/** Rate/modulation condition for the sensitivity figure, as stated in the source. */
+	rxSensitivityCondition: z.string().optional(),
+	rangeClass: z
+		.object({
+			value: z.string(),
+			unit: z.string(),
+			conditions: z.string(),
+			sourceRef: z.string(),
+		})
+		.nullable(),
+	antenna: z.string().nullable(),
+	io: z.object({
+		di: z.number().nullable(),
+		do: z.number().nullable(),
+		ai: z.number().nullable(),
+		ao: z.number().nullable(),
+		relay: z.number().nullable(),
+		pulse: z.number().nullable(),
+	}),
+	ioNotes: z.string().nullable(),
+	upstreamInterfaces: z.array(z.string()),
+	powerSupply: z.string().nullable(),
+	powerConsumption: z.string().nullable(),
+	batteryLife: z
+		.object({
+			value: z.string(),
+			conditions: z.string(),
+			sourceRef: z.string(),
+		})
+		.nullable(),
+	ipRating: z.string().nullable(),
+	operatingTemp: z.string().nullable(),
+	certifications: z.array(z.string()),
+	hazardousArea: z.string().nullable(),
+	sourceUrl: z.string().url(),
+	sourceType: z.enum(['datasheet', 'product-page', 'manual', 'technical-info']),
+	sourceDocId: z.string().nullable(),
+	dateChecked: z.coerce.date(),
+	notes: z.string().optional(),
+});
+
+/**
+ * Vendor records (blueprint R1.6) — one YAML file per maker in
+ * src/data/vendors/. `listingStatus` is the commercial-skeleton field
+ * (listed = recorded by the editors, unclaimed; claimed / verified are
+ * only ever set by an actual claim/verification event, never by an
+ * editor's guess). founded / headquarters are present only when they
+ * were transcribed from the maker's own official pages — the schema
+ * keeps them optional and the records omit them otherwise.
+ */
+const vendorSchema = z.object({
+	slug: z.string(),
+	name: z.string(),
+	website: z.string().url(),
+	listingStatus: z.enum(['listed', 'claimed', 'verified']),
+	/** Internal note on a claim/verification event; never rendered. */
+	claimSource: z.string().optional(),
+	featuredEligible: z.boolean(),
+	founded: z.number().nullable().optional(),
+	headquarters: z.string().nullable().optional(),
+	/** Product lines as named by the maker; kept to the lines this database covers. */
+	productLines: z.array(z.string()),
+	sources: z
+		.array(
+			z.object({
+				label: z.string(),
+				url: z.string().url(),
+				dateChecked: z.coerce.date(),
+			}),
+		)
+		.optional(),
+	notes: z.string().optional(),
+});
+
 export const collections = {
 	pages: defineCollection({
 		loader: glob({ base: './src/content/pages', pattern: '**/*.{md,mdx}' }),
@@ -143,5 +251,13 @@ export const collections = {
 	protocols: defineCollection({
 		loader: glob({ base: './src/data/protocols', pattern: '**/*.yaml' }),
 		schema: protocolSchema,
+	}),
+	products: defineCollection({
+		loader: glob({ base: './src/data/products', pattern: '**/*.yaml' }),
+		schema: productSchema,
+	}),
+	vendors: defineCollection({
+		loader: glob({ base: './src/data/vendors', pattern: '**/*.yaml' }),
+		schema: vendorSchema,
 	}),
 };
