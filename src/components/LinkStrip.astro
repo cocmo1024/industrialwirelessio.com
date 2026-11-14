@@ -1,0 +1,145 @@
+---
+/**
+ * Link Strip （链路条） — signature component of the 「链路」 design
+ * language (blueprint §2.2). A signal path drawn across the page head:
+ *   [Node A] —(protocol · band · distance class)— [Node B]
+ * with instrument readings underneath (mono, tabular — R8).
+ *
+ * Every value rendered here comes from a data-layer record (protocol
+ * linkStrip block today; product records from Phase 2). The component
+ * hard-codes nothing: if a reading has no sourced value, the record
+ * omits it and the strip simply shows fewer readings.
+ *
+ * Margin semantics (R5): a reading may carry state ok/warn/err, and
+ * ONLY then does a state colour appear — colour always names the
+ * link-margin state, never decoration.
+ */
+interface Reading {
+	label: string;
+	value: string;
+	state?: 'ok' | 'warn' | 'err';
+}
+
+interface Props {
+	nodeA: string;
+	nodeB: string;
+	linkLabel: string;
+	readings?: Reading[];
+}
+
+const { nodeA, nodeB, linkLabel, readings = [] } = Astro.props;
+---
+
+<div class="link-strip" role="img" aria-label={`Reference link: ${nodeA} to ${nodeB} via ${linkLabel}`}>
+	<div class="strip-path">
+		<span class="node">{nodeA}</span>
+		<span class="path-line">
+			<span class="path-label">{linkLabel}</span>
+		</span>
+		<span class="node">{nodeB}</span>
+	</div>
+	{
+		readings.length > 0 && (
+			<dl class="strip-readings">
+				{readings.map((reading) => (
+					<div class="reading">
+						<dt>{reading.label}</dt>
+						<dd class:list={['num', reading.state && `state-${reading.state}`]}>
+							{reading.value}
+						</dd>
+					</div>
+				))}
+			</dl>
+		)
+	}
+</div>
+
+<style>
+	.link-strip {
+		border: 1px solid var(--line);
+		border-radius: var(--r-md);
+		background: var(--card);
+		padding: 0.8rem;
+		margin-bottom: 1.2rem;
+	}
+
+	.strip-path {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+	}
+
+	.node {
+		border: 1px solid var(--line-strong);
+		border-radius: var(--r-sm);
+		background: var(--panel);
+		padding: 0.35rem 0.6rem;
+		font-weight: 600;
+		font-size: var(--fs-sm);
+		white-space: nowrap;
+	}
+
+	.path-line {
+		flex: 1 1 auto;
+		border-top: 2px solid var(--accent);
+		position: relative;
+		min-width: 4rem;
+	}
+
+	.path-label {
+		position: absolute;
+		left: 50%;
+		top: -0.65rem;
+		transform: translateX(-50%);
+		background: var(--card);
+		padding: 0 0.4rem;
+		font-family: var(--mono);
+		font-size: var(--fs-xs);
+		color: var(--ink-2);
+		white-space: nowrap;
+	}
+
+	.strip-readings {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 2rem;
+		margin: 0.7rem 0 0;
+		padding-top: 0.6rem;
+		border-top: 1px solid var(--line);
+	}
+
+	.reading dt {
+		font-size: var(--fs-xs);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+	}
+
+	.reading dd {
+		margin: 0.1rem 0 0;
+		font-size: var(--fs-lg);
+	}
+
+	.reading dd.state-ok {
+		color: var(--ok);
+	}
+
+	.reading dd.state-warn {
+		color: var(--warn);
+	}
+
+	.reading dd.state-err {
+		color: var(--err);
+	}
+
+	@media (max-width: 40rem) {
+		.strip-path {
+			flex-wrap: wrap;
+		}
+
+		.path-label {
+			white-space: normal;
+			text-align: center;
+		}
+	}
+</style>

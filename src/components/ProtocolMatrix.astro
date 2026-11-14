@@ -1,0 +1,72 @@
+---
+/**
+ * Protocol matrix (asset A14) — rendered from protocol records only
+ * (blueprint §4.4): every cell is a field of the same record that
+ * drives the protocol's own page, so the matrix can never drift into
+ * a second set of numbers. Columns: band / topology / latency class /
+ * power profile / standard / best-for line.
+ */
+interface MatrixProtocol {
+	slug: string;
+	name: string;
+	bands: { label: string; detail: string }[];
+	topology: string;
+	latencyClass: string;
+	powerProfile: string;
+	standardsBody: string;
+	standardDesignation: string;
+	bestFor: string;
+}
+
+interface Props {
+	protocols: MatrixProtocol[];
+	/** Compact = homepage teaser (fewer columns). */
+	compact?: boolean;
+}
+
+const { protocols, compact = false } = Astro.props;
+---
+
+<div class="table-wrap">
+	<table class="data protocol-matrix">
+		<caption>Industrial wireless protocols, from the protocol records</caption>
+		<thead>
+			<tr>
+				<th scope="col">Protocol</th>
+				<th scope="col">Band</th>
+				<th scope="col">Topology</th>
+				<th scope="col">Update / latency class</th>
+				<th scope="col">Power profile</th>
+				{!compact && <th scope="col">Standard</th>}
+				<th scope="col">Best for</th>
+			</tr>
+		</thead>
+		<tbody>
+			{
+				protocols.map((protocol) => (
+					<tr>
+						<th scope="row">
+							<a href={`/protocols/${protocol.slug}/`}>{protocol.name}</a>
+						</th>
+						<td>{protocol.bands.map((band) => band.label).join(' · ')}</td>
+						<td>{protocol.topology}</td>
+						<td>{protocol.latencyClass}</td>
+						<td>{protocol.powerProfile}</td>
+						{!compact && (
+							<td>
+								{protocol.standardDesignation} ({protocol.standardsBody})
+							</td>
+						)}
+						<td>{protocol.bestFor}</td>
+					</tr>
+				))
+			}
+		</tbody>
+	</table>
+</div>
+
+<style>
+	.protocol-matrix th[scope='row'] {
+		white-space: nowrap;
+	}
+</style>

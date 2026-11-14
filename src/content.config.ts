@@ -44,11 +44,104 @@ const pageSchema = z.looseObject({
 	relatedProtocols: z.array(z.string()).optional(),
 	relatedProducts: z.array(z.string()).optional(),
 	relatedTools: z.array(z.string()).optional(),
+	/** Protocol anatomy wiring (Phase 1): the protocol record this page renders. */
+	protocolSlug: z.string().optional(),
+	/** Comparison anatomy wiring (Phase 1): protocol record slugs compared on this page. */
+	comparisonOf: z.array(z.string()).optional(),
+	/** FAQ block (GEO List A construction spec §4): questions verbatim from List C. */
+	faq: z
+		.array(z.object({ question: z.string(), answer: z.string() }))
+		.optional(),
+});
+
+/**
+ * Protocol records (blueprint §4.4) — the data layer's first citizens.
+ * One YAML file per protocol in src/data/protocols/. Every numeric
+ * value lives in `keyParameters` / `gatewayCapacity` / `payloadLimits`
+ * and carries its primary source with it; a value that cannot be
+ * traced to a standards-body publication or a manufacturer datasheet
+ * is omitted from the record entirely (never approximated). Pages,
+ * the protocol matrix, the spectrum rail and the link strips are all
+ * views of these records — there is no second copy of any number.
+ */
+const sourcedValue = z.object({
+	key: z.string(),
+	label: z.string(),
+	value: z.string(),
+	/** Primary source this value was transcribed from (document + section/table). */
+	source: z.string(),
+});
+
+const protocolSchema = z.object({
+	slug: z.string(),
+	name: z.string(),
+	fullName: z.string(),
+	standardsBody: z.string(),
+	standardDesignation: z.string(),
+	/** One-line coverage note for the nameplate (this site's coverage level). */
+	coverage: z.string(),
+	bands: z.array(
+		z.object({
+			label: z.string(),
+			detail: z.string(),
+			/** Representative frequency for spectrum-rail log positioning. */
+			railFreqMhz: z.number(),
+		}),
+	),
+	topology: z.string(),
+	/** Latency / update-rate class, in the standard body's or maker's own wording. */
+	latencyClass: z.string(),
+	powerProfile: z.string(),
+	/** One-sentence fit statement for the matrix "best for" column. */
+	bestFor: z.string(),
+	keyParameters: z.array(sourcedValue),
+	/** WirelessHART only (asset A2): per-model gateway capacity, one sourced row per model. */
+	gatewayCapacity: z
+		.array(
+			z.object({
+				vendor: z.string(),
+				model: z.string(),
+				maxDevices: z.string(),
+				condition: z.string(),
+				source: z.string(),
+			}),
+		)
+		.optional(),
+	/** LoRaWAN only (asset A5): regional-parameter payload limits, straight from RP002. */
+	payloadLimits: z
+		.array(
+			z.object({
+				region: z.string(),
+				dataRate: z.string(),
+				maxMacPayload: z.string(),
+				maxAppPayload: z.string().optional(),
+				note: z.string().optional(),
+				source: z.string(),
+			}),
+		)
+		.optional(),
+	linkStrip: z.object({
+		nodeA: z.string(),
+		nodeB: z.string(),
+		linkLabel: z.string(),
+		readings: z.array(z.object({ label: z.string(), value: z.string() })),
+	}),
+	sources: z.array(
+		z.object({
+			label: z.string(),
+			url: z.string().url(),
+			dateChecked: z.coerce.date(),
+		}),
+	),
 });
 
 export const collections = {
 	pages: defineCollection({
 		loader: glob({ base: './src/content/pages', pattern: '**/*.{md,mdx}' }),
 		schema: pageSchema,
+	}),
+	protocols: defineCollection({
+		loader: glob({ base: './src/data/protocols', pattern: '**/*.yaml' }),
+		schema: protocolSchema,
 	}),
 };

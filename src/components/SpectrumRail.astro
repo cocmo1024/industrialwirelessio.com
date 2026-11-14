@@ -1,0 +1,186 @@
+---
+/**
+ * Spectrum Rail （频谱轨道） — signature component of the 「链路」
+ * design language (blueprint §2.2). One horizontal track on a
+ * logarithmic frequency axis (100 MHz – 6 GHz); every protocol in the
+ * data layer sits on the rail at the frequency of each of its bands,
+ * and every marker is a link to that protocol's page. This is the
+ * site's wayfinding device: "find a protocol by its band".
+ *
+ * Positions are computed from the records' `bands[].railFreqMhz` —
+ * the component holds no protocol facts of its own. Markers that fall
+ * close together (the three 2.4 GHz protocols) are stacked into lanes
+ * so labels never collide.
+ */
+interface RailBand {
+	label: string;
+	railFreqMhz: number;
+}
+
+interface RailProtocol {
+	slug: string;
+	name: string;
+	bands: RailBand[];
+}
+
+interface Props {
+	protocols: RailProtocol[];
+	/** Slug of the protocol page being read, highlighted when set. */
+	current?: string;
+}
+
+const { protocols, current } = Astro.props;
+
+const AXIS_MIN = 100; // MHz
+const AXIS_MAX = 6000; // MHz
+const logMin = Math.log10(AXIS_MIN);
+const logSpan = Math.log10(AXIS_MAX) - logMin;
+const positionPct = (mhz: number) =>
+	Math.min(97, Math.max(1, ((Math.log10(mhz) - logMin) / logSpan) * 100));
+
+interface Marker {
+	slug: string;
+	name: string;
+	bandLabel: string;
+	left: number;
+	lane: number;
+}
+
+const markers: Marker[] = [];
+const flat = protocols
+	.flatMap((protocol) =>
+		protocol.bands.map((band) => ({
+			slug: protocol.slug,
+			name: protocol.name,
+			bandLabel: band.label,
+			left: positionPct(band.railFreqMhz),
+		})),
+	)
+	.sort((a, b) => a.left - b.left);
+
+for (const item of flat) {
+	let lane = 0;
+	while (markers.some((m) => m.lane === lane && Math.abs(m.left - item.left) < 13)) lane += 1;
+	markers.push({ ...item, lane });
+}
+const laneCount = Math.max(1, ...markers.map((m) => m.lane + 1));
+
+const ticks = [
+	{ mhz: 100, label: '100 MHz' },
+	{ mhz: 433, label: '433 MHz' },
+	{ mhz: 868, label: '868 MHz' },
+	{ mhz: 2400, label: '2.4 GHz' },
+	{ mhz: 3500, label: '3.5 GHz' },
+	{ mhz: 5800, label: '5.8 GHz' },
+];
+---
+
+<div class="spectrum-rail">
+	<div class="rail-track" style={`--lanes: ${laneCount}`}>
+		{
+			markers.map((marker) => (
+				<a
+					class:list={['rail-marker', { current: marker.slug === current }]}
+					href={`/protocols/${marker.slug}/`}
+					style={`left: ${marker.left}%; --lane: ${marker.lane}`}
+					aria-current={marker.slug === current ? 'page' : undefined}
+				>
+					<span class="marker-name">{marker.name}</span>
+					<span class="marker-band num">{marker.bandLabel}</span>
+				</a>
+			))
+		}
+	</div>
+	<div class="rail-axis" aria-hidden="true">
+		{
+			ticks.map((tick) => (
+				<span class="tick num" style={`left: ${positionPct(tick.mhz)}%`}>
+					{tick.label}
+				</span>
+			))
+		}
+	</div>
+</div>
+
+<style>
+	.spectrum-rail {
+		margin-bottom: 0.4rem;
+	}
+
+	.rail-track {
+		position: relative;
+		height: calc(var(--lanes) * 2.6rem + 0.9rem);
+		border-bottom: 2px solid var(--line-strong);
+		background:
+			repeating-linear-gradient(
+				to right,
+				var(--line) 0,
+				var(--line) 1px,
+				transparent 1px,
+				transparent 10%
+			);
+	}
+
+	.rail-marker {
+		position: absolute;
+		bottom: calc(var(--lane) * 2.6rem + 0.45rem);
+		transform: translateX(-50%);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 0.05rem;
+		padding: 0.25rem 0.5rem;
+		border: 1px solid var(--line-strong);
+		border-bottom: 3px solid var(--accent);
+		border-radius: var(--r-sm);
+		background: var(--card);
+		color: var(--ink);
+		text-decoration: none;
+		white-space: nowrap;
+	}
+
+	.rail-marker:hover {
+		background: var(--hover);
+		color: var(--ink);
+	}
+
+	.rail-marker.current {
+		border-color: var(--accent);
+		background: var(--accent-soft);
+	}
+
+	.marker-name {
+		font-size: var(--fs-sm);
+		font-weight: 600;
+		line-height: 1.2;
+	}
+
+	.marker-band {
+		font-size: var(--fs-xs);
+		color: var(--ink-2);
+		line-height: 1.2;
+	}
+
+	.rail-axis {
+		position: relative;
+		height: 1.4rem;
+	}
+
+	.tick {
+		position: absolute;
+		transform: translateX(-50%);
+		font-size: var(--fs-xs);
+		color: var(--mute);
+		padding-top: 0.25rem;
+	}
+
+	.tick::before {
+		content: '';
+		position: absolute;
+		left: 50%;
+		top: 0;
+		width: 1px;
+		height: 0.25rem;
+		background: var(--line-strong);
+	}
+</style>
