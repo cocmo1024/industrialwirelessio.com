@@ -24,6 +24,14 @@ import LinkStrip from '../components/LinkStrip.astro';
 import SpectrumRail from '../components/SpectrumRail.astro';
 import ProtocolMatrix from '../components/ProtocolMatrix.astro';
 import FaqSection from '../components/FaqSection.astro';
+import ProductTable from '../components/ProductTable.astro';
+import {
+	bandFamily,
+	buildDatasetNode,
+	ioTypes,
+	productGate,
+	protocolLabel,
+} from '../utils/products';
 import { brand } from '../data/brand';
 import { buildSeo, type PageKind } from '../utils/seo';
 import {
@@ -110,7 +118,31 @@ const comparisonRecords = data.comparisonOf
 	?.map((recordSlug) => recordBySlug.get(recordSlug))
 	.filter((record) => Boolean(record));
 const isComparison = Boolean(comparisonRecords && comparisonRecords.length >= 2);
-const isNewAnatomy = isHub || Boolean(protocolRecord) || isComparison;
+
+/* ---- Product database wiring (Phase 2) ---- */
+const productEntries = await getCollection('products');
+const productRecords = productEntries.map((item) => item.data);
+const vendorEntries = await getCollection('vendors');
+const vendorRecords = vendorEntries.map((item) => item.data);
+const isProductIndex = slug === 'product-families' && Boolean(data.productIndex);
+const indexableProducts = productRecords.filter((record) => productGate(record).indexable);
+const productsForProtocol = protocolRecord
+	? productRecords.filter((record) => record.protocols.includes(protocolRecord.slug))
+	: [];
+const productProtocolsCovered = [...new Set(productRecords.flatMap((record) => record.protocols))];
+const latestProductCheck = productRecords.length
+	? new Date(Math.max(...productRecords.map((record) => record.dateChecked.getTime())))
+			.toISOString()
+			.slice(0, 10)
+	: null;
+const filterProtocols = productProtocolsCovered;
+const filterBands = [...new Set(productRecords.flatMap((record) => bandFamily(record)))].sort();
+const filterIoTypes = [...new Set(productRecords.flatMap((record) => ioTypes(record)))].sort();
+const filterVendors = vendorRecords
+	.filter((vendor) => productRecords.some((record) => record.vendorSlug === vendor.slug))
+	.sort((a, b) => a.name.localeCompare(b.name));
+
+const isNewAnatomy = isHub || Boolean(protocolRecord) || isComparison || isProductIndex;
 
 const { Content } = isNewAnatomy ? await render(entry) : { Content: null };
 
@@ -125,6 +157,10 @@ if (data.faq && data.faq.length > 0) {
 			acceptedAnswer: { '@type': 'Answer', text: item.answer },
 		})),
 	});
+}
+
+if (isProductIndex) {
+	seo.structuredData.push(buildDatasetNode(productRecords));
 }
 
 /* Comparison table rows: fixed identity rows + key parameters aligned by key. */
@@ -189,7 +225,27 @@ const latestChecked = (sources: { dateChecked: Date }[]) =>
 <BaseLayout seo={seo} hreflang={hreflang} hasRail>
 	<Fragment slot="rail">
 		{
-			protocolRecord ? (
+			isProductIndex ? (
+				<div class="panel nameplate">
+					<div class="panel-head">Product database</div>
+					<div class="panel-body">
+						<dl>
+							<dt>Records</dt>
+							<dd class="num">{productRecords.length}</dd>
+							<dt>Full record pages</dt>
+							<dd class="num">{indexableProducts.length}</dd>
+							<dt>Makers recorded</dt>
+							<dd class="num">{filterVendors.length}</dd>
+							<dt>Protocols covered</dt>
+							<dd>{productProtocolsCovered.map(protocolLabel).join(' · ')}</dd>
+							<dt>Latest source check</dt>
+							<dd class="num">{latestProductCheck}</dd>
+							<dt>Source standard</dt>
+							<dd>{brand.sourcing}</dd>
+						</dl>
+					</div>
+				</div>
+			) : protocolRecord ? (
 				<div class="panel nameplate">
 					<div class="panel-head">Protocol</div>
 					<div class="panel-body">
@@ -400,20 +456,41 @@ const latestChecked = (sources: { dateChecked: Date }[]) =>
 						<Content />
 					</div>
 				)}
-				<section class="panel" aria-label="Products using this protocol">
-					<div class="panel-head">Products on this protocol</div>
-					<div class="panel-body">
-						<div class="empty-state">
-							<p class="empty-title">No product records carry this protocol yet.</p>
-							<p class="empty-reason">
-								Product records enter the database only with manufacturer datasheet
-								sources attached (Phase 2). When the first gateways, adapters and
-								modules for {protocolRecord.name} are recorded, they appear here as
-								a live table filtered from the database.
-							</p>
-							<a class="btn" href="/product-families/">Browse the product database</a>
-						</div>
-					</div>
+				<section aria-label="Products using this protocol">
+					<h2>Products on this protocol</h2>
+					{
+						productsForProtocol.length > 0 ? (
+							<>
+								<ProductTable products={productsForProtocol} variant="protocol" />
+								<p class="matrix-note">
+									Live from the product database — every row is a record with its
+									manufacturer source attached; records still being completed link
+									to that source instead of a page. The full database is on the{' '}
+									<a href="/product-families/">product database index</a>.
+								</p>
+							</>
+						) : (
+							<div class="panel">
+								<div class="panel-body">
+									<div class="empty-state">
+										<p class="empty-title">
+											No product records carry this protocol yet.
+										</p>
+										<p class="empty-reason">
+											Product records enter the database only with manufacturer
+											datasheet sources attached. When the first gateways,
+											adapters and modules for {protocolRecord.name} are
+											recorded, they appear here as a live table filtered from
+											the database.
+										</p>
+										<a class="btn" href="/product-families/">
+											Browse the product database
+										</a>
+									</div>
+								</div>
+							</div>
+						)
+					}
 				</section>
 				{data.relatedProtocols
 					?.filter((related) => recordBySlug.has(related) && related !== protocolRecord.slug)
@@ -523,6 +600,109 @@ const latestChecked = (sources: { dateChecked: Date }[]) =>
 						the source of a row.
 					</p>
 				</section>
+			</article>
+		) : isProductIndex ? (
+			<article>
+				<h1>{data.title}</h1>
+				{data.description && <p class="lede">{data.description}</p>}
+				{data.readerTakeaway && (
+					<section class="panel">
+						<div class="panel-head">Quick answer</div>
+						<div class="panel-body">
+							<p>{data.readerTakeaway}</p>
+						</div>
+					</section>
+				)}
+				<section class="panel" aria-label="Filter the database">
+					<div class="panel-head">Filter records</div>
+					<div class="panel-body">
+						<form class="filters" id="product-filters">
+							<label>
+								Protocol
+								<select name="protocol">
+									<option value="">All protocols</option>
+									{filterProtocols.map((slug) => (
+										<option value={slug}>{protocolLabel(slug)}</option>
+									))}
+								</select>
+							</label>
+							<label>
+								Band
+								<select name="band">
+									<option value="">All bands</option>
+									{filterBands.map((band) => (
+										<option value={band}>{band}</option>
+									))}
+								</select>
+							</label>
+							<label>
+								I/O type
+								<select name="io">
+									<option value="">All I/O types</option>
+									{filterIoTypes.map((type) => (
+										<option value={type}>{type}</option>
+									))}
+								</select>
+							</label>
+							<label>
+								Maker
+								<select name="vendor">
+									<option value="">All makers</option>
+									{filterVendors.map((vendor) => (
+										<option value={vendor.slug}>{vendor.name}</option>
+									))}
+								</select>
+							</label>
+							<button type="reset" class="btn">Reset filters</button>
+						</form>
+						<p class="filter-count" aria-live="polite">
+							<span class="num" data-visible-count>{productRecords.length}</span> of{' '}
+							<span class="num">{productRecords.length}</span> records shown
+						</p>
+					</div>
+				</section>
+				<ProductTable products={productRecords} variant="index" />
+				<p class="matrix-note">
+					Every row is transcribed from the manufacturer's datasheet or official
+					product documentation linked from the record — figures that cannot be
+					traced to a primary source are left out, not estimated. Records marked
+					“page pending source completion” already feed this table and the protocol
+					pages; they earn a full specification page when their source set is
+					complete.
+				</p>
+				{Content && (
+					<div class="prose">
+						<Content />
+					</div>
+				)}
+				{data.faq && data.faq.length > 0 && <FaqSection items={data.faq} />}
+				<script>
+					const form = document.getElementById('product-filters');
+					const rows = [...document.querySelectorAll('[data-product-row]')];
+					const counter = document.querySelector('[data-visible-count]');
+					function applyFilters() {
+						if (!form) return;
+						const data = new FormData(form);
+						const protocol = String(data.get('protocol') ?? '');
+						const band = String(data.get('band') ?? '');
+						const io = String(data.get('io') ?? '');
+						const vendor = String(data.get('vendor') ?? '');
+						let visible = 0;
+						for (const row of rows) {
+							const el = row as HTMLElement;
+							const show =
+								(!protocol || (el.dataset.protocols ?? '').split(' ').includes(protocol)) &&
+								(!band || (el.dataset.bands ?? '').split('|').includes(band)) &&
+								(!io || (el.dataset.io ?? '').split(' ').includes(io)) &&
+								(!vendor || el.dataset.vendor === vendor);
+							el.style.display = show ? '' : 'none';
+							if (show) visible += 1;
+						}
+						if (counter) counter.textContent = String(visible);
+					}
+					form?.addEventListener('change', applyFilters);
+					form?.addEventListener('reset', () => requestAnimationFrame(applyFilters));
+				</script>
 			</article>
 		) : (
 			<article>
@@ -654,5 +834,40 @@ const latestChecked = (sources: { dateChecked: Date }[]) =>
 	.compare-entry {
 		border-left: 3px solid var(--accent);
 		padding-left: 0.8rem;
+	}
+
+	.filters {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.8rem 1.2rem;
+		align-items: end;
+	}
+
+	.filters label {
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+		font-size: var(--fs-sm);
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+	}
+
+	.filters select {
+		font: inherit;
+		font-size: var(--fs-md);
+		letter-spacing: normal;
+		text-transform: none;
+		color: var(--ink);
+		padding: 0.4rem 0.6rem;
+		border: 1px solid var(--line-strong);
+		background: var(--surface, transparent);
+		min-width: 11rem;
+	}
+
+	.filter-count {
+		margin-top: 0.7rem;
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
 	}
 </style>

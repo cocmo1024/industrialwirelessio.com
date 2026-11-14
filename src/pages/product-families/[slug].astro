@@ -1,0 +1,360 @@
+---
+/**
+ * Product page — generated ONLY for records that pass the §4.3
+ * indexability gate (src/utils/products.ts). Rows-only records have
+ * no route here, hence no sitemap entry and no llms listing; they
+ * appear as rows in the database index and protocol slots instead.
+ *
+ * Anatomy (blueprint §2.3, unchanged by R1 — it is the data-center
+ * module's internal form): nameplate rail (maker, model, type,
+ * source badge) → link strip showing the product's position in a
+ * typical link → wireless identity first → I/O & electrical table →
+ * environment & certifications table → same-protocol alternatives →
+ * protocol backlinks → source block. Every spec table carries a
+ * source column; a field the manufacturer source does not state is
+ * absent from the record and absent here — never a placeholder.
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LinkStrip from '../../components/LinkStrip.astro';
+import ProductTable from '../../components/ProductTable.astro';
+import { buildSeo } from '../../utils/seo';
+import {
+	buildProductNode,
+	ioSummary,
+	productGate,
+	productPath,
+	productSummary,
+	PRODUCT_TYPE_LABELS,
+	protocolLabel,
+	type ProductRecord,
+} from '../../utils/products';
+
+export async function getStaticPaths() {
+	const entries = await getCollection('products');
+	return entries
+		.map((entry) => entry.data)
+		.filter((record) => productGate(record).indexable)
+		.map((record) => ({ params: { slug: record.slug }, props: { record } }));
+}
+
+interface Props {
+	record: ProductRecord;
+}
+
+const { record } = Astro.props;
+
+const allProducts = (await getCollection('products')).map((entry) => entry.data);
+const protocolRecords = (await getCollection('protocols')).map((entry) => entry.data);
+const protocolSlugsWithPages = new Set(protocolRecords.map((protocol) => protocol.slug));
+
+const alternatives = allProducts.filter(
+	(other) =>
+		other.slug !== record.slug &&
+		other.protocols.some((slug) => record.protocols.includes(slug)),
+);
+
+const title = `${record.vendor} ${record.model}`;
+const description = productSummary(record);
+const path = productPath(record);
+
+const seo = buildSeo(
+	{
+		id: `product-families/${record.slug}`,
+		locale: 'en',
+		title: `${title} — ${PRODUCT_TYPE_LABELS[record.productType]} specifications`,
+		description,
+		kind: 'product',
+		dateModified: record.dateChecked,
+	},
+	path,
+);
+seo.structuredData.push(buildProductNode(record));
+
+const sourceLabel = record.sourceDocId
+	? `${record.sourceDocId} (manufacturer ${record.sourceType})`
+	: `Manufacturer ${record.sourceType}`;
+
+const linkReadings = [
+	record.txPowerDbm != null
+		? { label: 'Tx power', value: `${record.txPowerDbm} dBm` }
+		: null,
+	record.rxSensitivityDbm != null
+		? { label: 'Sensitivity', value: `${record.rxSensitivityDbm} dBm` }
+		: null,
+	record.rangeClass
+		? {
+				label: 'Range class',
+				value: `${record.rangeClass.value} ${record.rangeClass.unit} — ${record.rangeClass.conditions}`,
+			}
+		: null,
+].filter((reading): reading is NonNullable<typeof reading> => Boolean(reading));
+
+const fieldHost =
+	record.upstreamInterfaces[0] ?? 'Host system';
+const fieldSide =
+	record.productType === 'gateway' || record.productType === 'adapter'
+		? 'Wireless field devices'
+		: ioSummary(record)
+			? `Field I/O — ${ioSummary(record)}`
+			: 'Field devices';
+
+const wirelessRows: { label: string; value: string }[] = [
+	{ label: 'Protocol', value: record.protocols.map(protocolLabel).join(' · ') },
+	{ label: 'Frequency band', value: record.frequencyBands.join(' · ') },
+	...(record.txPowerDbm != null
+		? [
+				{
+					label: 'Transmit power',
+					value: `${record.txPowerDbm} dBm${record.txPowerCondition ? ` (${record.txPowerCondition})` : ''}`,
+				},
+			]
+		: []),
+	...(record.rxSensitivityDbm != null
+		? [
+				{
+					label: 'Receiver sensitivity',
+					value: `${record.rxSensitivityDbm} dBm${record.rxSensitivityCondition ? ` (${record.rxSensitivityCondition})` : ''}`,
+				},
+			]
+		: []),
+	...(record.rangeClass
+		? [
+				{
+					label: 'Range class',
+					value: `${record.rangeClass.value} ${record.rangeClass.unit} — ${record.rangeClass.conditions}`,
+				},
+			]
+		: []),
+	...(record.antenna ? [{ label: 'Antenna', value: record.antenna }] : []),
+];
+
+const ioRows: { label: string; value: string }[] = [
+	...(ioSummary(record) ? [{ label: 'I/O counts', value: ioSummary(record) }] : []),
+	...(record.ioNotes ? [{ label: 'I/O notes', value: record.ioNotes }] : []),
+	...(record.upstreamInterfaces.length
+		? [{ label: 'Upstream interfaces', value: record.upstreamInterfaces.join(' · ') }]
+		: []),
+	...(record.powerSupply ? [{ label: 'Power supply', value: record.powerSupply }] : []),
+	...(record.powerConsumption
+		? [{ label: 'Power consumption', value: record.powerConsumption }]
+		: []),
+	...(record.batteryLife
+		? [
+				{
+					label: 'Battery life',
+					value: `${record.batteryLife.value} — ${record.batteryLife.conditions}`,
+				},
+			]
+		: []),
+];
+
+const environmentRows: { label: string; value: string }[] = [
+	...(record.ipRating ? [{ label: 'Ingress rating', value: record.ipRating }] : []),
+	...(record.operatingTemp
+		? [{ label: 'Operating temperature', value: record.operatingTemp }]
+		: []),
+	...(record.hazardousArea
+		? [{ label: 'Hazardous area', value: record.hazardousArea }]
+		: []),
+	...(record.certifications.length
+		? [{ label: 'Certifications', value: record.certifications.join(' · ') }]
+		: []),
+];
+---
+
+<BaseLayout seo={seo} hasRail>
+	<Fragment slot="rail">
+		<div class="panel nameplate">
+			<div class="panel-head">Product record</div>
+			<div class="panel-body">
+				<dl>
+					<dt>Maker</dt>
+					<dd>{record.vendor}</dd>
+					<dt>Model</dt>
+					<dd>{record.model}</dd>
+					<dt>Type</dt>
+					<dd>{PRODUCT_TYPE_LABELS[record.productType]}</dd>
+					<dt>Status</dt>
+					<dd>{record.status}</dd>
+					<dt>Source</dt>
+					<dd>{sourceLabel}</dd>
+					<dt>Checked</dt>
+					<dd class="num">{record.dateChecked.toISOString().slice(0, 10)}</dd>
+				</dl>
+			</div>
+		</div>
+	</Fragment>
+
+	<article>
+		<h1>{title}</h1>
+		<p class="lede">{description}</p>
+
+		<LinkStrip
+			nodeA={fieldHost}
+			nodeB={fieldSide}
+			linkLabel={`${record.protocols.map(protocolLabel).join(' / ')} · ${record.frequencyBands.join(' · ')}`}
+			readings={linkReadings}
+		/>
+
+		<section aria-label="Wireless identity">
+			<h2>Wireless identity</h2>
+			<div class="table-wrap">
+				<table class="data">
+					<thead>
+						<tr>
+							<th scope="col">Parameter</th>
+							<th scope="col">Value</th>
+							<th scope="col">Source</th>
+						</tr>
+					</thead>
+					<tbody>
+						{
+							wirelessRows.map((row) => (
+								<tr>
+									<th scope="row">{row.label}</th>
+									<td>{row.value}</td>
+									<td class="source-cell">{sourceLabel}</td>
+								</tr>
+							))
+						}
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		{
+			ioRows.length > 0 && (
+				<section aria-label="I/O and electrical">
+					<h2>I/O and electrical</h2>
+					<div class="table-wrap">
+						<table class="data">
+							<thead>
+								<tr>
+									<th scope="col">Parameter</th>
+									<th scope="col">Value</th>
+									<th scope="col">Source</th>
+								</tr>
+							</thead>
+							<tbody>
+								{ioRows.map((row) => (
+									<tr>
+										<th scope="row">{row.label}</th>
+										<td>{row.value}</td>
+										<td class="source-cell">{sourceLabel}</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+				</section>
+			)
+		}
+
+		{
+			environmentRows.length > 0 && (
+				<section aria-label="Environment and certifications">
+					<h2>Environment and certifications</h2>
+					<div class="table-wrap">
+						<table class="data">
+							<thead>
+								<tr>
+									<th scope="col">Parameter</th>
+									<th scope="col">Value</th>
+									<th scope="col">Source</th>
+								</tr>
+							</thead>
+							<tbody>
+								{environmentRows.map((row) => (
+									<tr>
+										<th scope="row">{row.label}</th>
+										<td>{row.value}</td>
+										<td class="source-cell">{sourceLabel}</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+				</section>
+			)
+		}
+
+		{
+			alternatives.length > 0 && (
+				<section aria-label="Alternatives on the same protocols">
+					<h2>Other recorded products on the same protocol</h2>
+					<ProductTable products={alternatives} variant="protocol" />
+				</section>
+			)
+		}
+
+		{
+			record.protocols.some((slug) => protocolSlugsWithPages.has(slug)) && (
+				<section aria-label="Protocol reference">
+					<h2>Protocol reference</h2>
+					<ul>
+						{record.protocols
+							.filter((slug) => protocolSlugsWithPages.has(slug))
+							.map((slug) => (
+								<li>
+									<a href={`/protocols/${slug}/`}>
+										{protocolLabel(slug)} protocol reference — parameters, sizing
+										and product table
+									</a>
+								</li>
+							))}
+					</ul>
+				</section>
+			)
+		}
+
+		<section aria-label="Source">
+			<h2>Source</h2>
+			<p>
+				Every figure on this page was transcribed from the manufacturer's own
+				documentation: <a href={record.sourceUrl} rel="noopener">{sourceLabel}</a>,
+				checked {record.dateChecked.toISOString().slice(0, 10)}. Figures the source
+				does not state are not estimated and do not appear. The full database,
+				including records still being completed, is on the{' '}
+				<a href="/product-families/">product database index</a>.
+			</p>
+		</section>
+	</article>
+</BaseLayout>
+
+<style>
+	.lede {
+		font-size: var(--fs-lg);
+		color: var(--ink-2);
+		max-width: 68ch;
+	}
+
+	.nameplate dl {
+		margin: 0;
+	}
+
+	.nameplate dt {
+		font-size: var(--fs-xs);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		margin-top: 0.6rem;
+	}
+
+	.nameplate dt:first-child {
+		margin-top: 0;
+	}
+
+	.nameplate dd {
+		margin: 0.15rem 0 0;
+	}
+
+	article section {
+		margin-bottom: 1.2rem;
+	}
+
+	.source-cell {
+		font-size: var(--fs-sm);
+		color: var(--ink-2);
+	}
+</style>

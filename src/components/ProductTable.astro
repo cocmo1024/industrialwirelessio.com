@@ -1,0 +1,126 @@
+---
+/**
+ * Product Table — the data layer's shared table view (Phase 2).
+ *
+ * One component, two call sites (blueprint R3 — same-type surfaces
+ * stay isomorphic):
+ *   - variant "index": the database browse table on /product-families/,
+ *     rows carry data-* filter attributes for the client filter panel.
+ *   - variant "protocol": the live product slot on protocol pages.
+ *
+ * Link policy (blueprint §4.3): a record that passes the indexability
+ * gate links to its product page; a record that is still rows-only
+ * links to its manufacturer source instead and is badged as such —
+ * rows are data, not thin pages.
+ */
+import {
+	bandFamily,
+	ioSummary,
+	ioTypes,
+	productGate,
+	productPath,
+	PRODUCT_TYPE_LABELS,
+	protocolLabel,
+	type ProductRecord,
+} from '../utils/products';
+
+interface Props {
+	products: ProductRecord[];
+	variant?: 'index' | 'protocol';
+}
+
+const { products, variant = 'index' } = Astro.props;
+
+const rows = products.map((record) => ({ record, gate: productGate(record) }));
+---
+
+<div class="table-wrap">
+	<table class="data product-table">
+		<thead>
+			<tr>
+				<th scope="col">Product</th>
+				<th scope="col">Maker</th>
+				<th scope="col">Type</th>
+				{variant === 'index' && <th scope="col">Protocol</th>}
+				<th scope="col">Band</th>
+				<th scope="col">I/O</th>
+				{
+					variant === 'protocol' && (
+						<>
+							<th scope="col">Tx power</th>
+							<th scope="col">Sensitivity</th>
+						</>
+					)
+				}
+				{variant === 'index' && <th scope="col">IP</th>}
+				<th scope="col">Record</th>
+			</tr>
+		</thead>
+		<tbody>
+			{
+				rows.map(({ record, gate }) => (
+					<tr
+						data-product-row
+						data-protocols={record.protocols.join(' ')}
+						data-bands={bandFamily(record).join('|')}
+						data-io={ioTypes(record).join(' ')}
+						data-vendor={record.vendorSlug}
+						data-indexable={gate.indexable ? 'yes' : 'no'}
+					>
+						<th scope="row">
+							{gate.indexable ? (
+								<a href={productPath(record)}>
+									{record.vendor} {record.model}
+								</a>
+							) : (
+								<a href={record.sourceUrl} rel="noopener">
+									{record.vendor} {record.model}
+								</a>
+							)}
+						</th>
+						<td>{record.vendor}</td>
+						<td>{PRODUCT_TYPE_LABELS[record.productType]}</td>
+						{variant === 'index' && (
+							<td>{record.protocols.map(protocolLabel).join(' · ')}</td>
+						)}
+						<td>{record.frequencyBands.join(' · ')}</td>
+						<td>{ioSummary(record) || '—'}</td>
+						{variant === 'protocol' && (
+							<>
+								<td class="num">
+									{record.txPowerDbm != null ? `${record.txPowerDbm} dBm` : '—'}
+								</td>
+								<td class="num">
+									{record.rxSensitivityDbm != null
+										? `${record.rxSensitivityDbm} dBm`
+										: '—'}
+								</td>
+							</>
+						)}
+						{variant === 'index' && <td>{record.ipRating ?? '—'}</td>}
+						<td>
+							{gate.indexable ? (
+								<span class="record-state">Full record</span>
+							) : (
+								<span class="record-state pending">
+									In database — page pending source completion
+								</span>
+							)}
+						</td>
+					</tr>
+				))
+			}
+		</tbody>
+	</table>
+</div>
+
+<style>
+	.record-state {
+		font-size: var(--fs-sm);
+		color: var(--ink-2);
+	}
+
+	.record-state.pending {
+		font-style: italic;
+	}
+</style>

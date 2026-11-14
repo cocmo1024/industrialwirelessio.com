@@ -1,6 +1,12 @@
 import { getCollection } from 'astro:content';
 import { brand } from '../data/brand';
 import { buildRouteManifest } from '../utils/routes';
+import {
+	productGate,
+	productPath,
+	productSummary,
+	PRODUCT_TYPE_LABELS,
+} from '../utils/products';
 
 export const prerender = true;
 
@@ -63,6 +69,24 @@ export async function GET() {
 		for (const item of items) {
 			lines.push(
 				`- [${item.title}](${item.url})${item.description ? `: ${item.description}` : ''}`,
+			);
+		}
+		lines.push('');
+	}
+
+	// Product pages are data-defined routes (Phase 2): only records that
+	// pass the §4.3 indexability gate have a page, so only those are
+	// listed here — rows-only records are reachable through the index.
+	const productEntries = await getCollection('products');
+	const indexableProducts = productEntries
+		.map((entry) => entry.data)
+		.filter((record) => productGate(record).indexable)
+		.sort((a, b) => `${a.vendor} ${a.model}`.localeCompare(`${b.vendor} ${b.model}`));
+	if (indexableProducts.length) {
+		lines.push('## Product Database — specification pages');
+		for (const record of indexableProducts) {
+			lines.push(
+				`- [${record.vendor} ${record.model}](${brand.siteUrl}${productPath(record)}): ${PRODUCT_TYPE_LABELS[record.productType]}. ${productSummary(record)}`,
 			);
 		}
 		lines.push('');
