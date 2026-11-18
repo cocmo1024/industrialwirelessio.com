@@ -1,0 +1,6 @@
+slug: fieldcomm-group
+name: FieldComm Group
+kind: Standards body
+url: https://www.fieldcommgroup.org/
+note: "Owns WirelessHART (IEC 62591), HART, HART-IP and FDI; runs the device registration program and publishes application guides, including a 2026 guide comparing WirelessHART, LoRaWAN and cellular for industrial applications."
+dateChecked: 2026-11-19

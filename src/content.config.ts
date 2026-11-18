@@ -48,6 +48,8 @@ const pageSchema = z.looseObject({
 	protocolSlug: z.string().optional(),
 	/** Product-index anatomy wiring (Phase 2): this page renders the product database. */
 	productIndex: z.boolean().optional(),
+	/** Vendor-directory anatomy wiring (Phase 3 portal layer, R1.3): this page renders the vendor directory. */
+	vendorIndex: z.boolean().optional(),
 	/** Comparison anatomy wiring (Phase 1): protocol record slugs compared on this page. */
 	comparisonOf: z.array(z.string()).optional(),
 	/** FAQ block (GEO List A construction spec §4): questions verbatim from List C. */
@@ -243,10 +245,81 @@ const vendorSchema = z.object({
 	notes: z.string().optional(),
 });
 
+/**
+ * News items (blueprint R1.2 H2 / R1.3) — one YAML file per item in
+ * src/data/news/. An item exists only when it traces to a primary
+ * source (manufacturer announcement, standards-body or organizer
+ * publication): `sourceName` + `sourceUrl` are mandatory and the item
+ * links OUT to that source. `summary` and `editorsNote` are this
+ * site's own editorial processing — the added value that keeps the
+ * news line from being a link farm (anti-pattern gate item 6).
+ */
+const newsSchema = z.object({
+	slug: z.string(),
+	headline: z.string(),
+	/** Date of the underlying announcement/event, as printed by the source. */
+	date: z.coerce.date(),
+	sourceName: z.string(),
+	sourceUrl: z.string().url(),
+	summary: z.string(),
+	/** Editorial desk note: why this matters to a wireless practitioner. */
+	editorsNote: z.string().optional(),
+	tag: z.enum(['Standards', 'Products', 'Markets', 'Events', 'Ecosystem']),
+	relatedVendors: z.array(z.string()).optional(),
+	relatedProtocols: z.array(z.string()).optional(),
+	/** Optional on-site continuation (e.g. the events index). */
+	internalLink: z.string().optional(),
+	dateChecked: z.coerce.date(),
+});
+
+/**
+ * Events (blueprint R1.2 H6 / R1.3) — one YAML file per event in
+ * src/data/events/. Dates and venues are transcribed from the
+ * organizer's own pages only; `dateChecked` records when.
+ */
+const eventSchema = z.object({
+	slug: z.string(),
+	name: z.string(),
+	startDate: z.coerce.date(),
+	endDate: z.coerce.date(),
+	city: z.string(),
+	venue: z.string(),
+	organizer: z.string(),
+	url: z.string().url(),
+	note: z.string(),
+	dateChecked: z.coerce.date(),
+});
+
+/**
+ * Resources (blueprint R1.2 H6 / R1.3) — one YAML file per entry in
+ * src/data/resources/: standards bodies, alliances and public
+ * references, each with an editorial note on what it is for.
+ */
+const resourceSchema = z.object({
+	slug: z.string(),
+	name: z.string(),
+	kind: z.string(),
+	url: z.string().url(),
+	note: z.string(),
+	dateChecked: z.coerce.date(),
+});
+
 export const collections = {
 	pages: defineCollection({
 		loader: glob({ base: './src/content/pages', pattern: '**/*.{md,mdx}' }),
 		schema: pageSchema,
+	}),
+	news: defineCollection({
+		loader: glob({ base: './src/data/news', pattern: '**/*.yaml' }),
+		schema: newsSchema,
+	}),
+	events: defineCollection({
+		loader: glob({ base: './src/data/events', pattern: '**/*.yaml' }),
+		schema: eventSchema,
+	}),
+	resources: defineCollection({
+		loader: glob({ base: './src/data/resources', pattern: '**/*.yaml' }),
+		schema: resourceSchema,
 	}),
 	protocols: defineCollection({
 		loader: glob({ base: './src/data/protocols', pattern: '**/*.yaml' }),

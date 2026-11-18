@@ -193,7 +193,37 @@ export const brand = {
 		applications: 'Applications',
 		tools: 'Tools',
 		compare: 'Compare',
+		news: 'News',
+		markets: 'Markets',
+		ecosystem: 'Ecosystem',
+		'tech-depth': 'Tech Depth',
+		events: 'Events',
+		resources: 'Resources',
+		'data-center': 'Data Center',
+		subscribe: 'Subscribe',
 	} as Record<string, string>,
+
+	/**
+	 * Portal sections (blueprint R1.4 top bar) — the site's primary
+	 * navigation since the R1 portal layer. Order is the R1 commercial
+	 * priority order; labels are the R1.4 fixed wording.
+	 */
+	portalSections: [
+		{ label: 'News', path: '/news/' },
+		{ label: 'Markets', path: '/markets/' },
+		{ label: 'Ecosystem', path: '/ecosystem/' },
+		{ label: 'Tech Depth', path: '/tech-depth/' },
+		{ label: 'Events', path: '/events/' },
+		{ label: 'Resources', path: '/resources/' },
+	] as { label: string; path: string }[],
+
+	/** Utility entries (R1.4: visually separated from the section nav). */
+	utilityLinks: [
+		{ label: 'Data Center', path: '/data-center/' },
+		{ label: 'Tools', path: '/tools/' },
+		{ label: 'Search', path: '/search/' },
+		{ label: 'Subscribe', path: '/subscribe/' },
+	] as { label: string; path: string }[],
 } as const;
 
 export type Brand = typeof brand;

@@ -61,6 +61,15 @@
   --fs-2xl: 22px;
   --fs-3xl: 24px;
 
+  /* EDITORIAL layer (blueprint R1.8 adaptation, Phase 3 portal layer):
+     display sizes for the front page and section surfaces, declared
+     above the shared scale. Sizes only — the editorial layer consumes
+     the same TEXT/SURFACE/LINE tokens as everything else, so no new
+     contrast pairs arise (L0 judged pairs are unchanged). */
+  --fs-display: 30px;     /* front-page lead headline */
+  --fs-headline: 21px;    /* secondary headlines, feature titles */
+  --lede-lh: 1.5;         /* summary / dek line height */
+
   /* Form — hard corners, hairline structure, no decorative shadow */
   --r-sm: 2px;
   --r-md: 3px;
