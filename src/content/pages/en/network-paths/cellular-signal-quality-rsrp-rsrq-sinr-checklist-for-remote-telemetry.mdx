@@ -36,7 +36,10 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
+faq:
+  - question: What RSRP, RSRQ and SINR values are good for an industrial cellular router?
+    answer: "Read the three together, against published field bands: RSRP of -80 dBm or better is excellent and -90 to -100 dBm is fair to poor; RSRQ of -10 dB or better is excellent and degrades as it approaches -20 dB; SINR of 20 dB or better is excellent, while anything near 0 dB is marginal. These bands are Teltonika Networks' published field guidance for its routers — 3GPP defines what the metrics measure, not what counts as good — and a strong RSRP with a poor SINR is an interference problem, not a coverage problem."
 ---
 
 # Cellular Signal Quality RSRP, RSRQ, and SINR Checklist for Remote Telemetry
@@ -63,6 +66,24 @@ Check:
 - outage timestamps against carrier, weather, site power, and local cabinet events.
 
 If only RSRP is recorded, the team has a partial RF picture. If RSRP, RSRQ, SINR, attach history, and outage evidence are all recorded, the team can usually separate coverage, interference, installation, congestion, power, and router behavior.
+
+## The reading bands: what counts as good
+
+3GPP (TS 36.214 for LTE, TS 38.215 for 5G) defines what RSRP, RSRQ and SINR measure and the ranges a modem can report — it does not grade them. The grades below are the field bands published by Teltonika Networks in its official signal-strength recommendations for its routers; other manufacturers publish their own bands, so where your router's maker publishes one, prefer theirs.
+
+| Metric | Excellent | Good | Fair to poor | Poor |
+|---|---|---|---|---|
+| RSRP | −80 dBm or better | −80 to −90 dBm | −90 to −100 dBm | below −100 dBm |
+| RSRQ | −10 dB or better | −10 to −15 dB | −15 to −20 dB | −20 dB or below |
+| SINR | 20 dB or better | 13 to 20 dB | 0 to 13 dB | 0 dB or below |
+
+Three reading conclusions follow from the bands:
+
+**Do not judge a site by RSRP alone.** RSRP says how much reference-signal power arrives; it says nothing about how usable that power is. A site can show a good RSRP and still fail to hold a session.
+
+**SINR decides what the link can actually carry.** SINR is the metric that tracks usable modulation and throughput: as SINR falls toward 0 dB, the modem falls back to more robust, slower modes and then loses the link, whatever the RSRP says.
+
+**A degrading RSRQ points at interference or cell load before it points at coverage.** RSRQ worsens when the cell is busy or the band is dirty, even at constant RSRP — so the first checks are time-of-day pattern, serving cell and antenna placement, not a bigger antenna.
 
 ## Why signal bars are not enough
 

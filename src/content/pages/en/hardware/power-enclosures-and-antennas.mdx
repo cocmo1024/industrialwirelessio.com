@@ -35,7 +35,10 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
+relatedTools:
+  - /tools/fresnel-zone-calculator/
+  - /tools/link-budget-calculator/
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -139,6 +142,12 @@ The most expensive field telemetry failure is often not the failed component. It
 - the erosion of trust in the telemetry program.
 
 That is why power, enclosures, and antennas deserve first-class design attention.
+
+## Antenna placement: line of sight is not the whole test
+
+A path can look clear and still perform badly. What matters is not just visual line of sight between the antennas but clearance of the first Fresnel zone — the ellipsoid around the direct path — at the path's worst obstruction. The working target is at least 60% of the first zone clear at that point; the figure is an engineering convention from link-planning practice, not a standard's limit, and the zone is widest near the middle of the path, which is where a cabinet-height antenna most often fails the test.
+
+Treat clearance as part of enclosure and mast planning, not as a radio afterthought: mast height, antenna position on the cabinet, and nearby structures are decided when the enclosure is placed. The [Fresnel zone calculator](/tools/fresnel-zone-calculator/) computes the zone radius and clearance ratio for a specific path, and the [link budget calculator](/tools/link-budget-calculator/) shows what the remaining margin means for the link. A site review that records both numbers — clearance ratio and link margin — will catch most "looked fine on the day" antenna failures before they are commissioned.
 
 ## Implementation checklist
 

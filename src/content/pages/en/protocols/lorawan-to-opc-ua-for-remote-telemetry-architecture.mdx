@@ -27,7 +27,7 @@ updateTriggers:
   - OPC Foundation and LoRa Alliance mapping updates
   - Major LoRaWAN gateway or network-server product changes
   - New utility or industrial monitoring requirements around low-power remote sensors
-lastReviewed: 2026-05-04
+lastReviewed: 2026-11-19
 contentCluster: telemetry-protocol-fit
 canonicalCluster: telemetry-protocol-fit
 pageType: protocol-guide
@@ -35,6 +35,9 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
+faq:
+  - question: Can a LoRaWAN network feed data into OPC UA and SCADA?
+    answer: "Yes — that is the normal architecture, provided the mapping happens at the right layer. LoRaWAN stays the low-power field network; decoded payloads are named, typed, timestamped and quality-marked at the network server or gateway layer, and exposed to SCADA and historians as OPC UA objects from there. The sensor itself never speaks OPC UA, and upstream systems should not be left decoding raw payload formats device by device."
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -43,6 +46,8 @@ import LinkCard from '../../../../components/LinkCard.astro';
 
 LoRaWAN is useful in remote telemetry because it can collect small, low-power measurements over long distances. OPC UA is useful because industrial systems need structured meaning, not just bytes. The 2026 joint activity between the OPC Foundation and LoRa Alliance to map LoRaWAN data into OPC UA is important because it points at a long-standing problem: low-power sensor networks often reach the gateway, but then become messy one-off payloads upstream.
 
+This page is the architecture companion to the [LoRaWAN protocol reference](/protocols/lorawan/): that page covers the radio network itself — classes, data rates, duty cycle, payload limits — while this page covers what happens to the data after the network server has it.
+
 The durable architecture question is not "LoRaWAN or OPC UA?" It is "where does a small remote sensor measurement become an industrial information object that SCADA, historians, dashboards, and operations teams can trust?"
 
 ## Quick answer
@@ -50,6 +55,10 @@ The durable architecture question is not "LoRaWAN or OPC UA?" It is "where does 
 LoRaWAN should usually remain the low-power field network. OPC UA should usually appear above the LoRaWAN network server, gateway, or integration layer where decoded payloads can be named, typed, timestamped, quality-marked, and mapped into an industrial information model.
 
 Do not push OPC UA down into tiny battery sensors. Do not leave upstream consumers decoding random LoRaWAN payload formats forever.
+
+## Architecture boundary
+
+The boundary conclusion, stated once and used everywhere on this page: **the LoRaWAN-to-OPC UA mapping belongs at the network-server or gateway layer, never in the end device.** A LoRaWAN sensor sends compact payloads; the integration layer decodes them, attaches names, engineering units, timestamps and quality, and publishes them as OPC UA objects. Data crosses three hops — device to gateway by radio, gateway to network server, network server to the OPC UA layer — and only the last hop speaks OPC UA.
 
 ## What the mapping effort signals
 

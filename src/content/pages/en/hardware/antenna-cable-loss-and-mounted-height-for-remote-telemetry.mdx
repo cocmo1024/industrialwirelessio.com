@@ -35,7 +35,15 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
+relatedTools:
+  - /tools/link-budget-calculator/
+  - /tools/fresnel-zone-calculator/
+faq:
+  - question: How much signal do you lose in a long antenna cable run?
+    answer: "It depends on the cable and the frequency, and the figures are published: at 900 MHz, Times Microwave rates LMR-400 at 3.9 dB per 100 ft, LMR-240 at 7.6 dB, LMR-195 at 11.1 dB and RG-58 at 16.5 dB — so a 10 m run of LMR-240 costs about 2.5 dB, and the same run of RG-58 costs about 5.4 dB. Connectors and surge arrestors add their own insertion loss on top. Cable loss subtracts directly from antenna gain, which is why moving the radio to the antenna often beats buying a bigger antenna."
+  - question: How high should I mount the antenna at a remote telemetry site?
+    answer: "High enough to clear the first Fresnel zone over the path's obstructions — not simply as high as the mast allows. The working target is at least 60% of the first Fresnel zone clear at the worst obstruction point, which is an engineering convention from link-planning practice; the zone radius grows with path length and shrinks with frequency, so the required height is a calculation for the specific path, not a rule of thumb. Extra height beyond clearance buys little and costs cable loss, wind load and lightning exposure."
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -122,6 +130,31 @@ Before finalizing the antenna design, the team should prove that:
 - the cable path is short and disciplined enough to preserve that gain;
 - inspection and replacement are realistic under the site's access conditions;
 - the physical installation can survive weather and routine service.
+
+## Coax attenuation: the published figures
+
+Cable loss is not a matter of opinion — manufacturers publish attenuation per length at stated frequencies. The table below is transcribed from Times Microwave Systems' LMR selection guide (attenuation in dB per 100 ft at +25 °C); the manufacturer's calculator gives exact values at other frequencies.
+
+| Cable | At 900 MHz | At 1,500 MHz |
+|---|---|---|
+| LMR-195 | 11.1 dB / 100 ft | 14.5 dB / 100 ft |
+| LMR-240 | 7.6 dB / 100 ft | 9.9 dB / 100 ft |
+| LMR-400 | 3.9 dB / 100 ft | 5.1 dB / 100 ft |
+| RG-58 | 16.5 dB / 100 ft | not listed in the guide at this frequency |
+
+Worked from the table: a 10 m (about 33 ft) run of LMR-240 at 900 MHz costs roughly 2.5 dB; the same run of RG-58 costs roughly 5.4 dB. Every connector pair and any inline surge arrestor adds further insertion loss on top of the cable figure — count them in the same budget, because the radio cannot tell the difference between loss in the cable and loss in a connector.
+
+## Three field conclusions
+
+**Cable loss spends antenna gain.** A 6 dBi antenna on 10 m of RG-58 at 900 MHz delivers less to the radio than a 3 dBi antenna on a short LMR-400 run. Gain figures are quoted at the antenna port; what the link gets is gain minus everything between the port and the radio.
+
+**Raise the antenna before you enlarge it.** Height clears obstructions and the Fresnel zone; gain only narrows the beam. The order of operations at a weak site is: clear the path, shorten or upgrade the cable, then consider gain.
+
+**Shortening the run usually beats upgrading the radio.** Moving the radio into an outdoor enclosure at the antenna removes the long run entirely. That is often cheaper than the dB it recovers are worth elsewhere in the budget — run the numbers in the [link budget calculator](/tools/link-budget-calculator/) before buying hardware.
+
+## How high: clearance is a calculation
+
+The mounting-height question has a computable answer. The first Fresnel zone — the ellipsoid around the direct path that must stay substantially clear — has a radius set by the path length, the frequency, and where the obstruction sits. The working target is at least 60% of that zone clear at the worst obstruction; the 60% figure is an engineering convention from link-planning practice, not a standard's limit. The [Fresnel zone calculator](/tools/fresnel-zone-calculator/) works the geometry for a specific path; this page's job is the judgement around it: height past clearance buys wind load, lightning exposure and cable loss, not reliability.
 
 ## Implementation checklist
 
