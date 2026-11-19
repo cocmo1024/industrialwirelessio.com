@@ -35,7 +35,7 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -112,6 +112,24 @@ Broader telemetry and data reuse become more defensible when:
 - the support team can manage the stack without repeated specialist intervention.
 
 Until then, simpler architectures usually create more real value.
+
+## The wireless connection pattern for substations and distributed energy
+
+Substation telemetry divides into two traffic classes with different wireless answers. Operational telemetry — breaker states, transformer temperature and load, battery plant health, intrusion and environmental alarms — is low-rate and alarm-driven, well served by an RTU-class device on cellular or private radio with strict exception rules. Distributed-energy sites (solar, storage, small generation) add a second class: production and power-quality data that owners and aggregators want at minute resolution, which pushes the design toward always-on backhaul and a data budget planned for it.
+
+The boundary discipline matters more than the radio choice. Substation networks are protection-adjacent: the telemetry path must be architecturally separated from protection and control systems, with remote access brokered, logged, and disabled by default. Wireless earns its place at the fence line and the auxiliary systems first — monitoring that never touches the protection chain — and only enters deeper with an explicit security architecture behind it.
+
+Event evidence is the third design point. When a breaker operates, the value of the telemetry is the sequence — what changed first, by how much, over what interval. Local timestamping and buffering at the substation device, delivered after the fact if the link was down, is worth more than a faster live feed that loses the order.
+
+## Battery plant and auxiliary systems: the quiet wins
+
+The highest-value substation telemetry is often the least glamorous: the station battery plant. Charger failure and battery degradation are leading causes of protection systems failing to operate on demand, and they announce themselves slowly — float voltage drift, rising impedance, temperature divergence between cells — to any monitoring patient enough to trend them. A telemetry package that watches the battery plant, the cabinet environment, and the fence line will prevent more serious events than one that streams primary plant data nobody trends. Start the wireless scope there, where the data is slow, the alarms are meaningful, and the security boundary is easiest to defend.
+
+## Time synchronisation is evidence quality
+
+Substation records are compared against relay records, neighbouring sites and the control centre's log after every significant event, and those comparisons stand or fall on timestamps. A telemetry device whose clock drifts minutes per month quietly corrupts every sequence it reports. Specify the time source (network time over the backhaul, GPS where justified), monitor clock health as a data point, and treat a site with a sick clock as a site with sick evidence — its data may still alarm correctly, but it will not reconstruct anything.
+
+Specify the time source before the first device is ordered; retrofitting clock discipline across an installed fleet is nobody's idea of a small job.
 
 ## Implementation checklist
 

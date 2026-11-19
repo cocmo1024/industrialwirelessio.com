@@ -33,7 +33,7 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 ---
 
 # Booster stations and pressure-zone telemetry for distribution networks
@@ -117,6 +117,28 @@ These sites often need an explicit fallback model because operators may make dec
 - what field staff should do if the central system shows stale data.
 
 This connects the application page to broader [network outage playbooks](/reliability/network-outage-playbooks-for-unattended-sites/) and [digital-input event buffering](/reliability/digital-input-event-buffering-for-alarm-first-telemetry/). Pressure telemetry is only useful if the communications layer preserves enough context to trust the alarm.
+
+## The wireless connection pattern for booster stations
+
+A booster station usually needs three signal groups on the radio link: pressures (suction and discharge), pump state and run hours, and the station's alarm set — high/low pressure, pump fault, power fail, intrusion. The pattern that fits is a small RTU-class device or a wireless I/O module pair reporting to the utility's SCADA over cellular or a licensed radio path, with report-by-exception on the alarms and a routine report slow enough to keep data costs boring.
+
+Two design points decide whether the link earns trust. First, pressure transients: a booster station is where water hammer shows up, so if transient capture matters, the local device must sample and timestamp locally — no wide-area link reports fast enough to reconstruct a transient after the fact. Second, control boundaries: remote start/stop of booster pumps is a control decision, not a telemetry convenience. Keep interlocks and pressure protection local, let the radio carry commands only where the control philosophy explicitly allows it, and make the loss-of-link state a designed state (pumps hold, pumps stop, or local automatic control continues) rather than a discovered one.
+
+Pressure-zone context also changes the alarm design. A low-pressure alarm at a booster station may be a burst downstream, a pump failure at the station, or a demand spike the station is correctly answering — the telemetry should report the evidence (suction pressure, discharge pressure, pump state, flow where fitted) that lets an operator separate those three stories without a site visit.
+
+## What breaks first at booster stations
+
+The recurring failures are mundane. Pressure transmitters drift or get isolated by a closed valve during maintenance and never reopened, so the telemetry faithfully reports a fiction. Pump run feedback is taken from the starter auxiliary contact, which proves the starter closed, not that the pump is moving water — pair it with flow or discharge pressure before trusting it. Batteries sized for the radio alone die early because the pressure transmitter loop was added later. And the antenna, mounted inside a metal-clad pump hall "temporarily" during commissioning, stays there for a decade, taxing every transmission.
+
+A pilot site proves the design only if it runs through a demand peak and a power event. Schedule the pilot across both, and check the archive afterwards for gaps: the gaps, and how the system labelled them, are the product being bought.
+
+## Data the operators actually use
+
+Keep the point list short and argued. Suction and discharge pressure, each pump's run state and hours, station power state, and the alarm set cover nearly every operational question; flow, where a meter exists, turns pressure arguments into evidence. Resist the long tail of "might be useful" points: every added point costs configuration, alarm review, and eventually a sensor to maintain, and the points nobody trends become the noise that hides the ones that matter. Review the point list after the first season against the questions operators actually asked — the telemetry a booster station needs is the telemetry its incidents keep requesting.
+
+Finally, record the baseline before the telemetry goes in: how the station's problems were discovered previously, and how long discovery took. The value case for the whole installation is written in that comparison, and it cannot be reconstructed afterwards.
+
+The comparison also protects the project politically: when the next budget round asks what the telemetry bought, the answer is a measured discovery time against a measured incident cost, not an anecdote about a bad night.
 
 ## What to prove in a pilot site
 

@@ -21,7 +21,7 @@ lifecycle: hub
 refreshPriority: medium
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 problemSolved: Helps readers solve the practical question behind Reliability instead of stopping at a generic definition or feature list.
 readerTakeaway: "You should leave with a clearer decision model, implementation boundary, or next-step checklist for Reliability."
 ---
@@ -77,14 +77,29 @@ Reliability is the page set that turns an interesting telemetry design into a fi
 		description="A supervisory-continuity page for deciding how quickly unattended sites should declare lost visibility and stale data."
 	/>
 	<LinkCard
-		title="When should a remote site alarm immediately vs buffer locally?"
-		href="/reliability/when-should-a-remote-site-alarm-immediately-vs-buffer-locally/"
-		description="A high-value alarm-separation page for deciding which events deserve instant response and which belong in local continuity buffers."
+		title="Report-by-exception and store-and-forward"
+		href="/protocols/report-by-exception-and-store-and-forward/"
+		description="The consolidated guide to which events deserve instant response and which belong in local continuity buffers — the alarm-separation discipline, in the Protocols section."
 	/>
 	<LinkCard
-		title="Remote telemetry alarm flood reduction"
-		href="/reliability/remote-telemetry-alarm-flood-reduction-deadbands-persistence-and-operator-trust/"
-		description="A trust and reliability page for reducing nuisance alarms with deadbands, persistence, latching, stale-data rules, and actionability review."
+		title="Alarm priority and deadband design"
+		href="/protocols/alarm-priority-and-deadband-design-for-remote-telemetry/"
+		description="The consolidated guide to reducing nuisance alarms with deadbands, persistence, latching, stale-data rules, and actionability review — in the Protocols section."
+	/>
+	<LinkCard
+		title="Firmware patching for remote telemetry devices"
+		href="/reliability/remote-telemetry-firmware-patching-and-device-update-discipline/"
+		description="Update discipline for fleets that cannot afford a bricked device three hours from the depot."
+	/>
+	<LinkCard
+		title="Quarterly inspection checklists for remote sites"
+		href="/reliability/remote-site-quarterly-inspection-checklist-power-antenna-enclosure-and-records/"
+		description="The visit rhythm that catches power, antenna, enclosure and records decay before it becomes an outage."
+	/>
+	<LinkCard
+		title="Solar and battery health for remote telemetry sites"
+		href="/reliability/solar-and-battery-health-for-remote-telemetry-sites/"
+		description="Power-system health monitoring for the sites where the battery, not the radio, ends the service life."
 	/>
 	<LinkCard
 		title="Why do remote telemetry sites go offline?"

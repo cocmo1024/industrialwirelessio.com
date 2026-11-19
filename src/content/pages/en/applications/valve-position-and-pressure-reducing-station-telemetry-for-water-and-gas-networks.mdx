@@ -34,7 +34,7 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 ---
 
 ## What matters first
@@ -130,6 +130,22 @@ That often leads to:
 - and remote visibility that looks adequate until the first real upset.
 
 These sites are usually cheap in point count and expensive in failure ambiguity.
+
+## The wireless connection pattern for valve and PRS sites
+
+Valve and pressure-reducing stations are the most dispersed points in a distribution network: often unpowered, below grade or in small chambers, and visited rarely. The wireless pattern is a battery node reading valve position (open/closed or percentage), upstream and downstream pressure, and chamber state (flood, intrusion), reporting by exception with a daily-to-weekly heartbeat. Sub-GHz and LPWAN links fit because the data is tiny and the sites are many; what matters is the per-point cost and the battery discipline, not bandwidth.
+
+Position feedback deserves one design rule: report the state the valve actually reached, not the state it was commanded to reach. Partial travel, stuck stems and slow actuators are exactly the failures this telemetry exists to catch, and a node that echoes commands instead of measuring position hides all three. Where actuation is remote, the same boundary discipline applies as at any controlled site — local interlocks own safety, the link carries commands only within an explicit control philosophy, and loss of link leaves the valve in its designed state.
+
+Pressure data from PRS sites has a second use beyond operations: it is the cheapest network-model calibration data a utility can buy. Even slow pressure trends from the network's extremities expose modelling errors, closed valves that should be open, and demand growth — value that justifies the telemetry on sites whose alarms alone might not.
+
+## Below-grade and chamber realities
+
+Chamber installations punish assumptions: radio signals attenuate through cast-iron covers and wet soil, condensation attacks connectors, and the antenna that tested well with the lid open fails with it closed. Design for the closed-lid case — external antenna on a short, sealed feed where the structure allows, or a node specified and tested for below-grade service — and commission with the chamber in its working state, not its convenient one. Battery replacement intervals should be planned against the chamber visit schedule the utility actually keeps, so the telemetry never depends on a visit nobody makes.
+
+## Rollout economics
+
+Valve and PRS telemetry scales by hundreds of points, so the unit economics are decided by installation minutes and battery years, not by radio features. A node that needs a chamber rebuild costs ten times the node that clamps on during a routine visit; a battery that lasts four years instead of eight doubles the lifetime visit count across the whole estate. Pilot on the awkward sites — the deep chamber, the far extremity, the known dead spot — because a design that survives those rolls out everywhere, while a design proven only on easy sites fails at fleet scale, expensively and in public.
 
 ## A better rollout model
 

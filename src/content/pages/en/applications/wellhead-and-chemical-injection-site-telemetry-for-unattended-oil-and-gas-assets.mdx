@@ -35,7 +35,7 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -108,6 +108,22 @@ These deployments often disappoint when:
 - dispatch logic is unclear during communications loss;
 - field teams inherit a stack they did not help design;
 - the site depends on perfect connectivity to stay understandable.
+
+## The wireless connection pattern for wellhead sites
+
+Wellhead telemetry runs on the harshest version of the unattended-site problem: hazardous-area constraints, wide temperature swings, long distances between pads, and production data that carries commercial weight. The field layer at the pad is usually an RTU-class device gathering pressures, temperatures, flow and chemical-injection rates, with solar power sized for the worst month. Backhaul splits by geography: private radio or cellular where coverage exists, satellite for the genuinely remote pads — and the store-and-forward discipline matters more than the bearer, because allocation and compliance records are rebuilt from these archives.
+
+Chemical injection is the control-adjacent piece. Injection rates are adjusted against production and corrosion data, so the telemetry loop — measure, report, adjust — is an operations workflow, not just monitoring. Rate changes should be confirmed by measured flow at the injection point, not assumed from pump commands, and the historical record of rates versus time is a corrosion-management document in its own right.
+
+Hazardous-area certification is the hard filter on every device choice at the wellhead: it eliminates products before features are compared, and it applies to the whole installed assembly — device, antenna, glands, power — not just the radio with the certificate on its datasheet.
+
+## Solar sizing at the pad
+
+Pad power fails in a specific way: the array sized for average sun meets the worst month, the dust or snow season, and a battery bank that has aged two winters. Size for the worst month with the aged battery, orient for winter sun at northern latitudes, and monitor the power system itself as telemetry — charge state and load trends are the earliest warning that a site is about to go dark. A pad that reports its own power honestly can be serviced on a route; a pad that goes silently dark becomes an emergency visit and a hole in the production record.
+
+## Data ownership and allocation
+
+Wellhead data feeds allocation — the accounting that divides production among wells, owners and royalty interests — which gives the telemetry a legal weight most monitoring never carries. Retention periods, edit trails and gap documentation belong in the design brief from the start: when a site's archive has a hole, the record should say why (storm, battery, carrier outage, with the store-and-forward log as evidence) rather than leaving the allocation team to discover silence. Telemetry that cannot explain its own gaps will be re-measured by hand, at field-crew prices.
 
 ## Implementation checklist
 

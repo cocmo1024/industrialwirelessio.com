@@ -32,7 +32,7 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -100,6 +100,24 @@ Alarm-first sites should define:
 - whether local buffering preserves the sequence after reconnect.
 
 This prevents the two worst outcomes: alarm spam that operators ignore and quiet failure where the site stops reporting while the last value still looks normal.
+
+## The wireless connection pattern for tank farms
+
+Tank farms are where wireless I/O stops being a telemetry accessory and becomes plant infrastructure. Inside the farm, the instrument layer — level, temperature, pressure, valve state — belongs to the process wireless networks: WirelessHART and ISA100.11a meshes exist precisely for this density of instruments, hazardous-area constraints, and per-device diagnostics, and they reach the control system through their gateways. LoRaWAN and cellular serve the farm's scattered remainder: remote sumps, fence-line environmental points, loading areas and the sites beyond the mesh fence.
+
+The design questions are therefore boundary questions. Which points are control-relevant and belong on the managed mesh, with its update classes and diagnostics? Which are monitoring-only and can ride a low-power wide-area link at a fraction of the cost? And where do the two worlds meet — usually at a gateway or integration layer that presents both to the historian with consistent timestamps and quality flags.
+
+Environmental monitoring around the farm (groundwater wells, leak detection, air points) follows the remote-site pattern rather than the plant pattern: battery nodes, slow reports, loud alarms on absence. One farm, two wireless disciplines — the architecture should say so explicitly instead of forcing one network to do both jobs badly.
+
+## Overfill protection stays independent
+
+One boundary is absolute: overfill prevention and other safety-instrumented functions remain independent of the monitoring telemetry, on their own certified path. Wireless monitoring can watch the same levels, trend them, and alarm early — and should, because it catches slow stories (a drifting gauge, a valve passing) that safety systems are not designed to narrate. But the moment a monitoring link is asked to carry a safety function, the design has left telemetry and entered a different engineering regime with different rules. Keep the regimes separate, and let each do the job it is good at.
+
+## Alarm philosophy inside the fence
+
+Tank farm alarms split into two families that should never share a tuning session. Process alarms (level approaching limits, abnormal rates of change, valve disagreement) belong to operations and follow the plant's alarm-management discipline. Telemetry-health alarms (a mesh device silent, a gateway down, a battery fading) belong to maintenance and follow the stale-data rules: they should be impossible to confuse with process events, because the day both fire together, the crew must know instantly which voice is the plant and which is the instrumentation asking for help.
+
+Keep the two families in separate alarm summaries and separate review meetings; the tuning that suits one actively harms the other.
 
 ## Field rollout checklist
 

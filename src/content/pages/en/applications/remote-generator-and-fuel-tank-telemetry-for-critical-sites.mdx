@@ -35,7 +35,7 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -122,6 +122,20 @@ The remote team usually needs a short, disciplined view:
 - communications loss that is interpreted in outage context.
 
 If alarms are noisy or ambiguous, remote visibility becomes a burden instead of an advantage.
+
+## The wireless connection pattern for generator sites
+
+Generator telemetry is quiet until it is urgent, and the connection pattern should be built for the urgent hour. The device watches run state, fail-to-start, battery voltage, fuel level and enclosure state, reports a slow heartbeat in normal times, and alarms immediately on exercise failure, real run start, or low fuel. Cellular is the usual backhaul; at sites where the generator exists because the grid is unreliable, consider that the same storm takes the grid and stresses the cellular network — the alarm path should store-and-forward rather than depend on a live session.
+
+Fuel is the slow variable that decides outcomes: most generator failures during long outages are fuel and battery stories, not engine stories. A fuel-level trend reported daily, with a low-level exception alarm, converts the commonest outage failure into a routine delivery ticket days earlier.
+
+## Exercise runs are the audit trail
+
+The weekly exercise run is the generator's proof of readiness, and the telemetry should treat it as such: log start, duration, load state where available, and any failure to start as a first-class alarm, not a status footnote. A fleet view of exercise results is the cheapest reliability programme a critical-site operator can run — the generator that failed its Tuesday exercise in October is the one that would have failed during the December storm, and the telemetry earns its cost the first time that swap happens in a workshop instead of an outage.
+
+## Fleet view across critical sites
+
+Single-site telemetry answers "is this generator ready?" Fleet telemetry answers the harder question: "which of our forty generators is least ready, and where should the maintenance route go first?" Exercise failures, battery voltage trends, fuel burn against expected, and run hours since service combine into a readiness ranking that turns generator maintenance from a calendar ritual into a risk queue. The sites that benefit most are the ones nobody visits — the telemetry is not monitoring the generator so much as it is scheduling the humans.
 
 ## Implementation checklist
 

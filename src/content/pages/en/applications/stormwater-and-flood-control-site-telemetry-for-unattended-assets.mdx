@@ -1,6 +1,6 @@
 ---
-title: Stormwater pump controller remote access and flood-control telemetry
-description: A field-first guide to stormwater pump controller remote access, flood-control telemetry, alarm handling, local event capture, and remote command boundaries for unattended assets.
+title: Stormwater and Flood-Control Site Telemetry for Unattended Assets
+description: "A field-first guide to stormwater and flood-control telemetry: pump controller remote access, alarm handling, local event capture, and remote command boundaries for unattended assets."
 referenceType: application
 adProfile: application
 commercialIntent: high
@@ -35,12 +35,12 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
 
-# Stormwater pump controller remote access and flood-control telemetry
+# Stormwater and Flood-Control Site Telemetry for Unattended Assets
 
 Stormwater pump stations and flood-control assets are different from ordinary remote monitoring sites. The most important operating window is often the worst communications window: heavy rain, high inflow, utility power stress, blocked drains, and simultaneous alarms across many sites. A remote-access design that works during a quiet commissioning test may still fail to preserve the event story when operations actually needs it.
 
@@ -196,6 +196,10 @@ Weak designs usually fail because:
 - the event history cannot reconstruct what happened after the storm.
 
 Those are operating-model failures, not only technology failures.
+
+## Event capture is the product
+
+Stormwater sites are idle for most of the year and critical for a few dozen hours. The telemetry earns its place in those hours: high-rate local logging during the event (levels, pump runs, inflows), exception alarms as thresholds cross, and a complete event archive afterwards for the capacity review and the regulator. A system that reports a calm daily average through the storm of the decade has failed at its only job — design the capture first, and let the routine reporting be whatever is left over.
 
 ## Implementation checklist
 

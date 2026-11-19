@@ -21,7 +21,7 @@ lifecycle: hub
 refreshPriority: medium
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 problemSolved: Helps readers solve the practical question behind Applications instead of stopping at a generic definition or feature list.
 readerTakeaway: "You should leave with a clearer decision model, implementation boundary, or next-step checklist for Applications."
 ---
@@ -48,7 +48,11 @@ Applications are the right starting point for remote telemetry because site cont
 	</div>
 </div>
 
-## Core paths
+## Application paths by scenario
+
+Applications are indexed by the operating scenario they serve. Utility telemetry — dispersed, unpowered, rarely visited assets — is this hub's deepest coverage. Process industry paths cover the oil, gas and storage sites where telemetry meets allocation and compliance. Factory-automation coverage (in-plant wireless I/O, AGV and machine retrofit paths) is in production and will join this index as its pages complete review.
+
+### Utility telemetry: water, wastewater and power
 
 <div class="portal-links">
 	<LinkCard
@@ -57,24 +61,9 @@ Applications are the right starting point for remote telemetry because site cont
 		description="A high-value lane for telemetry projects with sparse maintenance access and strong reliability demands."
 	/>
 	<LinkCard
-		title="Remote generator and fuel tank telemetry"
-		href="/applications/remote-generator-and-fuel-tank-telemetry-for-critical-sites/"
-		description="A critical-site lane where outage readiness and fuel assurance matter more than broad telemetry ambition."
-	/>
-	<LinkCard
-		title="Substation and distributed energy telemetry"
-		href="/applications/substation-and-distributed-energy-telemetry/"
-		description="A field architecture lane for remote energy assets where event clarity and survivability drive the design."
-	/>
-	<LinkCard
-		title="Pipeline cathodic protection and remote cabinet telemetry"
-		href="/applications/pipeline-cathodic-protection-and-remote-cabinet-telemetry/"
-		description="A remote cabinet and integrity-monitoring path where alarm credibility, sparse access, and power limits dominate the architecture."
-	/>
-	<LinkCard
-		title="Wellhead and chemical injection telemetry"
-		href="/applications/wellhead-and-chemical-injection-site-telemetry-for-unattended-oil-and-gas-assets/"
-		description="A remote oil and gas field path where low-power telemetry, sparse access, and alarm credibility drive the architecture."
+		title="Lift stations and sewer network telemetry"
+		href="/applications/lift-stations-and-sewer-network-telemetry/"
+		description="Wet-well level, pump state and overflow-risk telemetry for the most failure-prone assets in a sewer network."
 	/>
 	<LinkCard
 		title="Booster stations and pressure-zone telemetry"
@@ -87,15 +76,50 @@ Applications are the right starting point for remote telemetry because site cont
 		description="An event-first water-infrastructure path for sites where flood response, alarm order, and cabinet survivability matter more than steady bandwidth."
 	/>
 	<LinkCard
+		title="Remote tank level telemetry for water and wastewater"
+		href="/applications/remote-tank-level-telemetry-for-water-and-wastewater/"
+		description="Level monitoring for storage and process tanks where the visit cost, not the sensor, dominates the economics."
+	/>
+	<LinkCard
 		title="Valve position and pressure-reducing station telemetry"
 		href="/applications/valve-position-and-pressure-reducing-station-telemetry-for-water-and-gas-networks/"
 		description="A distribution-asset path for valve and PRS sites where state sequence, pressure context, and remote visibility have to survive sparse maintenance conditions."
+	/>
+	<LinkCard
+		title="Substation and distributed energy telemetry"
+		href="/applications/substation-and-distributed-energy-telemetry/"
+		description="A field architecture lane for remote energy assets where event clarity and survivability drive the design."
+	/>
+	<LinkCard
+		title="Remote generator and fuel tank telemetry"
+		href="/applications/remote-generator-and-fuel-tank-telemetry-for-critical-sites/"
+		description="A critical-site lane where outage readiness and fuel assurance matter more than broad telemetry ambition."
+	/>
+</div>
+
+### Process industry: oil, gas and storage
+
+<div class="portal-links">
+	<LinkCard
+		title="Wellhead and chemical injection telemetry"
+		href="/applications/wellhead-and-chemical-injection-site-telemetry-for-unattended-oil-and-gas-assets/"
+		description="A remote oil and gas field path where low-power telemetry, sparse access, and alarm credibility drive the architecture."
+	/>
+	<LinkCard
+		title="Pipeline cathodic protection and remote cabinet telemetry"
+		href="/applications/pipeline-cathodic-protection-and-remote-cabinet-telemetry/"
+		description="A remote cabinet and integrity-monitoring path where alarm credibility, sparse access, and power limits dominate the architecture."
 	/>
 	<LinkCard
 		title="Tank farms and environmental monitoring"
 		href="/applications/tank-farms-and-environmental-monitoring/"
 		description="A field-heavy path for sites where cabinet survivability, alarm credibility, and sparse maintenance access matter more than feature count."
 	/>
+</div>
+
+### Cross-cutting paths
+
+<div class="portal-links">
 	<LinkCard
 		title="Network paths"
 		href="/network-paths/"

@@ -35,7 +35,7 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -122,6 +122,28 @@ These cabinet projects most often disappoint when:
 - there is no local strategy for what happens between telemetry intervals or during outages.
 
 The result is connected cabinets that still trigger avoidable truck rolls.
+
+## The wireless connection pattern for cathodic protection sites
+
+Cathodic protection (CP) monitoring is the extreme case of low-rate telemetry: rectifier outputs, pipe-to-soil potentials, and test-station readings that change slowly and matter enormously. The wireless pattern is a battery or solar node at the rectifier or test station reporting daily to weekly, with instant-off and depolarised measurements taken on the local device's schedule — the measurement technique lives in the field device, because synchronised interruption cannot be orchestrated over a wide-area link after the fact.
+
+What the link must guarantee is not speed but evidence quality: timestamped readings, the rectifier's state at the moment of measurement, and a record that survives backhaul outages until it can be delivered. Compliance reporting is built from these records months later, so a CP telemetry system should be judged like an archive, not like a dashboard — completeness and timestamp integrity outrank refresh rate.
+
+The failure that matters most is silent: a node that stops reporting looks, in a monthly compliance pull, like a site that was never protected. Heartbeat discipline and stale-data rules are therefore the core of the design — every CP site should announce its own silence loudly, through missing-data alarms at the host, long before the compliance review finds the gap.
+
+## Rectifier sites versus test stations
+
+Treat the two point types differently. Rectifier sites have power, a cabinet, and a device that itself needs monitoring (output voltage and current, tap changes, outages) — they justify a fuller RTU-class installation with solar backup. Test stations are passive points visited by technicians with handheld instruments; the telemetry case there is a battery node making the routine potential readings between surveys, so the expensive crew time goes to the measurements that need a human: instant-off surveys, coupon reads, and interference investigations.
+
+Interference deserves its own sentence in any CP telemetry plan: foreign pipelines, DC transit systems and telluric currents all move potentials in ways a naive daily reading will misread as protection changes. Nodes that log at higher cadence during scheduled windows — and timestamp tightly enough to correlate with neighbours — turn interference from a compliance argument into a diagnosable event.
+
+## Survey integration, not survey replacement
+
+Telemetry does not retire the CP technician; it re-aims them. Annual close-interval surveys, coupon stations and interference investigations remain hands-on work. What continuous monitoring changes is the targeting: instead of discovering a dead rectifier at the annual survey — eleven months after it failed — the crew is dispatched within days, and survey effort concentrates on the stretches where the monitored data looks wrong. Budget holders sometimes ask whether monitoring can replace survey line items; the honest answer is that it converts survey from a discovery tool into a verification tool, which is a better use of the same money, not a smaller spend.
+
+Keep the measurement chain honest end-to-end: reference electrodes age, cables chafe, and shunt resistors drift, and the telemetry will report all three as if they were pipeline conditions. A calibration and inspection rhythm for the sensing chain itself — written into the maintenance plan, with its checks logged beside the data — is what separates a monitoring system from a random-number archive with good radios.
+
+The same discipline applies to the archive: readings, calibration records and gap explanations are one compliance document, and they should be stored, retained and retrievable as one. An auditor who has to assemble the story from three systems will price the assembly risk into their findings, and the operator will pay it, every time.
 
 ## Implementation checklist
 
