@@ -34,21 +34,6 @@ export default defineConfig({
 			redirectToDefaultLocale: false,
 		},
 	},
-	vite: {
-		resolve: {
-			alias: {
-				// TEMPORARY (Phase 0–3): legacy MDX bodies import Starlight
-				// components; resolve them to inert stubs so the content
-				// loader compiles. Bodies are not rendered until the
-				// Phase 4 migration replaces those imports natively.
-				// See src/compat/starlight-components.ts.
-				'@astrojs/starlight/components': new URL(
-					'./src/compat/starlight-components.ts',
-					import.meta.url,
-				).pathname,
-			},
-		},
-	},
 	integrations: [
 		mdx(),
 		sitemap({

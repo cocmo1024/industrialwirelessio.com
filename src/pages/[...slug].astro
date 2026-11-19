@@ -14,9 +14,12 @@
  *  - Comparison pages (frontmatter `comparisonOf`): conclusion block
  *    first, budget-style table aligned from both protocol records,
  *    dual link strips, MDX prose, FAQ, merged sources.
- *  - Legacy pages (everything else): the Phase 0 skeleton — bodies
- *    still import Starlight components and migrate in Phase 4; these
- *    pages render frontmatter slots plus a migration panel.
+ *  - Reference pages (everything else; Phase 4 migration): the full
+ *    migrated anatomy — Quick answer panel, body rendered natively
+ *    (Starlight-era components replaced by the native component set),
+ *    live data slots on category and vendor pages, FAQ, and a
+ *    related-objects link zone (explicit frontmatter relations first,
+ *    same-section siblings as the structural floor).
  */
 import { getCollection, render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -28,17 +31,19 @@ import ProductTable from '../components/ProductTable.astro';
 import Slot from '../components/Slot.astro';
 import {
 	bandFamily,
+	buildCategoryDatasetNode,
 	buildDatasetNode,
 	ioTypes,
 	productGate,
+	productPath,
 	protocolLabel,
+	type ProductRecord,
 } from '../utils/products';
 import { brand } from '../data/brand';
 import { buildSeo, type PageKind } from '../utils/seo';
 import {
 	buildRouteManifest,
 	hreflangLinksFor,
-	pagePath,
 	type RouteEntry,
 } from '../utils/routes';
 
@@ -106,7 +111,6 @@ const entries = await getCollection('pages');
 const manifest = buildRouteManifest(entries);
 const hreflang = hreflangLinksFor(manifest, slug);
 const sectionLabel = brand.sectionLabels[slug.split('/')[0]] ?? null;
-const liveUrl = `https://industrialwirelessio.com${pagePath('en', slug)}`;
 
 /* ---- Data-layer wiring (Phase 1) ---- */
 const protocolEntries = await getCollection('protocols');
@@ -160,7 +164,97 @@ const directoryProtocols = [...new Set(directoryRows.flatMap((row) => row.protoc
 
 const isNewAnatomy = isHub || Boolean(protocolRecord) || isComparison || isProductIndex || isVendorIndex;
 
-const { Content } = isNewAnatomy ? await render(entry) : { Content: null };
+/* ---- Category / vendor data slots (Phase 4 migration) ----
+ * The two category essays carry the live records of their category
+ * (blueprint §7.3 mechanism 3: category pages stop being plain essays
+ * and carry the data table + a category Dataset, GEO B-11 Phase 4
+ * item). The three vendor family essays carry their maker's records. */
+const CATEGORY_WIRING: Record<
+	string,
+	{ types: ProductRecord['productType'][]; datasetName: string; datasetDescription: string }
+> = {
+	'product-families/wireless-remote-io-and-rtu-modules': {
+		types: ['wireless-io-module', 'adapter'],
+		datasetName: 'Wireless I/O Modules and Adapters — Industrial Wireless I/O Product Database (category subset)',
+		datasetDescription:
+			'Manufacturer-sourced specifications for the wireless I/O modules and adapters in the Industrial Wireless I/O Product Database: radio protocol, frequency band, transmit power, receiver sensitivity, I/O counts, upstream interfaces, power supply, ingress rating and certifications. Every value is transcribed from the manufacturer datasheet or official product documentation linked from each record; values that cannot be traced to a primary source are left out.',
+	},
+	'product-families/industrial-telemetry-gateways': {
+		types: ['gateway'],
+		datasetName: 'Industrial Telemetry Gateways — Industrial Wireless I/O Product Database (category subset)',
+		datasetDescription:
+			'Manufacturer-sourced specifications for the industrial telemetry gateways in the Industrial Wireless I/O Product Database: radio protocol, frequency band, transmit power, receiver sensitivity, upstream interfaces, power supply, ingress rating and certifications. Every value is transcribed from the manufacturer datasheet or official product documentation linked from each record; values that cannot be traced to a primary source are left out.',
+	},
+};
+const categoryWiring = CATEGORY_WIRING[slug];
+const categoryProducts = categoryWiring
+	? productRecords.filter((record) => categoryWiring.types.includes(record.productType))
+	: [];
+const CATEGORY_VENDOR_PAGES: Record<string, string> = {
+	'product-families/digi-ix10-and-ix20-for-remote-industrial-sites': 'digi',
+	'product-families/phoenix-contact-tc-router-for-unattended-telemetry-sites': 'phoenix-contact',
+	'product-families/siemens-scalance-m-for-industrial-remote-access-and-telemetry': 'siemens',
+	'vendors/phoenix-contact-field-connectivity': 'phoenix-contact',
+	'vendors/siemens-remote-connectivity': 'siemens',
+};
+const slotVendorSlug = CATEGORY_VENDOR_PAGES[slug];
+const slotVendor = slotVendorSlug
+	? vendorRecords.find((vendor) => vendor.slug === slotVendorSlug)
+	: undefined;
+const slotVendorProducts = slotVendorSlug
+	? productRecords.filter((record) => record.vendorSlug === slotVendorSlug)
+	: [];
+
+/* ---- Related-objects zone (blueprint §7.3 mechanism 2) ----
+ * Explicit frontmatter relations (relatedProtocols / relatedProducts /
+ * relatedTools) are the editorial layer; same-section siblings are
+ * the structural floor so no migrated page ships without outbound
+ * object links. Inbound depth is verified against the built link
+ * graph (scripts/link-graph-report.mjs). */
+const siblingRoutes = manifest
+	.filter(
+		(route) =>
+			route.locale === 'en' &&
+			slug.includes('/') &&
+			route.slug.startsWith(`${slug.split('/')[0]}/`) &&
+			route.slug !== slug &&
+			route.slug.split('/').length === 2,
+	)
+	.sort((a, b) => a.path.localeCompare(b.path))
+	.slice(0, 4);
+const siblingTitles = new Map(
+	entries.map((e) => {
+		const parsed = e.id.replace(/^en\//, '').replace(/\/index$/, '');
+		return [parsed, e.data.title];
+	}),
+);
+const relatedProtocolLinks = (data.relatedProtocols ?? [])
+	.map((protocolSlug) => recordBySlug.get(protocolSlug))
+	.filter(Boolean)
+	.map((record) => ({ href: `/protocols/${record!.slug}/`, label: record!.name }));
+const relatedProductLinks = (data.relatedProducts ?? [])
+	.map((productSlug) => productRecords.find((record) => record.slug === productSlug))
+	.filter(Boolean)
+	.map((record) => ({
+		href: productGate(record!).indexable ? productPath(record!) : record!.sourceUrl,
+		label: `${record!.vendor} ${record!.model}`,
+	}));
+const relatedToolLinks = (data.relatedTools ?? []).map((toolPath) => ({
+	href: toolPath,
+	label:
+		toolPath === '/tools/link-budget-calculator/'
+			? 'Link budget calculator'
+			: toolPath === '/tools/fresnel-zone-calculator/'
+				? 'Fresnel zone calculator'
+				: toolPath,
+}));
+const hasRelatedZone =
+	relatedProtocolLinks.length > 0 ||
+	relatedProductLinks.length > 0 ||
+	relatedToolLinks.length > 0 ||
+	siblingRoutes.length > 0;
+
+const { Content } = await render(entry);
 
 if (data.faq && data.faq.length > 0) {
 	seo.structuredData.push({
@@ -177,6 +271,16 @@ if (data.faq && data.faq.length > 0) {
 
 if (isProductIndex) {
 	seo.structuredData.push(buildDatasetNode(productRecords));
+}
+
+if (categoryWiring && categoryProducts.length > 0) {
+	seo.structuredData.push(
+		buildCategoryDatasetNode(categoryProducts, {
+			slug: slug.split('/').at(-1)!,
+			name: categoryWiring.datasetName,
+			description: categoryWiring.datasetDescription,
+		}),
+	);
 }
 
 /* Comparison table rows: fixed identity rows + key parameters aligned by key. */
@@ -875,17 +979,88 @@ const latestChecked = (sources: { dateChecked: Date }[]) =>
 						</ul>
 					</section>
 				)}
-				<section class="panel migration-note">
-					<div class="panel-head">Rebuild in progress</div>
-					<div class="panel-body">
-						<p>
-							This page is being migrated into the new reference anatomy. Its full text is
-							already compiled into <a href="/llms-full.txt">llms-full.txt</a>, and the live
-							version remains available while the rebuild proceeds.
-						</p>
-						<a class="btn" href={liveUrl}>Read the live version</a>
+				{Content && (
+					<div class="prose">
+						<Content />
 					</div>
-				</section>
+				)}
+				{categoryProducts.length > 0 && (
+					<section>
+						<h2>Records in this category</h2>
+						<p class="pages-note">
+							Live from the product database — every figure transcribed from the
+							manufacturer source linked from each record; records that pass the
+							publishing gate link to their product page, the rest link to the source.
+						</p>
+						<ProductTable products={categoryProducts} variant="protocol" />
+					</section>
+				)}
+				{slotVendorProducts.length > 0 && (
+					<section>
+						<h2>{slotVendor ? `${slotVendor.name} in the product database` : 'In the product database'}</h2>
+						<ProductTable products={slotVendorProducts} variant="protocol" />
+						{slotVendor && (
+							<p class="pages-note">
+								Full record set and company profile:{' '}
+								<a href={`/vendors/${slotVendor.slug}/`}>{slotVendor.name} vendor page</a>
+							</p>
+						)}
+					</section>
+				)}
+				{data.faq && data.faq.length > 0 && <FaqSection items={data.faq} />}
+				{hasRelatedZone && (
+					<section class="related-zone" aria-label="Related references">
+						<h2>Related references</h2>
+						{relatedProtocolLinks.length > 0 && (
+							<>
+								<h3>Protocols</h3>
+								<ul>
+									{relatedProtocolLinks.map((link) => (
+										<li>
+											<a href={link.href}>{link.label}</a>
+										</li>
+									))}
+								</ul>
+							</>
+						)}
+						{relatedProductLinks.length > 0 && (
+							<>
+								<h3>Products in the database</h3>
+								<ul>
+									{relatedProductLinks.map((link) => (
+										<li>
+											<a href={link.href}>{link.label}</a>
+										</li>
+									))}
+								</ul>
+							</>
+						)}
+						{relatedToolLinks.length > 0 && (
+							<>
+								<h3>Engineering tools</h3>
+								<ul>
+									{relatedToolLinks.map((link) => (
+										<li>
+											<a href={link.href}>{link.label}</a>
+										</li>
+									))}
+								</ul>
+							</>
+						)}
+						{siblingRoutes.length > 0 && (
+							<>
+								<h3>More in this section</h3>
+								<ul>
+									{siblingRoutes.map((route) => (
+										<li>
+											<a href={route.path}>{siblingTitles.get(route.slug) ?? route.slug}</a>
+										</li>
+									))}
+								</ul>
+							</>
+						)}
+					</section>
+				)}
 			</article>
 		)
 	}
@@ -922,8 +1097,22 @@ const latestChecked = (sources: { dateChecked: Date }[]) =>
 		margin-bottom: 1.2rem;
 	}
 
-	.migration-note p {
-		margin-bottom: 0.6rem;
+	.related-zone {
+		border-top: 2px solid var(--line-strong);
+		margin-top: 2rem;
+		padding-top: 1rem;
+	}
+
+	.related-zone h3 {
+		font-size: var(--fs-sm);
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		margin: 1rem 0 0.4rem;
+	}
+
+	.related-zone ul {
+		margin: 0;
 	}
 
 	.prose {

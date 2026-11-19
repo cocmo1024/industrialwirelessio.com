@@ -1,0 +1,50 @@
+---
+/**
+ * Link Card — native replacement for the Starlight LinkCard used by
+ * the legacy MDX bodies (Phase 4 migration). One link, one decision:
+ * title, target, one-line description. Styled from the shared tokens
+ * so migrated pages read as part of the new anatomy, not the old
+ * documentation theme.
+ */
+interface Props {
+	title: string;
+	href: string;
+	description?: string;
+}
+
+const { title, href, description } = Astro.props;
+---
+
+<a class="link-card" href={href}>
+	<span class="link-card-title">{title}</span>
+	{description && <span class="link-card-desc">{description}</span>}
+</a>
+
+<style>
+	.link-card {
+		display: block;
+		border: 1px solid var(--line-strong);
+		background: var(--surface, transparent);
+		padding: 0.8rem 1rem;
+		margin: 0.6rem 0;
+		text-decoration: none;
+		color: var(--ink);
+	}
+
+	.link-card:hover {
+		border-color: var(--accent);
+	}
+
+	.link-card-title {
+		display: block;
+		font-weight: 600;
+		color: var(--accent);
+	}
+
+	.link-card-desc {
+		display: block;
+		margin-top: 0.25rem;
+		font-size: var(--fs-sm);
+		color: var(--ink-2);
+	}
+</style>

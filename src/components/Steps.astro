@@ -1,0 +1,33 @@
+---
+/**
+ * Steps — native replacement for the Starlight Steps component
+ * (Phase 4 migration). Wraps an ordered list written in the MDX body
+ * and presents it as a numbered procedure with a rule rail.
+ */
+---
+
+<div class="steps">
+	<slot />
+</div>
+
+<style>
+	.steps {
+		border-left: 3px solid var(--accent);
+		padding-left: 1.2rem;
+		margin: 1rem 0;
+	}
+
+	.steps :global(ol) {
+		margin: 0;
+		padding-left: 1.2rem;
+	}
+
+	.steps :global(li) {
+		margin: 0.45rem 0;
+	}
+
+	.steps :global(li::marker) {
+		font-weight: 700;
+		color: var(--accent);
+	}
+</style>

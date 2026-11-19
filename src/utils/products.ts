@@ -261,6 +261,44 @@ export function buildDatasetNode(records: ProductRecord[]) {
 	};
 }
 
+/**
+ * Category-level Dataset node (GEO List B-11, Phase 4 item): same
+ * structure and field definitions as the database-wide node, scoped
+ * to one product category and anchored on the category page.
+ */
+export function buildCategoryDatasetNode(
+	records: ProductRecord[],
+	category: { slug: string; name: string; description: string },
+) {
+	const latest = records.length
+		? new Date(Math.max(...records.map((record) => record.dateChecked.getTime())))
+				.toISOString()
+				.slice(0, 10)
+		: undefined;
+	const url = `${brand.siteUrl}/product-families/${category.slug}/`;
+	return {
+		'@context': 'https://schema.org',
+		'@type': 'Dataset',
+		'@id': `${url}#dataset`,
+		name: category.name,
+		description: category.description,
+		url,
+		creator: { '@id': `${brand.siteUrl}/#organization` },
+		publisher: { '@id': `${brand.siteUrl}/#organization` },
+		inLanguage: 'en-US',
+		...(latest ? { dateModified: latest } : {}),
+		license: `${brand.siteUrl}/terms-of-use/`,
+		usageInfo:
+			'Data transcribed from publicly available manufacturer datasheets and product documentation; cite the manufacturer source linked from each product record when reusing a figure. Product names and trademarks belong to their respective manufacturers.',
+		variableMeasured: DATASET_VARIABLES.map((variable) => ({
+			'@type': 'PropertyValueSpecification',
+			name: variable.name,
+			description: variable.definition,
+			...(variable.unit ? { unitText: variable.unit } : {}),
+		})),
+	};
+}
+
 /** Schema.org Product node for an indexable product page, sourced fields only. */
 export function buildProductNode(record: ProductRecord) {
 	const url = `${brand.siteUrl}${productPath(record)}`;

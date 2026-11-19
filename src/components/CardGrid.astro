@@ -1,0 +1,23 @@
+---
+/**
+ * Card Grid — native replacement for the Starlight CardGrid
+ * (Phase 4 migration). Responsive grid wrapper for Card panels; the
+ * legacy `stagger` prop is accepted and ignored.
+ */
+interface Props {
+	stagger?: boolean;
+}
+---
+
+<div class="card-grid">
+	<slot />
+</div>
+
+<style>
+	.card-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+		gap: 1rem;
+		margin: 1rem 0;
+	}
+</style>

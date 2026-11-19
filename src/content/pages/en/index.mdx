@@ -38,9 +38,12 @@ problemSolved: Helps readers understand how Industrial Wireless I/O is organized
 readerTakeaway: You should leave knowing the main sections of Industrial Wireless I/O and which path to open next.
 ---
 
-import { Card, CardGrid, LinkCard, Steps } from '@astrojs/starlight/components';
+import Card from '../../../components/Card.astro';
+import CardGrid from '../../../components/CardGrid.astro';
+import LinkCard from '../../../components/LinkCard.astro';
+import Steps from '../../../components/Steps.astro';
 
-<CardGrid stagger>
+<CardGrid>
 	<Card title="Applications" icon="open-book">
 		Remote telemetry environments organized around asset behavior, maintenance reality, and data goals.
 	</Card>
