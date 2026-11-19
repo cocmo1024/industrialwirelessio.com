@@ -33,7 +33,7 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -114,6 +114,16 @@ After a lightning or surge-heavy event, field teams should inspect:
 - whether the site recovered cleanly or only appeared to recover.
 
 This evidence helps separate carrier outages from physical damage. It also gives operations a defensible reason to upgrade a cabinet rather than repeatedly replacing electronics.
+
+## Coordinating the protection stages
+
+One SPD at the cabinet entry is a start, not a system. Coordinated protection stages the energy: a high-capacity device where the service enters, finer protection at the equipment where long internal runs or sensitive inputs justify it, and protection on every conductive path that crosses the boundary — power, antenna feedlines, and the field signal cables that leave the cabinet for sensors on masts, tanks and wellheads. The signal lines are the forgotten path: a surge induced on a 200-metre sensor run arrives at the transmitter and the I/O card, not at the power SPD, and it arrives whether or not the mains protection is perfect.
+
+Coordination also means the stages must not fight: the upstream device should take the bulk of the energy and the downstream device the residual, which is a matter of device class, connecting lead length and the decoupling the cable run itself provides. Manufacturer coordination guidance exists for exactly this pairing problem; follow the tested combinations rather than assembling stages by catalogue voltage ratings alone.
+
+## After the strike: evidence and replacement
+
+Protection that has worked once has spent itself, partly or wholly. SPDs degrade with each event they absorb, and their status indication — wired to a telemetry point, per this site's channel parity rules — is the only thing standing between a protected cabinet and a cabinet that merely looks protected. The post-storm workflow belongs in the outage playbook: which sites took events, which SPDs report end-of-life, which get a visit before the next storm rather than after it. Surge protection at unattended sites is a consumable with a monitoring system attached, and it should be budgeted and stocked that way.
 
 ## Design rule for unattended sites
 

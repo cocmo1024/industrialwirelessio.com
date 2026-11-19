@@ -27,7 +27,7 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -78,6 +78,22 @@ Local fallback may include:
 - or entering a safe local mode when upstream control disappears.
 
 The team should define fallback by consequence. A tank level site, a generator fuel site, a lift station, and a cathodic-protection rectifier do not need the same fallback behavior.
+
+## The assumption register
+
+Survivability planning becomes real when its assumptions are written as a register, one line each, with an owner and a test. The register for a typical unattended site reads like this: grid outages at this site last under 48 hours (test: utility records and the site's own power-fail log after year one). The carrier restores regional service within 24 hours (test: the last two regional events). A crew can reach the site within one working day in any season (test: the winter access check, not the summer one). The battery delivers its rated capacity at the site's winter temperature (test: the discharge evidence in the telemetry itself). Flood water does not reach the cabinet plinth (test: the site survey against the flood record, revisited after any upstream development).
+
+Each assumption gets a design consequence when it fails: autonomy extends, a second carrier appears, the visit rhythm changes, the cabinet rises. The register's value is that it converts survivability from a mood into a list of bets the design has placed — bets that can be reviewed after every real event, when the site has just announced which assumptions were wrong. Sites that survive decades are not the ones designed most conservatively; they are the ones whose assumptions were written down early enough to be corrected cheaply.
+
+## Designing for the maintenance you actually have
+
+The final survivability input is the maintenance reality: visit frequency, crew skill mix, spare-parts geography, and the budget rhythm that replaces batteries in year five rather than year eight. A design that assumes quarterly visits at a site the organisation actually reaches annually is not a conservative design — it is a fiction with good components. Survivability planning starts from the service model that exists, or from an explicit decision to fund a better one; anything else transfers the gap into the failure statistics, where it will be discovered at the usual price and the usual hour.
+
+Pair this with the assumption register: every line in the register that depends on a visit (battery capacity checks, SPD status, desiccant and seal condition) inherits the real visit interval, and the autonomy and monitoring budgets are sized to cover the difference between the visits the design wanted and the visits the organisation keeps.
+
+## Survivability is a fleet property
+
+Single-site thinking hides the correlated failures: the regional storm that takes forty sites at once, the carrier fault that darkens a whole district, the firmware defect present in every unit of one model. Fleet-level survivability asks different questions — how much of the estate can be dark before operations lose the picture entirely, whether the critical sites are concentrated on one carrier, one power utility, one device model — and it budgets diversity where concentration creates shared fate. The site register and the fleet map are the same document read at two zoom levels, and the planning review should read both.
 
 ## Minimum acceptance test
 

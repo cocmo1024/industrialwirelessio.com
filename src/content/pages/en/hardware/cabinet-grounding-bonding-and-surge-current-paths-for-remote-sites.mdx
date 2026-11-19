@@ -33,7 +33,7 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 ---
 
 # Cabinet grounding, bonding, and surge current paths for remote sites
@@ -94,6 +94,28 @@ Strong remote-site cabinets usually show:
 - and a grounding scheme that technicians can inspect without guesswork.
 
 That is usually more valuable than adding more devices after failures start.
+
+## Equipotential bonding: one reference, short paths
+
+The cabinet, the mast, the cable shields, the SPD earth terminals and the incoming services should all meet at one bonding point with short, straight conductors. The physics is unforgiving: at lightning and surge frequencies, conductor inductance dominates resistance, so a long, looping earth lead can develop more voltage than the equipment it was meant to protect. Bond first for the surge path — wide, short, direct — and treat the resistance-to-earth measurement as a secondary check, not the design goal.
+
+Bond every metallic entry to the same point: power, antenna feedlines (through their SPDs or bulkhead grounds), signal cables from field devices, and any metallic conduit or tray. A single unbonded entry — the sensor cable somebody added in year two, straight from a field junction box — reopens the potential differences the bonding was built to close, and it does so exactly when a surge arrives on that cable. The bonding diagram belongs in the cabinet door pocket, and every later modification should be checked against it.
+
+## Shield termination practice
+
+Cable shields earn their keep when they are terminated deliberately. For surge and EMC purposes at remote cabinets, terminate shields to the bonding system with low-impedance connections — 360-degree clamps or short pigtails at the cabinet entry plate — rather than long drain wires dressed neatly to a distant rail. Inside the cabinet, keep the distinction the instrument engineers care about: shields bonded for surge at entry, and signal-reference practices (single-point versus both-ends for low-frequency analogue loops) applied per the loop design, not by habit. Where both-ends bonding would circulate mains-frequency current on a long analogue run, use the hybrid approach — direct bond at entry, capacitive bond at the far end — and document it on the loop drawing.
+
+## Verifying the installation
+
+Grounding is verifiable, and unattended sites deserve the verification most. At commissioning: photograph the bonding arrangement before the door closes, record conductor sizes and routes on the as-built, measure and log earth resistance with the method used, and confirm every SPD's status indication is wired to something that will be seen (a telemetry point, not just an LED behind a closed door). At inspection visits, the checks are visual and cheap: corrosion at bonds, a shield clamp loosened by vibration, the SPD that took a hit and is quietly indicating end-of-life. Grounding fails slowly and announces itself only during the event it was meant to survive — the inspection rhythm is the design.
+
+## Common defects found on inspection
+
+Inspection visits to older sites find the same short list. The earth conductor was cut during a later cable installation and rejoined with a twist and tape. The antenna SPD was bypassed when a feedline was replaced, because the replacement was longer and "didn't reach". A second cabinet was added beside the first with its own earth rod and no bond between them, creating exactly the two-reference arrangement the original design avoided. Paint and corrosion have crept under a bonding lug that was never torqued after its first season. None of these defects announces itself in the telemetry; all of them wait for the surge. The inspection checklist for grounding is therefore short, visual and non-negotiable — and its findings belong in the site record beside the commissioning photographs, so the next inspector compares against evidence rather than impressions.
+
+## Mast and antenna grounding
+
+The mast deserves its own paragraph because it is the tallest conductor on the site and the one most likely to be treated as somebody else's problem. Bond the mast structure to the site bonding system at its base, bond the antenna feedline's shield at the mast and again where it enters the cabinet (through the entry SPD), and keep the down-conductor route straight and outside the cabinet's other cable entries. A feedline that enters unbonded and unprotected, dressed neatly to the radio, is a lightning delivery system aimed at the most expensive device in the cabinet. Where the antenna must sit on a shared structure — a water tank, a building, a tower owned by others — the bonding arrangement becomes a negotiation with the structure owner, and it belongs in the site agreement, not in a commissioning-week improvisation.
 
 ## What to read next
 

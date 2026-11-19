@@ -33,7 +33,7 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 ---
 
 # Heartbeat timers, stale-data rules, and supervisory loss handling
@@ -120,6 +120,20 @@ Stale data should be visible in the operator interface. A good display should sh
 - whether local buffered events are pending.
 
 If the display shows only the last value, operators may make decisions from old data without realizing it.
+
+## Choosing the numbers: a worked policy shape
+
+The settings form a chain, and each link should be a deliberate multiple of the previous one. The device reports on a heartbeat interval H. The host tolerates a small number of missed reports — say three — before data is marked stale at 3H. Stale becomes an alarm at a threshold set by the cost of blindness for that site class: a flood-critical site alarms in tens of minutes; a CP rectifier can wait a day. Escalation to a human follows if the alarm persists beyond a second threshold, by which time the carrier-outage and regional-event checks should already have run automatically.
+
+Worked shape for a water utility's mixed estate (illustrative policy, to be tuned per site): critical alarm sites — H of 5 minutes, stale at 15, alarm at 30, escalation at 2 hours. Standard telemetry — H of 1 hour, stale at 3 hours, alarm at 6, escalation next business day. Slow compliance points — H of 24 hours, stale at 48, alarm at 72, escalation weekly review. The values matter less than the properties: every class has all four numbers written down, the ratios are sane, and nobody discovers during an incident that a class was never assigned.
+
+## Heartbeats during degraded operation
+
+Decide in advance how the heartbeat behaves when the site itself is in trouble. A device on battery backup after a power failure may lengthen its interval deliberately — a designed degradation that trades freshness for survival, announced in the data so the host adjusts its stale thresholds rather than alarming on schedule. A device behind a congested or metered link may batch heartbeats with exception traffic. Both are legitimate; what is not legitimate is silent improvisation, where the field device changes its rhythm for reasons the host was never told, and the supervisory system spends an incident investigating a policy it does not know exists. Degraded-mode timing is part of the policy table, written next to the normal numbers.
+
+## Stale data must look stale
+
+The supervisory display carries half the policy. A value that has stopped updating must be visually and programmatically distinguishable from a live one — greyed, flagged, aged — in every view, export and API the host offers, because the costliest stale-data failures are not alarms missed but decisions made on numbers that looked current. Operators should be able to answer, for any value on any screen, "how old is this?" without leaving the screen. Test it during acceptance by killing a site's link and watching the displays, not the configuration: if any screen keeps presenting the frozen value as fact, the stale-data policy exists only on paper.
 
 ## Acceptance test
 

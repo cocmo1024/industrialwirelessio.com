@@ -35,7 +35,7 @@ lifecycle: evergreen
 refreshPriority: medium
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -126,6 +126,20 @@ Outage response usually goes wrong when:
 - ownership between operations, IT, and field teams is unclear.
 
 The result is more truck rolls and less confidence.
+
+## The first hour, scripted
+
+A playbook earns its name in the first hour. Minute zero to ten: confirm the outage is real and scoped — one site, a cluster on one carrier, or a region — using the host-side view before touching anything; most "outages" in that window are host, account or carrier events wearing a site failure's clothes. Ten to thirty: classify against the known signatures (power, backhaul, device, host) using the last evidence the site sent — battery trend, signal trend, the final alarm — and write the classification down, because the second hour's decisions depend on the first hour's reasoning being visible. Thirty to sixty: act on the classification — carrier ticket with the cluster evidence attached, crew dispatch with the right parts theory, or deliberate waiting where the playbook says the failure class self-recovers and a visit would only add a coincidental change.
+
+The discipline that makes this work is the log: every outage closes with the classification, the action, and whether the classification was right. Playbooks improve only when their misses are recorded; a playbook that is never wrong on paper is one nobody is checking against reality.
+
+## The carrier call, prepared in advance
+
+The playbook should contain the carrier escalation as a pre-written artefact: account identifiers, the affected SIM range, the evidence format the carrier's engineers actually accept (timestamps, cell identifiers where the devices report them, the cluster map), and the internal owner authorised to accept a carrier's "no fault found" and push back with data. Outages are the worst possible time to discover that the person who knows the carrier account left the company. Keep the artefact with the playbook, review it quarterly, and rehearse it once a year against a simulated regional event — the first rehearsal always finds the stale phone number.
+
+## Closing the outage
+
+An outage is not over when the data resumes. It closes when the backfilled archive has been checked for the gaps the store-and-forward discipline promised to prevent, when the classification's correctness is recorded, and when any site whose evidence contradicts the classification is flagged for the pattern review. Clusters of "carrier outage" closures that each lasted exactly one heartbeat too long, or power closures at sites whose battery telemetry looked healthy, are the review's raw material. The playbook's last page is a standing agenda for that review — monthly, short, and with the authority to change the playbook itself.
 
 ## Implementation checklist
 

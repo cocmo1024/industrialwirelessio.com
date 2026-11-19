@@ -35,7 +35,7 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -106,6 +106,20 @@ These cabinets often disappoint when:
 - optional loads accumulate without revisiting the power model;
 - wiring convenience overrides serviceability;
 - the site has no clear rule for what should stay powered during degraded conditions.
+
+## Working the load budget
+
+The load budget is arithmetic, and it should be done in amp-hours per day, not in catalogue watts. List every load with its duty: the router and RTU run continuously; the transmitter loops draw their standing current; the heater and fan cycle with weather; the radio's transmit peaks average out to a small daily figure at telemetry duty cycles but dominate the peak-current sizing. Sum the continuous loads, apply honest duty factors to the cyclic ones, and the daily amp-hour figure falls out. Battery capacity is then that figure multiplied by the autonomy days the site must survive, corrected for temperature and for the depth of discharge the battery chemistry tolerates — and then checked against the worst month, not the average one.
+
+A worked shape (illustrative, not a specification): a cabinet drawing 0.8 A continuously at 24 V consumes about 19 Ah per day. Three days of autonomy at 50 percent depth of discharge needs roughly 115 Ah of nameplate capacity before temperature correction. The point of the example is the method: any site whose budget cannot be written in this form is not yet designed, whatever its purchase order says.
+
+## Battery isolation and maintenance safety
+
+Isolation is a safety feature before it is a convenience. A clearly identified battery disconnect — reachable without tools in the dark, labelled, and positioned so a technician can make the cabinet safe before working — prevents the classic injuries and the classic mistakes: the shorted spanner, the reversed replacement battery, the "dead" cabinet that was only ever isolated at the charger. Pair the disconnect with per-branch fusing sized to the conductor, not to the load's appetite, and put the fuse schedule inside the door. When a branch fuse blows at an unattended site, the telemetry should say which branch went dark; a cabinet that reports "power fail" for a single fused sensor loop sends crews out with the wrong parts and the wrong theory.
+
+## Charger behaviour matters too
+
+Size the charger for two jobs at once: carrying the standing load and recovering a depleted battery in a time the site can tolerate, without cooking the battery in the process. A charger that barely exceeds the load current leaves a site one long outage away from a battery that never refills before the next event; a charger with aggressive bulk rates shortens battery life in float service. Temperature-compensated charging is not a refinement at outdoor cabinets — a battery floated at a fixed voltage through a hot summer and a cold winter is being overcharged in one season and undercharged in the other.
 
 ## Implementation checklist
 

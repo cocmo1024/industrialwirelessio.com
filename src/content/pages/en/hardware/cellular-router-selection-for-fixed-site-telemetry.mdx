@@ -35,7 +35,7 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -168,6 +168,12 @@ The most common selection mistakes are:
 - choosing a premium router because "we might need video later."
 
 Those errors all look reasonable during procurement and expensive during operations.
+
+## Beyond telemetry: what else rides the same router
+
+Fixed-site cellular routers rarely carry telemetry alone for long. The same connection accumulates duties: remote access for maintenance, CCTV or event-image backhaul from site cameras, a secondary path for a site LAN, time synchronisation, and the management traffic of every other connected device in the cabinet. Selection should anticipate the accumulation. A router sized only for a trickle of SCADA polls will be blamed unfairly when video or bulk file transfer arrives; conversely, paying for throughput a site will never use wastes the budget that antenna work needed more.
+
+The questions that separate a durable choice from a regretted one are therefore platform questions: How are fleets configured, monitored and updated — individually, or from a management platform? What happens when the carrier sunsets a band or a SIM contract changes — how many site visits does the migration cost? Which security model governs remote access through the router, and who owns the accounts when staff change? The telemetry framing of this page is the entry point; the selection discipline is the same for any fixed industrial site the router will serve for a decade.
 
 ## Implementation checklist
 

@@ -35,7 +35,7 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -106,6 +106,20 @@ These sites usually become frustrating when:
 - buffering exists but the operational workflow never references it.
 
 The result is repeated uncertainty and avoidable dispatches.
+
+## A latching policy by signal class
+
+Write the policy per signal class, not per site, and the arguments mostly settle themselves. Safety and damage signals — high-high level, gas detection, fire, intrusion at critical sites — latch, always: their transient occurrence is the fact that matters, and nobody should need to be watching at the right second. Process excursions with operational consequences — pump fault, low pressure sustained, power fail — latch until acknowledged, because the response workflow needs a queue that does not evaporate. Diagnostic and quality signals — low battery warning, signal-strength degradation, enclosure temperature — self-clear but count: a self-clearing signal that fires forty times a month is a maintenance fact, and the count should surface in reporting even though no single occurrence deserved an alarm. Momentary states with no consequence — a door opened during a logged visit, a float bouncing in turbulence — neither latch nor alarm; they belong in the event buffer, available for reconstruction, invisible to the alarm queue.
+
+The anti-pattern to design against is the uniform policy: everything latching drowns operators in acknowledgements until acknowledgement becomes a reflex; everything self-clearing erases exactly the fleeting events that unattended sites exist to capture. The class table, reviewed after the first season against what actually fired, is the deliverable.
+
+## Acknowledgement is a workflow, not a button
+
+Latching only works if acknowledgement means something. Define who may acknowledge, what acknowledgement asserts (a human has seen this, owns it, and the response clock is running), and what happens to a latched alarm nobody acknowledges within its escalation window. Sites also need the honest reverse path: an alarm acknowledged in error should be re-armable without a site visit, and the audit trail should keep both events. When acknowledgement is a reflex — hundreds of latches cleared in a batch each morning — the policy table, not the operator, is the defect: too many signal classes are latching, and the seasonal review should demote them.
+
+## Last-known state: the third option
+
+Between latching and self-clearing sits the pattern unattended sites need most and configure least: last-known state with age. The host displays the final value the site reported, marked with its age, and treats the combination — value plus age — as the operational fact. A tank level last known at 62 percent, aged three hours, during a known carrier outage, is a usable input to a delivery decision; the same value presented without its age is a trap. Buffering completes the pattern: when the link returns, the buffered sequence replaces the flat line, and the reconstruction shows what the level actually did. Latching decides what demands attention; last-known state decides what can still be trusted; buffering decides what can be proven afterwards. A serious site designs all three, per signal class, in the same table.
 
 ## Implementation checklist
 
