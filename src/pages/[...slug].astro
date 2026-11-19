@@ -25,6 +25,7 @@ import SpectrumRail from '../components/SpectrumRail.astro';
 import ProtocolMatrix from '../components/ProtocolMatrix.astro';
 import FaqSection from '../components/FaqSection.astro';
 import ProductTable from '../components/ProductTable.astro';
+import Slot from '../components/Slot.astro';
 import {
 	bandFamily,
 	buildDatasetNode,
@@ -142,7 +143,22 @@ const filterVendors = vendorRecords
 	.filter((vendor) => productRecords.some((record) => record.vendorSlug === vendor.slug))
 	.sort((a, b) => a.name.localeCompare(b.name));
 
-const isNewAnatomy = isHub || Boolean(protocolRecord) || isComparison || isProductIndex;
+/* ---- Vendor directory wiring (Phase 3 portal layer, R1.3) ---- */
+const isVendorIndex = slug === 'vendors' && Boolean(data.vendorIndex);
+const directoryRows = vendorRecords
+	.map((vendor) => {
+		const own = productRecords.filter((record) => record.vendorSlug === vendor.slug);
+		return {
+			vendor,
+			records: own.length,
+			pages: own.filter((record) => productGate(record).indexable).length,
+			protocols: [...new Set(own.flatMap((record) => record.protocols))],
+		};
+	})
+	.sort((a, b) => a.vendor.name.localeCompare(b.vendor.name));
+const directoryProtocols = [...new Set(directoryRows.flatMap((row) => row.protocols))].sort();
+
+const isNewAnatomy = isHub || Boolean(protocolRecord) || isComparison || isProductIndex || isVendorIndex;
 
 const { Content } = isNewAnatomy ? await render(entry) : { Content: null };
 
@@ -225,7 +241,25 @@ const latestChecked = (sources: { dateChecked: Date }[]) =>
 <BaseLayout seo={seo} hreflang={hreflang} hasRail>
 	<Fragment slot="rail">
 		{
-			isProductIndex ? (
+			isVendorIndex ? (
+				<div class="panel nameplate">
+					<div class="panel-head">Vendor directory</div>
+					<div class="panel-body">
+						<dl>
+							<dt>Makers listed</dt>
+							<dd class="num">{directoryRows.length}</dd>
+							<dt>Product records</dt>
+							<dd class="num">{productRecords.length}</dd>
+							<dt>Full spec pages</dt>
+							<dd class="num">{indexableProducts.length}</dd>
+							<dt>Listing status</dt>
+							<dd>Listed = recorded by the editors from the maker's own documentation, unclaimed</dd>
+							<dt>Source standard</dt>
+							<dd>{brand.sourcing}</dd>
+						</dl>
+					</div>
+				</div>
+			) : isProductIndex ? (
 				<div class="panel nameplate">
 					<div class="panel-head">Product database</div>
 					<div class="panel-body">
@@ -704,6 +738,121 @@ const latestChecked = (sources: { dateChecked: Date }[]) =>
 					form?.addEventListener('reset', () => requestAnimationFrame(applyFilters));
 				</script>
 			</article>
+		) : isVendorIndex ? (
+			<article>
+				<h1>{data.title}</h1>
+				{data.description && <p class="lede">{data.description}</p>}
+				{data.readerTakeaway && (
+					<section class="panel">
+						<div class="panel-head">Quick answer</div>
+						<div class="panel-body">
+							<p>{data.readerTakeaway}</p>
+						</div>
+					</section>
+				)}
+				<section class="panel" aria-label="Filter the directory">
+					<div class="panel-head">Filter makers</div>
+					<div class="panel-body">
+						<form class="filters" id="vendor-filters">
+							<label>
+								Protocol
+								<select name="protocol">
+									<option value="">All protocols</option>
+									{directoryProtocols.map((slugOption) => (
+										<option value={slugOption}>{protocolLabel(slugOption)}</option>
+									))}
+								</select>
+							</label>
+							<button type="reset" class="btn">Reset filter</button>
+						</form>
+						<p class="filter-count" aria-live="polite">
+							<span class="num" data-visible-count>{directoryRows.length}</span> of{' '}
+							<span class="num">{directoryRows.length}</span> makers shown
+						</p>
+					</div>
+				</section>
+				<div class="table-wrap">
+					<table class="data">
+						<thead>
+							<tr>
+								<th scope="col">Maker</th>
+								<th scope="col">Protocols in its records</th>
+								<th scope="col">Product lines covered</th>
+								<th scope="col">Records</th>
+								<th scope="col">Listing status</th>
+							</tr>
+						</thead>
+						<tbody>
+							{
+								directoryRows.map((row) => (
+									<tr data-vendor-row data-protocols={row.protocols.join(' ')}>
+										<th scope="row">
+											{row.records >= 1 ? (
+												<a href={`/vendors/${row.vendor.slug}/`}>
+													{row.vendor.name}
+												</a>
+											) : (
+												<a href={row.vendor.website} rel="noopener">
+													{row.vendor.name}
+												</a>
+											)}
+										</th>
+										<td>
+											{row.protocols.length
+												? row.protocols.map(protocolLabel).join(' · ')
+												: '—'}
+										</td>
+										<td>{row.vendor.productLines.join(' · ')}</td>
+										<td class="num">
+											{row.records}
+											{row.pages > 0 && (
+												<span class="pages-note">
+													{' '}
+													({row.pages} with spec pages)
+												</span>
+											)}
+										</td>
+										<td>{row.vendor.listingStatus}</td>
+									</tr>
+								))
+							}
+						</tbody>
+					</table>
+				</div>
+				<p class="matrix-note">
+					A listing is compiled from the maker's own documentation and carries the
+					records to prove it. “Listed” means recorded by the editors and not yet
+					claimed; makers claim a listing through the entry on their directory page.
+					Makers with no verifiable wireless documentation are not listed.
+				</p>
+				<Slot name="featured-vendor" />
+				{Content && (
+					<div class="prose">
+						<Content />
+					</div>
+				)}
+				{data.faq && data.faq.length > 0 && <FaqSection items={data.faq} />}
+				<script>
+					const vForm = document.getElementById('vendor-filters') as HTMLFormElement | null;
+					const vRows = [...document.querySelectorAll('[data-vendor-row]')];
+					const vCounter = document.querySelector('[data-visible-count]');
+					function applyVendorFilters() {
+						if (!vForm) return;
+						const protocol = String(new FormData(vForm).get('protocol') ?? '');
+						let visible = 0;
+						for (const row of vRows) {
+							const el = row as HTMLElement;
+							const show =
+								!protocol || (el.dataset.protocols ?? '').split(' ').includes(protocol);
+							el.style.display = show ? '' : 'none';
+							if (show) visible += 1;
+						}
+						if (vCounter) vCounter.textContent = String(visible);
+					}
+					vForm?.addEventListener('change', applyVendorFilters);
+					vForm?.addEventListener('reset', () => requestAnimationFrame(applyVendorFilters));
+				</script>
+			</article>
 		) : (
 			<article>
 				<h1>{data.title}</h1>
@@ -867,6 +1016,11 @@ const latestChecked = (sources: { dateChecked: Date }[]) =>
 
 	.filter-count {
 		margin-top: 0.7rem;
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+	}
+
+	.pages-note {
 		color: var(--ink-2);
 		font-size: var(--fs-sm);
 	}

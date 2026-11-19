@@ -1,11 +1,11 @@
 ---
-title: Vendors
-description: Vendor-focused reference pages for remote telemetry, field connectivity, and industrial wireless portfolios compared through real site constraints.
+title: Vendor Directory
+description: The industrial wireless vendor directory — every listed maker, the protocols it builds for, its covered product lines and its recorded products, each listing traceable to the maker's own documentation.
 referenceType: foundation
 adProfile: foundation
 commercialIntent: low
 reviewCadence: Semiannual review
-primaryKeyword: vendors
+primaryKeyword: industrial wireless vendors
 searchIntent: learn
 decisionStage: problem-aware
 targetRoles:
@@ -21,54 +21,22 @@ lifecycle: hub
 refreshPriority: medium
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
-problemSolved: Helps readers solve the practical question behind Vendors instead of stopping at a generic definition or feature list.
-readerTakeaway: "You should leave with a clearer decision model, implementation boundary, or next-step checklist for Vendors."
+lastReviewed: 2026-11-19
+vendorIndex: true
+problemSolved: Helps readers find which makers actually build for a protocol or product class, and what of theirs is documented well enough to specify.
+readerTakeaway: "Every maker in this directory is here because its own documentation supports at least one product record. Use the protocol filter to cut the list to the makers who build for your radio, then open a maker's page for its recorded products."
 ---
 
-import { LinkCard, Steps } from '@astrojs/starlight/components';
+## How this directory works
 
-# Vendors
+A maker earns a listing the same way a product earns a record: its own published documentation — a datasheet, a manual, an official product page — has to support at least one product record in the database. There is no submission form and no paid placement. If a maker's wireless line cannot be verified from its own documents, it is not listed, however well known the brand is. That rule keeps the directory small, and it is deliberate: a directory of everyone is a directory of no one.
 
-Vendor pages are useful only when the site, asset, and hardware category are already clear enough to compare real strengths. Otherwise the reader ends up comparing brands with different field assumptions and pretending the choice is objective.
+Each row shows the protocols that appear in the maker's recorded products, the product lines this site covers, and how many records stand behind the listing. A maker's own page collects those records in one table, notes the releases and announcements the news line has covered, and carries the claim entry described below.
 
-## What vendor pages should answer
+## Listing status
 
-- Which parts of the field stack the vendor is strongest in
-- Whether the vendor fits the service model and site conditions
-- How much ecosystem consistency matters after commissioning
-- Where the vendor is merely adjacent to the category being researched
+Every listing starts as **listed**: recorded by the editors from public manufacturer documentation, not reviewed or endorsed by the maker, and not a recommendation. A maker can **claim** its listing to correct product lines and point the desk at current datasheets; a listing becomes **verified** when the maker has confirmed the entry's facts with us. Status is shown on every row because the difference between "we read their datasheet" and "they confirmed this entry" is information a specifier deserves to have.
 
-## Core paths
+## What the directory is not
 
-<div class="portal-links">
-	<LinkCard
-		title="Phoenix Contact field connectivity"
-		href="/vendors/phoenix-contact-field-connectivity/"
-		description="Use this page when panel, power, modular field hardware, and telemetry have to work as one field stack."
-	/>
-	<LinkCard
-		title="Siemens remote connectivity"
-		href="/vendors/siemens-remote-connectivity/"
-		description="Use this page when broader automation alignment and lifecycle support may matter more than narrow field modularity."
-	/>
-	<LinkCard
-		title="Applications"
-		href="/applications/"
-		description="Return to the application if the vendor conversation is getting ahead of the asset definition."
-	/>
-	<LinkCard
-		title="Reliability"
-		href="/reliability/"
-		description="Stress-test the vendor choice against cabinet, power, outage, and maintenance reality."
-	/>
-</div>
-
-## Vendor review flow
-
-<Steps>
-	1. Define the asset type, maintenance pattern, and field environment first.
-	2. Confirm the real device class before comparing brands.
-	3. Compare portfolio fit, support posture, and implementation burden.
-	4. Let vendor preference refine the shortlist, not replace the architecture decision.
-</Steps>
+It is not a ranking. Makers are ordered alphabetically, record counts reflect documentation coverage rather than market position, and a maker with three recorded products is not "better" than one with a single, exactly-right module. Compare within a protocol and a product class, read the records, and let the datasheets argue.
