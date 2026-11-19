@@ -1,18 +1,8 @@
 /**
- * TEMPORARY compatibility shim (Phase 0–3 of the rebuild).
- *
- * Legacy MDX bodies import { LinkCard, Card, CardGrid, Steps } from
- * '@astrojs/starlight/components'. Starlight is removed from this
- * stack, but the content loader still has to resolve those imports to
- * compile the files. Page bodies are NOT rendered by the new routes
- * in Phase 0, so these stubs are never invoked; they exist only so
- * the build can resolve the module.
- *
- * Phase 4 migration replaces every Starlight component usage in the
- * content with native components and deletes this shim + the alias in
- * astro.config.mjs. Do not build anything new on top of it.
+ * Removed in the Phase 4 migration (2026-11-19): the legacy MDX
+ * bodies now import the native component set (src/components/), the
+ * Vite alias that pointed here is gone, and nothing references this
+ * module. The file is kept as an empty tombstone only until its
+ * physical deletion is approved; do not add code here.
  */
-export const LinkCard = () => null;
-export const Card = () => null;
-export const CardGrid = () => null;
-export const Steps = () => null;
+export {};

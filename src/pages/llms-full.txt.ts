@@ -33,7 +33,7 @@ const EXCLUDED_PAGE_IDS = new Set([
 ]);
 
 export async function GET() {
-	const entries = await getCollection('pages');
+	const entries = (await getCollection('pages')).filter((entry) => !entry.data.mergedTo);
 	const sections: string[] = [];
 
 	const sorted = [...entries].sort((a, b) => a.id.localeCompare(b.id));

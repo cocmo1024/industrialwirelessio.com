@@ -30,7 +30,7 @@ const SECTION_TITLES: Record<string, string> = {
 };
 
 export async function GET() {
-	const entries = await getCollection('pages');
+	const entries = (await getCollection('pages')).filter((entry) => !entry.data.mergedTo);
 	const manifest = buildRouteManifest(entries);
 	const byId = new Map(entries.map((entry) => [entry.id, entry]));
 

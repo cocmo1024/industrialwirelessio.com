@@ -52,6 +52,11 @@ const pageSchema = z.looseObject({
 	vendorIndex: z.boolean().optional(),
 	/** Comparison anatomy wiring (Phase 1): protocol record slugs compared on this page. */
 	comparisonOf: z.array(z.string()).optional(),
+	/** Phase 4 MERGE disposition: this page was merged into the target
+	 * path (301 in public/_redirects). The entry is excluded from
+	 * routing, sitemap and both llms files; the file remains only as a
+	 * tombstone until its physical deletion is approved. */
+	mergedTo: z.string().optional(),
 	/** FAQ block (GEO List A construction spec §4): questions verbatim from List C. */
 	faq: z
 		.array(z.object({ question: z.string(), answer: z.string() }))
