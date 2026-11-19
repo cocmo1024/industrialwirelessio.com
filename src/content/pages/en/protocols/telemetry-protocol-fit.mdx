@@ -33,7 +33,15 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
+relatedProtocols:
+  - wirelesshart
+  - isa100
+  - lorawan
+  - io-link-wireless
+faq:
+  - question: WirelessHART, LoRaWAN or IO-Link Wireless — which protocol fits my application?
+    answer: "Match the protocol to the layer and the site. WirelessHART and ISA100.11a fit process instruments inside a plant — managed mesh networks with per-device diagnostics, run through a gateway. LoRaWAN fits scattered, battery-powered points over kilometres — small payloads, long intervals, no control. IO-Link Wireless fits the machine itself: cyclic, low-latency links between sensors, actuators and an IO-Link master over a few metres. The protocol matrix on this site compares all three against the same criteria; most real sites end up running two of them at different layers."
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -132,6 +140,18 @@ Remote telemetry projects often struggle when they:
 - use one reporting interval for alarms, slow analog trends, and heartbeat.
 
 The result is a system that appears connected but is hard to trust when something happens.
+
+## The layering conclusion
+
+Most protocol confusion disappears once the layers are kept apart:
+
+- **The field layer** moves signals between instruments and the first aggregation point. Modbus RTU over a serial pair, WirelessHART and ISA100.11a meshes, and IO-Link Wireless on the machine live here. Protocols at this layer are chosen for determinism, power and device fit.
+- **The transport and uplink layer** moves data from the site toward the centre. MQTT is the common shape here — lightweight publish/subscribe that tolerates intermittent backhaul — alongside plain HTTPS and vendor APIs.
+- **The information layer** gives the data meaning the centre can use: OPC UA information models, named and typed objects, the historian's tag structure.
+
+The conversion between layers is the gateway's job. A telemetry gateway polls or receives field-layer data, buffers it, and republishes it upward as MQTT or OPC UA. Which produces the one-sentence rule this page exists to state: **do not choose an uplink protocol to do a field protocol's job, or a field protocol to do an uplink's.** MQTT does not make a sensor deterministic; Modbus RTU does not give a historian an information model.
+
+This layering is not a telemetry-only pattern. The same three layers appear inside a factory — IO-Link Wireless and WirelessHART at the instruments, a cell-level gateway converting, OPC UA feeding the MES — which is why this overview now serves the plant cases alongside the remote-site cases it was first written for. The wireless side of the choice is compared in the [protocol matrix](/protocols/); the Modbus/MQTT/OPC UA side is worked through in [Modbus RTU, MQTT and OPC UA in telemetry](/protocols/modbus-rtu-mqtt-and-opc-ua-in-telemetry/).
 
 ## Practical selection rule
 

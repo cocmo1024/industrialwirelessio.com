@@ -33,7 +33,10 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
+faq:
+  - question: What should a remote telemetry cabinet contain?
+    answer: "Six groups, every time: a power train (supply, charger, battery, distribution with per-branch fusing), the communications device (router, gateway or RTU) with its antenna path and surge protection, the I/O and termination layer where field wiring lands, protection devices (breakers, surge protective devices, a proper grounding and bonding path), environmental control (heater, ventilation or condensation management sized to the climate), and the service layer — labels, documentation, spare fuses and test points. Cabinets fail reviews when a group is missing entirely, not when a component brand is wrong."
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -124,6 +127,23 @@ Cabinets usually become chronic support problems because:
 - technicians cannot isolate and service the cabinet cleanly.
 
 The cabinet then becomes a recurring truck roll, not a stable field node.
+
+## The cabinet by zones
+
+Walk a well-built cabinet in the order a fault would:
+
+1. **Power train.** Incoming supply or solar input, charger or controller, battery, and a distribution block with per-branch fusing and isolation — so one failed device cannot take the whole cabinet dark, and a technician can kill one branch without silencing the site.
+2. **Communications.** The router, gateway or RTU itself; its antenna feed with a surge arrestor where the cable enters; and the SIM or credentials recorded where the service team can find them. This is the device the site exists to keep alive.
+3. **I/O and termination.** Terminal blocks where field wiring lands, labelled to the drawing; signal conditioning or isolation where the field devices need it; spare terminals for the sensor that gets added next year.
+4. **Protection.** Breakers or fuses per branch, surge protective devices on power and signal entries, and a grounding and bonding path that gives surge current somewhere better to go than through the electronics.
+5. **Environment.** Heater, thermostat, ventilation or condensation control sized to the actual climate — most "electronic" failures at remote cabinets are water and temperature wearing a disguise.
+6. **Service layer.** Wiring diagram and configuration record inside the door, labelled cables, spare fuses, test points, and enough working room that a technician in gloves can replace the communications device without dismantling the cabinet.
+
+A cabinet that covers all six zones survives its design review. A cabinet missing a zone — most often protection or environment — fails in the field, slowly and then all at once.
+
+## Sizing the enclosure
+
+Buy the enclosure for the cabinet you will have in five years, not the one on today's drawing. Field cabinets accumulate: a second radio, a larger battery after the first winter, the extra I/O card for the sensor added in year two. An enclosure filled to capacity on commissioning day forces the next addition into an external box with new cable entries — each one a water path and a surge path. Working room is also a reliability property: a technician who can reach every terminal and read every label in gloves finishes the repair correctly the first time, at a site that may be hours from the depot.
 
 ## Implementation checklist
 

@@ -33,7 +33,10 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
+faq:
+  - question: How often should a remote telemetry site report data?
+    answer: "As often as the process changes in ways somebody acts on — and no oftener. Slow processes (tank levels, groundwater, cathodic protection) are honestly served by hourly or daily reports plus immediate alarm exceptions. Faster states (pump status, pressure transients, generator runs) justify minute-level reporting while they are active. The interval is a trade among alarm latency, battery life and data cost: every doubling of frequency roughly doubles radio energy and traffic, so the correct interval is the slowest one that still catches the events that matter — with report-by-exception covering the gaps."
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -118,6 +121,30 @@ Ask three questions for each signal:
 3. Can local buffering preserve the story better than constant transmission?
 
 If the first answer is no and the third is yes, the interval should usually be longer.
+
+## Choosing the interval: four constraints
+
+**Process dynamics.** The interval must be short against the fastest change anyone acts on. A tank that fills over two days cannot hide an event between hourly reports; a pressure transient that matters for ten minutes disappears entirely between them.
+
+**Alarm latency.** Reporting interval and alarm latency are different numbers, and confusing them is the common design error. The routine interval can be slow precisely because alarms travel by exception, immediately. Set the routine interval for trending and proof-of-life; set the exception rules for response.
+
+**Energy.** On battery and solar sites, transmissions dominate the power budget. Doubling the reporting frequency roughly doubles radio energy; the interval is therefore a battery-life decision wearing a data costume. Sites that must last years report slowly and alarm by exception.
+
+**Cost and congestion.** On cellular, interval drives data-plan volume (worked numbers in [telemetry data plan budgeting](/network-paths/telemetry-data-plan-budgeting-for-remote-sites/)). On shared licence-free bands, it also drives duty-cycle occupancy — a site reporting too often can crowd out its neighbours and itself.
+
+A workable starting pattern for most unattended sites: routine reports hourly to daily depending on process speed, a heartbeat that proves liveness between them, and exception rules that send alarms and significant changes immediately. Tune from there with evidence, not anxiety.
+
+## Worked patterns
+
+| Site type | Routine interval | Exception behaviour | Why |
+|---|---|---|---|
+| Tank farm level monitoring | 1–4 hours | Immediate on high/low level and rate-of-change | The process moves slowly; the alarm cannot wait for the routine report |
+| Pump station | 15–60 minutes | Immediate on run failure, high wet-well, power loss | Status trending is useful; failures are response events |
+| Cathodic protection | Daily | Exception rarely used; monthly detailed survey | The protected asset changes over weeks, not minutes |
+| Generator and fuel sites | Hourly heartbeat | Immediate on run start, fail-to-start, low fuel | The site is quiet until the moment it is critical |
+| Environmental / flood monitoring | 15 minutes in season | Immediate on threshold crossing, faster interval while in alarm | The event itself is the product; interval shortens when the event is live |
+
+The pattern across all five: the routine interval follows the process, the exception rules follow the consequences, and the two are never the same number doing both jobs badly.
 
 ## Implementation checklist
 

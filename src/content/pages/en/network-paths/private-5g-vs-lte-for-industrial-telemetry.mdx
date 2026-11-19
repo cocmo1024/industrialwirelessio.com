@@ -35,7 +35,14 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
+faq:
+  - question: What is private 5G, and when does a factory actually need it?
+    answer: "Private 5G is a 3GPP cellular network a company operates for its own site — a non-public network (NPN) running on locally licensed or shared spectrum, such as CBRS in the United States or the 3.7–3.8 GHz local licences in Germany. A factory actually needs it when three conditions hold at once: devices move (AGVs, AMRs, forklifts), the covered area is large, and latency must stay controlled and predictable. Fixed monitoring points rarely justify it; private LTE or Wi-Fi 6 usually serves them at a fraction of the build."
+  - question: "Private 5G vs private LTE: which is better for a factory network?"
+    answer: "For most factory networks today, private LTE is the pragmatic choice: the device ecosystem is wider, the equipment is cheaper, and its performance already covers telemetry, voice and moderate mobility. Private 5G earns its premium where the roadmap needs what LTE cannot grow into — very dense device counts, the tightest latency classes, or a long-lived campus network bought once for a decade of mobile automation. The deciding factors are device availability for your endpoints and the mobility-plus-latency requirement, not the generation number."
+  - question: Private 5G or Wi-Fi 6 — which is better for AGVs and other mobile equipment?
+    answer: "For mobile equipment that roams a large area on a schedule — AGVs and AMRs on fixed routes crossing many radio cells — private cellular (LTE or 5G) usually wins on handover: the network controls roaming, so a vehicle keeps its session while moving between cells. Wi-Fi 6 wins where the fleet is small, the area is compact, and the IT team already runs enterprise Wi-Fi well; its roaming is client-decided and can hesitate at cell edges. Cost runs the other way: Wi-Fi 6 reuses existing skills and cheap endpoints, while cellular needs licensed or shared spectrum and cellular modems in every vehicle."
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -124,6 +131,26 @@ Private 5G is still worth paying attention to because it clarifies future archit
 - organizations already maturing beyond simple per-site modem management.
 
 That is the healthy way to read the trend: not as "everything should become 5G," but as "some telemetry environments are now maturing into a different network problem."
+
+## What private 5G actually is
+
+Private 5G is a 3GPP cellular network operated by, or exclusively for, one organisation on one site — in 3GPP terms a non-public network (NPN). It is not a slice of the public carrier's marketing; it is your own core, your own radios, and your own SIMs, running on spectrum you are entitled to use locally. The spectrum paths differ by country: in the United States, the CBRS band (3.5 GHz) offers shared access coordinated by a spectrum access system under FCC rules; in Germany, the regulator BNetzA issues local licences for 3.7–3.8 GHz to industrial applicants; other countries run comparable local-licensing regimes. Which path exists at your site is a regulatory fact to check first — it decides cost and timeline before any vendor conversation.
+
+## When a factory actually needs it
+
+Private 5G is justified when three conditions hold **at the same time**: the devices **move** (AGVs, AMRs, forklifts, cranes), the area to cover is **large** enough that Wi-Fi would need dozens of access points and constant roaming management, and the application needs **controlled, predictable latency** rather than best-effort delivery. Remove any one of the three and a cheaper technology usually wins: fixed sensors do not need mobility management, a single hall does not need campus coverage, and monitoring traffic does not need latency guarantees. Building private 5G for fixed monitoring points is over-engineering — the honest sentence most vendor material avoids.
+
+## Private 5G vs private LTE vs Wi-Fi 6
+
+| Dimension | Private 5G | Private LTE | Wi-Fi 6 |
+|---|---|---|---|
+| Spectrum | Local licence or shared band (e.g. CBRS, 3.7–3.8 GHz local) | Local licence, shared band, or carrier agreement | Licence-free 2.4 / 5 / 6 GHz, shared with everyone |
+| Coverage per radio | Campus class — hundreds of metres per cell outdoors | Comparable to private 5G | Tens of metres indoors; many access points per hall |
+| Handover | Network-controlled, designed for moving devices | Network-controlled, designed for moving devices | Client-decided; can hesitate at cell edges |
+| Latency behaviour | Lowest and most controllable of the three | Low, adequate for most mobile automation | Variable under load; no hard guarantees |
+| Endpoint ecosystem | Narrowest and most expensive today | Wide industrial modem market | Widest and cheapest; every device class exists |
+| Build and run | Specialist integrator territory | Specialist integrator territory | In-house IT skills usually suffice |
+| Cost shape | Highest build cost; bought for a decade-long roadmap | Mid; the pragmatic campus default | Lowest build cost; cost grows with access-point count and roaming pain |
 
 ## A better decision sequence
 

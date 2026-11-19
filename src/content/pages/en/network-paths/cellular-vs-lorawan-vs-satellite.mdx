@@ -33,7 +33,12 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
+relatedTools:
+  - /tools/link-budget-calculator/
+faq:
+  - question: Cellular, LoRaWAN or satellite — which backhaul should a remote industrial site use?
+    answer: "Start from coverage and data shape. If the site has usable cellular coverage and moves more than a trickle of data, cellular is the default — the carrier operates the network. A private LoRaWAN network earns its gateways when many low-rate points cluster within range of a gateway position: per-point cost falls with density and endpoints run for years on batteries, at data rates between a few hundred bits and 50 kbit/s. Satellite is the backhaul of last resort and of high-value alarms — where neither cellular coverage nor an economic gateway position exists — and is rarely the right carrier for routine bulk data."
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -109,6 +114,26 @@ In field deployments, the network is only one part of a survivable architecture.
 
 This matrix helps prevent false comparisons. LoRaWAN can be excellent for dense low-power assets, while cellular can be better for sparse sites, and satellite can be justified when the cost of being blind is higher than the communication bill.
 
+## The three backhauls, compared
+
+| Dimension | Cellular (LTE / LTE-M / NB-IoT) | Private LoRaWAN | Satellite |
+|---|---|---|---|
+| Coverage premise | Exists where the carrier built it — check at the site, not on a map | Exists where you place gateways; you build the coverage yourself | Near-global, subject to sky view and the service's footprint |
+| Bandwidth magnitude | Megabits class on LTE; LTE-M / NB-IoT narrow that deliberately for power and reach | 0.3–50 kbit/s by data-rate setting (LoRa Alliance RP002); small payloads, duty-cycle limited | IoT messaging services are bytes-to-kilobytes class; broadband LEO services are megabits class — different products sharing a name |
+| Latency | Tens of milliseconds class on LTE | Seconds are normal; downlink is rationed by duty cycle | LEO services: tens of milliseconds class. Geostationary: roughly half a second or more of round-trip delay by geometry alone |
+| Site power | Router-class draw; a mains or sized solar supply | Endpoints run on batteries for years; only the gateway needs site power | Terminal draw is the highest of the three; power budget must be designed for it |
+| Cost structure | Modem + SIM + recurring data plan; cost scales with volume | Gateway hardware + the gateway's own backhaul; cost scales with sites covered, not with messages | Terminal + subscription, often with per-message or per-volume pricing; cost scales with use |
+| Who operates the network | The carrier | You | The service provider |
+| Typical failure | Carrier outage, congestion, coverage shadowing at the antenna | Gateway or its backhaul down; interference on the shared band | Sky obstruction, weather fade on some bands, service-plan limits |
+
+## The conclusions
+
+**If the site has usable cellular coverage and the data volume is more than a trickle, cellular is the default** — it is the only option of the three where someone else operates, maintains and upgrades the network, and its bandwidth leaves room for the firmware updates and remote-access sessions the other two cannot carry comfortably.
+
+**A private LoRaWAN network earns its gateways when many low-rate points cluster within gateway range of each other.** The per-point cost falls as density rises, the endpoints run for years on batteries, and the network is yours — which also means its failures are yours, starting with the gateway's own backhaul and power.
+
+**Satellite is the backhaul of last resort and of high-value alarms.** Where there is no cellular coverage and no economic gateway position, it keeps the few messages that matter moving. Priced and powered the way it is, it is rarely the right carrier for routine bulk data.
+
 ## Field survey checklist
 
 Before committing, verify:
@@ -126,6 +151,20 @@ The strongest network design is the one operations can support after the install
 ## Practical rule
 
 Use cellular as the first practical candidate when coverage, power, and plan management are acceptable. Use LoRaWAN when the asset pattern supports a private low-power sensor network. Use satellite when terrestrial coverage uncertainty creates unacceptable operational risk. Then design buffering and stale-data rules as if the path will still fail sometimes.
+
+## Cost structure, honestly
+
+Compare the three on structure, not on a price snapshot: carrier prices, satellite plans and gateway hardware all move faster than a reference page should pretend to track. Cellular concentrates cost in a recurring per-site subscription that scales with data volume — cheap for disciplined telemetry, punishing for chatty sites. LoRaWAN concentrates cost in gateway positions: expensive for the first point, nearly free for the fiftieth point inside the same footprint, and the subscription line largely disappears. Satellite concentrates cost in the terminal and the plan, and often meters the messages themselves.
+
+The practical consequence: a single isolated site almost always prices out on cellular or satellite, while a dense field of points prices out on private LoRaWAN — and a fleet of isolated sites with tiny, critical messages is exactly the satellite IoT case. Run the comparison per site archetype, not per technology preference.
+
+## Hybrids are the normal answer
+
+Real sites rarely run one backhaul in purity. The patterns that recur: **LoRaWAN in the field, cellular behind the gateway** — the endpoints stay battery-powered and cheap, and only the gateway needs a powered, connected position. **Cellular primary, satellite for the alarm lane** — routine data rides the cheap network, while the handful of messages that justify any price (overflow, intrusion, power failure) get a path that does not share the cellular network's failure modes. **Cellular with a second carrier** — dual-SIM failover covers carrier-specific outages, which are more common than total site failures.
+
+Design hybrids by failure independence, not by bandwidth: two paths that share a power supply, a mast, or a carrier core are one path with extra cost. And keep the failover behaviour boring — automatic, logged, and tested — because a hybrid that needs a human to switch it will be discovered, unswitched, during the incident it was bought for.
+
+One more discipline applies to all three: verify at the site, in the season that matters. Cellular coverage measured on a mild day with a handset is not the coverage a fixed antenna sees in a storm; a LoRaWAN gateway position that works in summer foliage may fail in winter ice loading or after the neighbouring building goes up; a satellite terminal's clear sky in the survey month may be a tree canopy by the next. Backhaul decisions are decade-scale commitments made from hour-scale observations — the survey checklist below exists to make those observations count.
 
 ## Related paths
 

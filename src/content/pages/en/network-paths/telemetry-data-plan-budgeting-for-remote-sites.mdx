@@ -35,7 +35,10 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
+faq:
+  - question: How much cellular data does a remote telemetry site use per month?
+    answer: "For a disciplined telemetry site, far less than most people fear: a 250-byte report sent every 15 minutes totals roughly 0.7 MB per month, and hourly reporting totals about 0.2 MB. Even a chatty five-minute cycle stays near 2 MB. What actually consumes industrial data plans is not the reporting — it is keepalive behaviour on poorly configured VPNs, alarm storms from untuned exception rules, and remote-access sessions and firmware updates. Budget for those, and the telemetry itself is nearly free."
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -138,6 +141,19 @@ Before the design is signed off, the team should be able to answer:
 4. Which future workload would change the site from low-data telemetry into a different cost class?
 
 If those answers are unknown, the data plan is not really budgeted yet.
+
+## The estimation table
+
+Estimate a site's volume from three numbers: the size of one report on the wire, the reporting interval, and the number of days. The table works an example with a 250-byte report (a modest payload plus protocol overhead — state your own assumption and the arithmetic stays honest):
+
+| Reporting pattern | Reports per month | Monthly volume at 250 B per report |
+|---|---|---|
+| Every 5 minutes | 8,640 | ≈ 2.2 MB |
+| Every 15 minutes | 2,880 | ≈ 0.72 MB |
+| Hourly | 720 | ≈ 0.18 MB |
+| Daily summary only | 30 | ≈ 0.01 MB |
+
+Report-by-exception sites land below the table: a site that reports twice a day because nothing changed sends less than the daily row, plus heartbeats. The rows that break budgets sit outside the table — persistent VPN keepalives that chat all day, alarm storms from exception rules with no deadband, remote-desktop sessions left open, and firmware updates. When a site's bill surprises you, look for one of those four before blaming the reporting interval.
 
 ## Implementation checklist
 

@@ -27,7 +27,7 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -89,6 +89,18 @@ OPC UA can be useful when the system needs richer industrial context, not just l
 - and environments where OT systems already expect OPC UA.
 
 For small remote telemetry sites, OPC UA may be heavier than necessary unless there is a clear consumer that benefits from it.
+
+## The conversion point: where the layers meet
+
+In a working architecture the three protocols rarely compete — they hand over to each other. A typical chain: a flow computer or PLC exposes registers over Modbus RTU; the site gateway polls those registers on a schedule or on exception, timestamps and buffers the values; the gateway republishes northbound as MQTT messages for telemetry consumers, or serves them as OPC UA objects where the consumer is a SCADA or historian platform that models assets rather than messages.
+
+Two design rules follow. First, convert once, at the gateway — chains of converters (Modbus to a proprietary format to MQTT to a database writer) lose timestamps, quality flags and alarm context at every hop. Second, keep the field-side polling independent of the uplink: when the backhaul drops, Modbus polling and local buffering continue, and the uplink layers simply receive the backfill later. If a backhaul outage stops field data collection, the conversion point was placed in the wrong device.
+
+## What Modbus RTU cannot do
+
+Modbus RTU's limits are structural, and naming them prevents the commonest architecture error — asking the field layer to behave like an information layer. There are no timestamps in the protocol: a value's time is whenever the master read it, so event sequencing across devices is approximate by construction. There is no quality flag: a register holding its last value and a register holding a live value look identical, which is why stale-data handling has to be built at the gateway. There is no security: no authentication, no encryption, so the serial segment must be physically or architecturally protected. And polling is sequential — every device on the bus waits its turn, so cycle time grows with device count and baud rate; a bus that polls thirty devices is a seconds-class system no matter how fast each transaction is.
+
+None of this makes Modbus RTU a poor choice. It makes it a field-layer choice: superb at moving register values between nearby equipment, wrong for time-critical event reconstruction or direct exposure to anything untrusted. The gateway patterns on this page exist precisely to cover those four gaps — timestamping at read time, marking quality, terminating the insecure segment, and republishing upward in protocols that carry context.
 
 ## Protocol decision checklist
 

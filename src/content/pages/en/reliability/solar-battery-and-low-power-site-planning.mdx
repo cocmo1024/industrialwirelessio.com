@@ -35,7 +35,14 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
+relatedProtocols:
+  - lorawan
+faq:
+  - question: What power options do wireless I/O modules have at unmanned sites?
+    answer: "Four, in practice: wired DC from the site supply where one exists (mains or a solar-charged battery bus), a self-contained internal battery pack — the common pattern for LPWAN and sub-GHz field transmitters — solar with a rechargeable battery sized for the site's dark stretch, and loop or energy-harvesting power for a narrow set of instruments. The choice caps everything else: battery-powered modules must report by exception and sleep between transmissions, while wired modules can poll and report freely. Power is therefore a selection criterion to settle before the model, not an accessory after it."
+  - question: How long can a battery-powered wireless sensor node last in the field?
+    answer: "There is no honest single number — battery life is set by the reporting interval, the transmit power the path demands, retries, temperature, and the battery's self-discharge, and manufacturers state their figures under conditions. As a sourced example, OleumTech rates its WT-AD1 wireless transmitter at up to 10 years, under the datasheet's stated conditions of ambient temperature and one transmission per minute without retries. Halve the interval discipline or add a lossy path that forces retries, and the same hardware lasts a fraction of that. Read every battery-life claim together with its stated conditions, or do not compare claims at all."
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -127,6 +134,20 @@ Use this order:
 5. size the panel and charging path to recover the battery within realistic weather assumptions.
 
 That sequence reduces the chance of buying a power system that only works in ideal conditions.
+
+## Node-level battery life: what actually decides it
+
+Site-level power planning (the rest of this page) sizes the cabinet. Node-level battery life is a different problem: a wireless sensor or transmitter node carries a finite battery, and five variables decide how long it lasts.
+
+1. **Reporting interval** dominates everything. A node that transmits once an hour spends almost its whole life asleep; one that transmits every minute spends roughly sixty times the radio energy. This is why report-by-exception behaviour — transmit on change, heartbeat otherwise — is the enabling pattern for battery nodes.
+2. **Transmit power and path loss.** A node at the edge of coverage transmits at maximum power and retries; a node with a clean path whispers. Antenna placement and gateway position are battery decisions.
+3. **Protocol behaviour.** Confirmed messages, rejoins and downlink listening windows all spend energy. Networks differ in how much housekeeping they demand from the endpoint.
+4. **Temperature.** Cold batteries deliver less capacity and hot ones self-discharge faster; nameplate capacity is a laboratory number.
+5. **Self-discharge and chemistry.** Over a ten-year target, the battery discharges itself on the shelf inside the node; chemistry choice is a lifetime choice.
+
+Manufacturers' figures must be read with their conditions attached. OleumTech, for example, rates the WT-AD1 wireless analog/discrete transmitter in this site's product database at up to 10 years — under its datasheet's stated conditions of ambient temperature and one transmission per minute without retries, with a battery-life chart for other intervals. That is the honest form of the claim: a number, its conditions, and a curve for the rest. A battery-life figure published without conditions is marketing, and two such figures cannot be compared.
+
+The planning consequence: fix the reporting pattern and the path first, then read battery claims against your pattern — and treat the gap between the datasheet interval and yours as a direct multiplier on service life.
 
 ## Implementation checklist
 
