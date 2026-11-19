@@ -78,7 +78,7 @@ const rows = products.map((record) => ({ record, gate: productGate(record) }));
 								</a>
 							)}
 						</th>
-						<td>{record.vendor}</td>
+						<td><a href={`/vendors/${record.vendorSlug}/`}>{record.vendor}</a></td>
 						<td>{PRODUCT_TYPE_LABELS[record.productType]}</td>
 						{variant === 'index' && (
 							<td>{record.protocols.map(protocolLabel).join(' · ')}</td>

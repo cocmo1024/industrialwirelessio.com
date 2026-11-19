@@ -27,6 +27,9 @@ problemSolved: Helps readers find which makers actually build for a protocol or 
 readerTakeaway: "Every maker in this directory is here because its own documentation supports at least one product record. Use the protocol filter to cut the list to the makers who build for your radio, then open a maker's page for its recorded products."
 ---
 
+import LinkCard from '../../../../components/LinkCard.astro';
+
+
 ## How this directory works
 
 A maker earns a listing the same way a product earns a record: its own published documentation — a datasheet, a manual, an official product page — has to support at least one product record in the database. There is no submission form and no paid placement. If a maker's wireless line cannot be verified from its own documents, it is not listed, however well known the brand is. That rule keeps the directory small, and it is deliberate: a directory of everyone is a directory of no one.
@@ -40,3 +43,19 @@ Every listing starts as **listed**: recorded by the editors from public manufact
 ## What the directory is not
 
 It is not a ranking. Makers are ordered alphabetically, record counts reflect documentation coverage rather than market position, and a maker with three recorded products is not "better" than one with a single, exactly-right module. Compare within a protocol and a product class, read the records, and let the datasheets argue.
+
+## Vendor deep-dives
+
+<div class="portal-links">
+	<LinkCard
+		title="Phoenix Contact: field connectivity overview"
+		href="/vendors/phoenix-contact-field-connectivity/"
+		description="How the TC Router, mGuard service ecosystem and cabinet components fit together — and how to evaluate the complete-cabinet claim."
+	/>
+	<LinkCard
+		title="Siemens: remote connectivity overview"
+		href="/vendors/siemens-remote-connectivity/"
+		description="SCALANCE field devices and the SINEMA Remote Connect governance layer, evaluated as a platform rather than a catalogue."
+	/>
+</div>
+

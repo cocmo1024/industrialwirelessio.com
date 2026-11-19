@@ -48,6 +48,8 @@ A wireless I/O module moves field signals where the wires would have run. An RTU
 
 A telemetry gateway sits between a field network and a host system and does four jobs: **protocol conversion**, **local buffering** with store-and-forward behaviour so readings survive a backhaul outage, **alarm handling** at the edge, and **backhaul management**. A router moves IP packets without understanding the industrial protocols inside them; a gateway is a translator that happens to buffer. The category definition, the capability floor and the gateway records are on the [industrial telemetry gateways category page](/product-families/industrial-telemetry-gateways/).
 
+The database's own composition — records by category, vendor and protocol — is published as the [2026 database census](/markets/database-census-2026/), and refreshed as the record set grows.
+
 ## How this database is built
 
 Each record is one product, transcribed from one manufacturer primary source — the datasheet where one is published, the official product documentation where it is not — and the record names that source and the date it was checked. A record earns a full specification page when its source set is complete enough to fill the wireless identity and at least one specification table with sourced values; until then it appears as a row here and in the protocol tables, linked to its source. Specifications are added model by model, never scraped from aggregators and never averaged between sources.

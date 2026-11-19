@@ -170,7 +170,7 @@ const environmentRows: { label: string; value: string }[] = [
 			<div class="panel-body">
 				<dl>
 					<dt>Maker</dt>
-					<dd>{record.vendor}</dd>
+					<dd><a href={`/vendors/${record.vendorSlug}/`}>{record.vendor}</a></dd>
 					<dt>Model</dt>
 					<dd>{record.model}</dd>
 					<dt>Type</dt>

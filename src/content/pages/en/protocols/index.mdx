@@ -27,9 +27,20 @@ problemSolved: Readers comparing industrial wireless protocols usually find vend
 readerTakeaway: "Industrial wireless protocols split by job, not by fashion: WirelessHART and ISA100.11a serve process field instruments, IO-Link Wireless serves factory sensors and actuators at millisecond cycle times, and LoRaWAN serves small, slow data over distance. The matrix above is generated from the same protocol records as the protocol pages, so every figure here matches the figure on the protocol's own page."
 ---
 
+import LinkCard from '../../../../components/LinkCard.astro';
+
+
 ## How to use this hub
 
 There are three ways into the protocol graph. Use the **spectrum rail** when you know the band you can operate in — licence-free 2.4 GHz, sub-GHz, or a regional allocation — and need to see which protocols live there. Use the **matrix** when you are comparing candidates for a job: topology, update class and power profile decide most real selections before any datasheet is opened. Use the **protocol pages** when you have a candidate and need the verified detail: definition, sourced parameter table, gateway or master capacity, and the engineering notes that say where the protocol stops being the right tool.
+
+<div class="portal-links">
+	<LinkCard
+		title="Compare the four protocols side by side"
+		href="/compare/"
+		description="The interactive comparison of WirelessHART, ISA100.11a, IO-Link Wireless and LoRaWAN across update class, topology, power and ecosystem."
+	/>
+</div>
 
 ## Choosing by scenario
 
