@@ -1,0 +1,41 @@
+vendor: Digi
+vendorSlug: digi
+model: IX10 (IX10-00G4)
+productType: router
+slug: digi-ix10
+status: active
+protocols:
+  - lte
+  - 3g
+  - gprs
+frequencyBands:
+  - "LTE Cat 4 Global: B1, B2, B3, B4, B5, B7, B8, B12, B13, B18, B19, B20, B25, B26, B28, B38, B39, B40, B41"
+  - "3G: B1, B2, B4, B5, B6, B8, B19"
+  - "2G EDGE / GPRS: 850/900/1800/1900 MHz"
+txPowerDbm: null
+rxSensitivityDbm: null
+rangeClass: null
+antenna: null
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: null
+upstreamInterfaces:
+  - Ethernet (1 port)
+  - "RJ-50 serial (RS-232/485)"
+powerSupply: "9-30 VDC, 1.0 A maximum"
+powerConsumption: "1.5 W (light traffic), 3.5 W (peak data transmission); 1.25 W low-power idle (IX10-00G4 model page)"
+batteryLife: null
+ipRating: null
+operatingTemp: null
+certifications: []
+hazardousArea: null
+sourceUrl: https://www.digi.com/products/models/ix10-00g4
+sourceType: product-page
+sourceDocId: null
+dateChecked: 2026-11-14
+notes: "Power figures per the current IX10-00G4 model page on digi.com. The older IX10 datasheet gives 2.5 W idle / 6 W peak; the two documents are not merged. Data row only for now under blueprint §4.3: the model-page specification block transcribed in this pass does not include an antenna or RF figure, so the wireless-identity count stays at two. Promotion path: transcribe the antenna/interface rows from the model page."

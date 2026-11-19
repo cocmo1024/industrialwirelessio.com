@@ -1,0 +1,154 @@
+---
+title: Heartbeat timers, stale-data rules, and supervisory loss handling
+description: How to define heartbeat timing, stale-data rules, and supervisory loss behavior so unattended telemetry sites do not look healthy after the operating story is already missing.
+referenceType: reliability
+adProfile: reliability
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: heartbeat timers stale data rules and supervisory loss handling
+searchIntent: design
+decisionStage: implementation
+targetRoles:
+  - Remote operations managers
+  - Telemetry architects
+  - Field reliability engineers
+  - Integrators
+contentStatus: growing
+problemSolved: Helps teams define heartbeat timing and stale-data behavior so remote operators can distinguish healthy silence from degraded visibility and act accordingly.
+readerTakeaway: You should leave with a practical model for heartbeat intervals, stale-data thresholds, and supervisory loss rules at unattended sites.
+keyQuestions:
+  - How often should unattended sites report heartbeat status?
+  - When should data be treated as stale versus merely quiet?
+  - What makes supervisory loss handling too noisy or too weak to support operations?
+notFor:
+  - High-bandwidth continuous telemetry systems where stale-data logic is already inherent in the process
+  - Staffed sites where local diagnosis is immediate and cheap
+updateTriggers:
+  - New field lessons in supervisory loss handling and heartbeat design
+  - Changes in common telemetry practice for stale-data and heartbeat thresholds
+contentCluster: telemetry-reliability
+canonicalCluster: telemetry-reliability
+pageType: reliability-guide
+lifecycle: evergreen
+refreshPriority: high
+authorKey: editorial-desk
+editorKey: review-desk
+lastReviewed: 2026-11-19
+---
+
+# Heartbeat timers, stale-data rules, and supervisory loss handling
+
+Unattended telemetry systems often fail in a subtle way: the site stops telling a trustworthy story, but the supervisory layer still looks calm. Operators see the last reported values and assume the asset is quiet, when in reality the information is old, the link is unstable, or the site is only partially visible. Heartbeat and stale-data rules are what separate genuine calm from blind optimism.
+
+## What matters first
+
+Good heartbeat design should:
+
+- reflect how quickly the site needs loss-of-visibility awareness;
+- distinguish between event silence and communications silence;
+- and drive a supervisory response that matches the consequence of being blind.
+
+The goal is not simply frequent heartbeats. It is operationally credible loss detection.
+
+## Why stale-data rules matter
+
+Data does not become useless at the same instant for every site. A slow-moving asset may tolerate older values longer than an alarm-first site. What matters is whether the operator can still make a sound decision from the current view.
+
+That is why stale-data logic should be tied to:
+
+- process consequence;
+- asset volatility;
+- dispatch cost;
+- and the site's fallback behavior during link loss.
+
+## Common mistakes
+
+Teams usually get poor results when they:
+
+- set one heartbeat interval for every site class;
+- treat stale data as only a dashboard decoration;
+- raise alarms so often that operators start ignoring supervisory loss;
+- or wait too long to declare degraded visibility on high-consequence assets.
+
+The result is either alert fatigue or false confidence.
+
+## A practical design model
+
+| Element | What it should do |
+| --- | --- |
+| Heartbeat timer | Confirm the site and path are still alive on a meaningful cadence |
+| Stale-data threshold | Mark when displayed values should no longer be trusted for action |
+| Supervisory-loss alarm | Escalate when visibility loss changes operational risk materially |
+| Recovery rule | Define how the system clears and how operators confirm normal visibility is restored |
+
+This combination gives remote teams a clearer operating picture.
+
+## How to choose intervals
+
+Start with the question: how bad is it if this site disappears without anyone noticing for 5 minutes, 30 minutes, or 4 hours?
+
+That answer should shape:
+
+- heartbeat frequency;
+- stale-data display logic;
+- and when the site moves from "quiet" to "loss of supervision."
+
+The interval should be driven by consequence, not habit.
+
+## Example interval classes
+
+Use classes rather than one universal timer:
+
+| Site class | Example | Heartbeat / stale-data posture |
+| --- | --- | --- |
+| Alarm-critical unattended site | lift station, flood-control gate, chemical injection site | Short heartbeat, aggressive stale-data flag, clear supervisory-loss alarm |
+| Slow monitoring site | tank level, environmental sensor, low-risk utility point | Longer heartbeat, visible value age, less aggressive dispatch alarm |
+| High-consequence remote asset | substation, pressure-zone booster, remote pump station | Redundant context, local buffering, explicit operator escalation |
+| Battery-constrained low-power node | remote sensor, LoRaWAN endpoint | Heartbeat balanced against power budget and payload limits |
+
+This class-based model keeps the system from annoying operators with low-value alarms while still protecting high-consequence assets.
+
+## Display rules matter
+
+Stale data should be visible in the operator interface. A good display should show:
+
+- last value;
+- value age;
+- live, stale, replayed, or unknown status;
+- time of last heartbeat;
+- whether the site is in supervisory loss;
+- whether local buffered events are pending.
+
+If the display shows only the last value, operators may make decisions from old data without realizing it.
+
+## Choosing the numbers: a worked policy shape
+
+The settings form a chain, and each link should be a deliberate multiple of the previous one. The device reports on a heartbeat interval H. The host tolerates a small number of missed reports — say three — before data is marked stale at 3H. Stale becomes an alarm at a threshold set by the cost of blindness for that site class: a flood-critical site alarms in tens of minutes; a CP rectifier can wait a day. Escalation to a human follows if the alarm persists beyond a second threshold, by which time the carrier-outage and regional-event checks should already have run automatically.
+
+Worked shape for a water utility's mixed estate (illustrative policy, to be tuned per site): critical alarm sites — H of 5 minutes, stale at 15, alarm at 30, escalation at 2 hours. Standard telemetry — H of 1 hour, stale at 3 hours, alarm at 6, escalation next business day. Slow compliance points — H of 24 hours, stale at 48, alarm at 72, escalation weekly review. The values matter less than the properties: every class has all four numbers written down, the ratios are sane, and nobody discovers during an incident that a class was never assigned.
+
+## Heartbeats during degraded operation
+
+Decide in advance how the heartbeat behaves when the site itself is in trouble. A device on battery backup after a power failure may lengthen its interval deliberately — a designed degradation that trades freshness for survival, announced in the data so the host adjusts its stale thresholds rather than alarming on schedule. A device behind a congested or metered link may batch heartbeats with exception traffic. Both are legitimate; what is not legitimate is silent improvisation, where the field device changes its rhythm for reasons the host was never told, and the supervisory system spends an incident investigating a policy it does not know exists. Degraded-mode timing is part of the policy table, written next to the normal numbers.
+
+## Stale data must look stale
+
+The supervisory display carries half the policy. A value that has stopped updating must be visually and programmatically distinguishable from a live one — greyed, flagged, aged — in every view, export and API the host offers, because the costliest stale-data failures are not alarms missed but decisions made on numbers that looked current. Operators should be able to answer, for any value on any screen, "how old is this?" without leaving the screen. Test it during acceptance by killing a site's link and watching the displays, not the configuration: if any screen keeps presenting the frozen value as fact, the stale-data policy exists only on paper.
+
+## Acceptance test
+
+Test heartbeat and stale-data behavior by simulating:
+
+1. quiet site with no process events;
+2. backhaul loss while the site continues locally;
+3. alarm event during communications outage;
+4. delayed recovery with buffered events;
+5. repeated connect/disconnect behavior.
+
+The system should not require operators to guess whether silence is normal. It should tell them whether visibility is trustworthy.
+
+## What to read next
+
+- [Alarm latching, last-known state, and local buffering for unattended sites](/reliability/alarm-latching-last-known-state-and-local-buffering-for-unattended-sites/)
+- [Digital-input event buffering for alarm-first telemetry](/reliability/digital-input-event-buffering-for-alarm-first-telemetry/)
+- [Stormwater and flood-control site telemetry for unattended assets](/applications/stormwater-and-flood-control-site-telemetry-for-unattended-assets/)

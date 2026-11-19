@@ -1,0 +1,39 @@
+vendor: Emerson
+vendorSlug: emerson
+model: "1410"
+productType: gateway
+slug: emerson-1410
+status: legacy
+protocols:
+  - wirelesshart
+frequencyBands:
+  - "2.4 GHz (IEEE 802.15.4)"
+txPowerDbm: null
+rxSensitivityDbm: null
+rangeClass: null
+antenna: "Internal antenna; remote-mount antenna options per manual 00809-0200-4410"
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: null
+upstreamInterfaces:
+  - Ethernet (incl. PoE)
+  - RS-485 serial
+powerSupply: null
+powerConsumption: null
+batteryLife: null
+ipRating: "IP65 (Type 4X)"
+operatingTemp: "-40 °C to +70 °C (T4 temperature-code marking range stated in the manual)"
+certifications:
+  - "FM / CSA Class I Division 2"
+  - "ATEX / IECEx Zone 2 (nA)"
+hazardousArea: "Class I Division 2 / Zone 2 variants"
+sourceUrl: https://www.emerson.com/en-us/catalog/emerson-sku-1410-wireless-gateway
+sourceType: manual
+sourceDocId: "00809-0200-4410 Rev. CA"
+dateChecked: 2026-11-14
+notes: "Legacy gateway, superseded by the 1410S. The operating-temperature figure is the T4 marking range stated in the manual, not a separate ambient specification. Transmit power and receiver sensitivity are not stated in the manual and are left blank."

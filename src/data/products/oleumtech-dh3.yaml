@@ -1,0 +1,51 @@
+vendor: OleumTech
+vendorSlug: oleumtech
+model: DH3
+productType: gateway
+slug: oleumtech-dh3
+status: active
+protocols:
+  - proprietary-900
+  - proprietary-2-4
+frequencyBands:
+  - "900 MHz / 915 MHz ISM (FHSS)"
+  - "2.4 GHz (DSSS)"
+  - "868 MHz (LBT-AFA)"
+txPowerDbm: 30
+txPowerCondition: "Maximum, 900/915 MHz models (1000 mW); 2.4 GHz model 63 mW, 868 MHz model 25 mW (datasheet 67-4057-001_AA)"
+rxSensitivityDbm: -110
+rxSensitivityCondition: "900/915 MHz at 9600 bps; -100 dBm at 115.2 kbps, 2.4 GHz -101 dBm at 250 kbps, 868 MHz -106 dBm at 80 kbps (datasheet)"
+rangeClass:
+  value: "64"
+  unit: km
+  conditions: "Up to 40 miles / 64 km with clear line of sight, gateway to gateway at 900/915 MHz; transmitter-to-gateway up to 7500 ft / 2.3 km at 900/915 MHz (datasheet; maximum-range figures collected under optimal test conditions)"
+  sourceRef: "Datasheet 67-4057-001_AA"
+antenna: "Optional omni-directional antenna (MMCX connector, per the datasheet networking diagram)"
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "No local I/O: the gateway aggregates OTC transmitters, I/O modules and other gateways onto a 1920-point register holding table, with event-based and time-based data logging. Local analog/discrete I/O is added through a separate RS485 I/O expansion module (datasheet)."
+upstreamInterfaces:
+  - "Ethernet 10/100/1000BASE-T (Modbus TCP/IP Master/Slave, MQTT/Sparkplug B)"
+  - "2 serial RTU ports, RS232/RS485 software-configurable (Modbus Master/Slave, LevelMaster ASCII Slave, ROC-Link Master)"
+powerSupply: "9-30 Vdc"
+powerConsumption: "Average power input 3 W with local display off, 5 W with display on (datasheet)"
+batteryLife: null
+ipRating: null
+operatingTemp: "-40 °C to +70 °C"
+certifications:
+  - "FCC Part 15 (USA)"
+  - "IC ICES-003 (Canada)"
+  - "ACMA (Australia)"
+  - "ATEX ITS15ATEX48231X"
+  - "IECEx ETL15.0039X"
+hazardousArea: "Class I Division 2 and Class I Zone 2, Groups A-D; ATEX II 3 G Ex nA nC IIC T4 Gc"
+sourceUrl: https://oleumtech.com/wp-content/uploads/downloads/datasheets/dh3-wireless-gateway-ethernet-serial-datasheet-oleumtech-67-4057-001.pdf
+sourceType: datasheet
+sourceDocId: "67-4057-001_AA"
+dateChecked: 2026-11-14
+notes: "Classification: OleumTech's own datasheet device functionality is 'Wireless Gateway with Ethernet/Serial Connectivity and Data Logging Capabilities' — the DH3 is recorded as a gateway, not a wireless I/O module, and it is also listed by the Phase 2 plan under modules; the manufacturer's classification governs. Band-specific ordering models: WG-0900-DH3, WG-0915-DH3, WG-2400-DH3, WG-0868-DH3. MQTT/Sparkplug B functionality requires firmware v2.0 or later. No enclosure IP rating is stated in the datasheet, so ipRating is left blank."

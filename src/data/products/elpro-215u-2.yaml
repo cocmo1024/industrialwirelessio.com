@@ -1,0 +1,46 @@
+vendor: ELPRO
+vendorSlug: elpro
+model: 215U-2 (EL-215U-2-BGN)
+productType: wireless-io-module
+slug: elpro-215u-2
+status: active
+protocols:
+  - wifi
+frequencyBands:
+  - "2.401-2.483 GHz (IEEE 802.11 b/g)"
+txPowerDbm: 23
+txPowerCondition: "200 mW (datasheet DS-EL-215U-2-BGN, Aug 2023; RF power may vary by country of application)"
+rxSensitivityDbm: -94
+rxSensitivityCondition: "802.11b at 11 Mbps; -75 dBm for 802.11g at 54 Mbps (datasheet)"
+rangeClass:
+  value: "400"
+  unit: m
+  conditions: "Typical range 1300 ft (400 m), line of sight (datasheet)"
+  sourceRef: "DS-EL-215U-2-BGN (Aug 2023)"
+antenna: "SMA female antenna connector (antennas are separate accessories)"
+io:
+  di: 8
+  do: 8
+  ai: 4
+  ao: 2
+  relay: null
+  pulse: null
+ioNotes: "The 8 discrete points are one shared block configurable as inputs or outputs (datasheet footnote); channels 1-4 can alternatively be configured as pulse inputs or pulse outputs. Plus 4 analog inputs (2 differential, 2 single-ended; 0-24 mA) and 2 analog outputs (sourcing, 0-24 mA)."
+upstreamInterfaces:
+  - "Ethernet 10/100Base-T (Modbus TCP, DNP3, MQTT/Sparkplug B gateway)"
+  - "RS-232 and RS-485 serial (Modbus RTU)"
+powerSupply: "10.8-30 Vdc nominal (can charge a sealed lead-acid backup battery)"
+powerConsumption: "Average current draw 200 mA at 12 Vdc idle (100 mA at 24 Vdc); transmit 200 mA at 12 Vdc (datasheet)"
+batteryLife: null
+ipRating: IP20
+operatingTemp: "-40 °C to +70 °C"
+certifications:
+  - "FCC Part 15.247 (USA)"
+  - "IC RSS 210 (Canada)"
+  - "EN 300 328 (EU)"
+hazardousArea: "UL Class I Division 2 (IECEx/ATEX Zone 2 pending per the Aug 2023 datasheet)"
+sourceUrl: https://elprotech.com/wp-content/uploads/2023/08/DS-EL-215U-2_Aug23_V1.0.pdf
+sourceType: datasheet
+sourceDocId: "DS-EL-215U-2-BGN (Effective Aug 2023)"
+dateChecked: 2026-11-14
+notes: "ELPRO describes the 215U-2 as an integrated wireless I/O node that also performs Ethernet/serial gateway duty (base, ProMesh mesh node or remote); it is recorded as a wireless I/O module, its primary identity in the datasheet title. Figures are from the current Aug 2023 technical data on elprotech.com; the Eaton-era 2018 revision of the same document is not merged."

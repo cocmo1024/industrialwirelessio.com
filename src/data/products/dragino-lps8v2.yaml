@@ -1,0 +1,46 @@
+vendor: Dragino
+vendorSlug: dragino
+model: LPS8v2
+productType: gateway
+slug: dragino-lps8v2
+status: active
+protocols:
+  - lorawan
+frequencyBands:
+  - EU868
+  - RU864
+  - IN865
+  - KZ865
+  - US915
+  - AU915
+  - AS923
+  - KR920
+txPowerDbm: 27
+txPowerCondition: Max output power (manual specifications)
+rxSensitivityDbm: -140
+rangeClass: null
+antenna: null
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: 10 programmable parallel demodulation paths
+upstreamInterfaces:
+  - Ethernet 10/100 (1 × RJ45)
+  - WiFi 802.11 b/g/n
+  - Cellular via optional 4G module
+powerSupply: 5 V, 2 A DC
+powerConsumption: null
+batteryLife: null
+ipRating: null
+operatingTemp: "-20 °C to 70 °C"
+certifications: []
+hazardousArea: null
+sourceUrl: https://wiki.dragino.com/docs/LoRaWAN-Gateway/indoor-gateways/lps8v2/
+sourceType: manual
+sourceDocId: null
+dateChecked: 2026-11-14
+notes: No standalone LPS8v2 datasheet was found on dragino.com (2026-11-14); the record transcribes the official wiki manual. Antenna, IP rating, certifications and power consumption are not stated there. Rows-only until a source with a document ID is bound (§4.3 gate 4).

@@ -1,0 +1,46 @@
+---
+/**
+ * FAQ block (GEO List A construction spec §4): 3–5 questions whose
+ * wording matches the List C question bank verbatim, each with a
+ * self-contained 2–4 sentence answer. The matching FAQPage JSON-LD
+ * node is emitted by the page template from the same frontmatter.
+ */
+interface FaqItem {
+	question: string;
+	answer: string;
+}
+
+interface Props {
+	items: FaqItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<section class="faq" aria-label="Frequently asked questions">
+	<h2>Frequently asked questions</h2>
+	{
+		items.map((item) => (
+			<div class="faq-item">
+				<h3>{item.question}</h3>
+				<p>{item.answer}</p>
+			</div>
+		))
+	}
+</section>
+
+<style>
+	.faq {
+		margin-top: 1.6rem;
+	}
+
+	.faq-item {
+		border-top: 1px solid var(--line);
+		padding: 0.8rem 0 0.2rem;
+	}
+
+	.faq-item h3 {
+		font-size: var(--fs-md);
+		margin-bottom: 0.3rem;
+	}
+</style>

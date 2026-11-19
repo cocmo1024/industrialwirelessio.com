@@ -1,0 +1,42 @@
+vendor: Digi
+vendorSlug: digi
+model: IX30 (IX30-00P7)
+productType: router
+slug: digi-ix30
+status: active
+protocols:
+  - lte
+frequencyBands:
+  - "LTE-A Cat 7 (North America / FirstNet) band set, per the IX30-00P7 model page"
+txPowerDbm: null
+rxSensitivityDbm: null
+rangeClass: null
+antenna: null
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "Software-selectable I/O on a 12-pin terminal block: 4 digital and 4 analog channels. Counts are left blank because channel duty is software-configured (model page)."
+upstreamInterfaces:
+  - Ethernet (2 ports)
+  - "RS-232/422/485 serial"
+powerSupply: null
+powerConsumption: "1.5 W (light traffic), 3.5 W (peak data transmission) (IX30-00P7 model page)"
+batteryLife: null
+ipRating: null
+operatingTemp: "-34 °C to +74 °C"
+certifications:
+  - PTCRB
+  - Verizon
+  - T-Mobile
+  - AT&T
+  - FirstNet Capable
+hazardousArea: "Class I Division 2"
+sourceUrl: https://www.digi.com/products/models/ix30-00p7
+sourceType: product-page
+sourceDocId: null
+dateChecked: 2026-11-14
+notes: "There is no Cat 6 variant of the IX30; the 00P7 is an LTE-A Cat 7 (North America / FirstNet) model. An older datasheet gives 4 W / 12 W power figures; the current model-page values are used. Data row only for now under blueprint §4.3: no antenna or RF figure was transcribed from the model page in this pass. Promotion path: transcribe the antenna/interface rows from the model page."

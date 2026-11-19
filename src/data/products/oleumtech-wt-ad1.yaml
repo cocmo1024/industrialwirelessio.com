@@ -1,0 +1,53 @@
+vendor: OleumTech
+vendorSlug: oleumtech
+model: WT-AD1
+productType: wireless-io-module
+slug: oleumtech-wt-ad1
+status: active
+protocols:
+  - proprietary-900
+  - proprietary-2-4
+frequencyBands:
+  - "900 MHz / 915 MHz ISM (FHSS)"
+  - "2.4 GHz (DSSS)"
+  - "868 MHz (LBT-AFA)"
+txPowerDbm: 18
+txPowerCondition: "Maximum, 2.4 GHz model (63 mW); 900/915 MHz models 10 mW, 868 MHz model 25 mW (datasheet 67-4040-001_S)"
+rxSensitivityDbm: -110
+rxSensitivityCondition: "900/915 MHz at 9600 bps; -100 dBm at 115.2 kbps, 2.4 GHz -101 dBm at 250 kbps, 868 MHz -106 dBm at 80 kbps (datasheet)"
+rangeClass:
+  value: "2.3"
+  unit: km
+  conditions: "Up to 7500 ft / 1.4 miles (2.3 km) with clear line of sight at 900/915 MHz, transmitter to gateway; 2.4 GHz up to 3.1 km, 868 MHz up to 2.4 km (datasheet; maximum-range figures collected under optimal test conditions)"
+  sourceRef: "Datasheet 67-4040-001_S"
+antenna: null
+io:
+  di: 1
+  do: null
+  ai: 3
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "3 analog inputs (0-5 Vdc, 24-bit ADC) and 1 discrete input (dry contact or open-drain/NPN). The transmitter supplies up to 9.5 Vdc of power to connected analog sensors (datasheet)."
+upstreamInterfaces:
+  - "OleumTech OTC wireless network (to an OTC gateway)"
+powerSupply: "Self-contained internal 3.6 Vdc lithium battery pack (replaceable; OleumTech SX1000-BP3 only)"
+powerConsumption: null
+batteryLife:
+  value: "Up to 10 years"
+  conditions: "Ambient temperature and one transmission per 1-minute interval without any retries (datasheet footnote 1; see the OleumTech Battery Life Expectancy Chart for other intervals)"
+  sourceRef: "Datasheet 67-4040-001_S"
+ipRating: IP66
+operatingTemp: "-40 °C to +70 °C"
+certifications:
+  - "FCC Part 15 (USA)"
+  - "IC ICES-003 (Canada)"
+  - "ACMA (Australia)"
+  - "ATEX Sira 13ATEX2142X"
+  - "IECEx SIR 13.0054X"
+hazardousArea: "Class I Division 1, Groups A-D, T3C — intrinsically safe (Ex ia IIC T3); Class I Zone 0, AEx ia IIC T3"
+sourceUrl: https://oleumtech.com/wp-content/uploads/downloads/datasheets/wt-ad1-wireless-analog-discrete-transmitter-datasheet-oleumtech-67-4040-001.pdf
+sourceType: datasheet
+sourceDocId: "67-4040-001_S"
+dateChecked: 2026-11-14
+notes: "Cluster-boundary judgment (2026-11-14): admitted as a wireless I/O module. The datasheet's device functionality is 'Wireless Transmitter with Analog and Discrete Inputs' — its analog inputs are generic 0-5 Vdc terminals for user-wired external sensors (it supplies sensor power and has no sensing element of its own), the opposite of the rejected Advantech WISE-4210-S231, which sensed internally and had no I/O terminals. The official product page sits under a pressure-gauge/transducer URL, but the datasheet governs: this is a general-purpose analog/discrete wireless transmitter, not a pressure sensor body. Band-specific ordering models: WT-0900-AD1, WT-0915-AD1, WT-2400-AD1, WT-0868-AD1. The -40 °C to +70 °C figure recorded is the Division 1 / Zone 0 ambient rating; the datasheet allows -40 °C to +80 °C for non-hazardous applications."

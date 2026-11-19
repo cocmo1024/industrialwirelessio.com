@@ -1,0 +1,36 @@
+vendor: Emerson
+vendorSlug: emerson
+model: "775 THUM Adapter"
+productType: adapter
+slug: emerson-thum-775
+status: active
+protocols:
+  - wirelesshart
+frequencyBands:
+  - "2.4 GHz (IEEE 802.15.4)"
+txPowerDbm: null
+rxSensitivityDbm: null
+rangeClass: null
+antenna: null
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "Loop-powered adapter that adds WirelessHART to a wired HART device. Voltage drop 2.25 V at 4 mA and 1.2 V at 20 mA (manufacturer product page)."
+upstreamInterfaces:
+  - WirelessHART (to a WirelessHART gateway)
+powerSupply: "Loop-powered from the 4-20 mA loop"
+powerConsumption: null
+batteryLife: null
+ipRating: IP66
+operatingTemp: "-40 °C to +85 °C"
+certifications: []
+hazardousArea: null
+sourceUrl: https://www.emerson.com/en/measurement-instrumentation/products/emerson-775-wireless-thum-adapter
+sourceType: product-page
+sourceDocId: null
+dateChecked: 2026-11-14
+notes: "Data row only under blueprint §4.3: a single upstream interface and no local I/O counts, so the record feeds tables but gets no page of its own."

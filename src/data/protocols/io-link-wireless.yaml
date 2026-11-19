@@ -1,0 +1,80 @@
+slug: io-link-wireless
+name: IO-Link Wireless
+fullName: IO-Link Wireless — the wireless extension of IO-Link
+standardsBody: IO-Link Community (PROFIBUS & PROFINET International)
+standardDesignation: IEC 61139-3:2023 · IO-Link Wireless System Specification V1.1 · base technology IEC 61131-9 (SDCI)
+coverage: Cornerstone — definition, cycle time and capacity
+bands:
+  - label: 2.4 GHz ISM
+    detail: 2.4–2.4835 GHz, 80 channels at 1 MHz spacing
+    railFreqMhz: 2400
+topology: Centralized star around a W-Master — up to 5 parallel tracks, no device-to-device mesh
+latencyClass: 5 ms minimum cycle time — machine-level control class
+powerProfile: Powered devices at machine level; the rated figure is reliability (PER 10⁻⁹), not battery life
+bestFor: Sensors and actuators on moving machine parts — grippers, tool changers, rotary tables
+keyParameters:
+  - key: standard
+    label: Standard
+    value: "IEC 61139-3:2023 (Edition 1.0, 2023-11) — Industrial networks – Single-drop digital communication interface – Part 3: Wireless extensions; the IO-Link Community's System Extensions specification V1.1 (March 2018, Order No. 10.112) is its technical basis, an extension of the IO-Link base standard (IEC 61131-9 SDCI), not a replacement stack"
+    source: IEC 61139-3:2023 cover and contents (official preview); IO-Link Community, System Specification V1.1, introduction
+  - key: channels
+    label: Channels
+    value: 80 channels at 1 MHz spacing; configuration channels at 2401 and 2480 MHz, data channels 2403–2478 MHz
+    source: IO-Link Wireless System Specification V1.1, §4.5 and §5.1
+  - key: phy
+    label: Radio (PHY)
+    value: GFSK at 1 Mbit/s gross; the radio design is based on Bluetooth 4.2 LE technology, with no Bluetooth system compatibility
+    source: IO-Link Wireless System Specification V1.1, §5.1
+  - key: txPower
+    label: Transmit power / sensitivity
+    value: At most 10 dBm EIRP (10 mW total, shared across tracks); receiver sensitivity at least −94 dBm
+    source: IO-Link Wireless System Specification V1.1, §5.1
+  - key: cycleTime
+    label: Cycle time
+    value: 5 ms minimum — one W-Cycle is three W-Sub-cycles of 1.664 ms
+    source: IO-Link Wireless System Specification V1.1, main characteristics and W-Cycle section
+  - key: retries
+    label: Retransmissions
+    value: A failed packet is retried inside the same 5 ms cycle using the remaining sub-cycles, each on a different channel — the cycle is never extended
+    source: IO-Link Wireless System Specification V1.1, §4.4 transmission error handling
+  - key: capacity
+    label: Devices per master
+    value: 8 W-Devices per track × up to 5 tracks = 40 W-Devices per W-Master; up to 3 W-Masters (120 devices) per cell
+    source: IO-Link Wireless System Specification V1.1, main characteristics and §4.3 cell concept
+  - key: processData
+    label: Process data
+    value: Up to 32 octets per device in each communication direction
+    source: IO-Link Wireless System Specification V1.1, main characteristics
+  - key: range
+    label: Range (W-Master cell)
+    value: Up to 20 m with one track active; up to 10 m when more than one track is active — environment-dependent
+    source: IO-Link Wireless System Specification V1.1, main characteristics and §4.3
+  - key: reliability
+    label: Reliability
+    value: Packet error rate of 10⁻⁹ — the figure the IO-Link Community states as equal to the wired version
+    source: IO-Link Community, “What is IO-Link Wireless?” technology page; System Specification V1.1, main characteristics
+  - key: coexistence
+    label: Coexistence
+    value: A configurable channel blacklist masks out channels used by WLAN and other 2.4 GHz systems; hopping tables are derived from each master's MasterID
+    source: IO-Link Wireless System Specification V1.1, §4.5.1 and §18.1
+linkStrip:
+  nodeA: W-Device (sensor / actuator)
+  nodeB: W-Master (to PLC via fieldbus)
+  linkLabel: IO-Link Wireless · 2.4 GHz ISM · star
+  readings:
+    - label: Cycle time
+      value: 5 ms
+    - label: Cell range
+      value: ≤ 20 m
+    - label: Packet error rate
+      value: 10⁻⁹
+sources:
+  - label: "IEC — IEC 61139-3:2023, Industrial networks – Single-drop digital communication interface – Part 3: Wireless extensions (catalogue entry and official preview)"
+    url: https://standards.iteh.ai/catalog/standards/sist/56a4848f-c8e7-42ff-a7c1-a1621c69535e/iec-61139-3-2023
+    dateChecked: 2026-11-14
+  - label: IO-Link Community — “What is IO-Link Wireless?” technology page
+    url: https://io-link.com/en/Technology/Wireless/wireless.php
+    dateChecked: 2026-11-14
+  - label: IO-Link Community — IO-Link Wireless System Extensions, Specification V1.1 (Order No. 10.112), via the PROFIBUS & PROFINET International download page
+    url: https://www.profibus.com/download/io-link-wireless-system-extensions
+    dateChecked: 2026-11-14

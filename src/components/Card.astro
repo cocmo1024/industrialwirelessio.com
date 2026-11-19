@@ -1,0 +1,31 @@
+---
+/**
+ * Card — native replacement for the Starlight Card (Phase 4
+ * migration). A titled panel; the legacy `icon` prop is accepted for
+ * source compatibility and intentionally not rendered (the new design
+ * language does not use icon glyphs on cards).
+ */
+interface Props {
+	title: string;
+	icon?: string;
+}
+
+const { title } = Astro.props;
+---
+
+<div class="panel card">
+	<div class="panel-head">{title}</div>
+	<div class="panel-body">
+		<slot />
+	</div>
+</div>
+
+<style>
+	.card {
+		margin: 0;
+	}
+
+	.card :global(p) {
+		margin: 0;
+	}
+</style>

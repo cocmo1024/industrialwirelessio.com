@@ -1,0 +1,111 @@
+slug: wirelesshart
+name: WirelessHART
+fullName: WirelessHART — the wireless extension of the HART protocol
+standardsBody: FieldComm Group
+standardDesignation: IEC 62591
+coverage: Cornerstone — definition, parameters and gateway sizing
+bands:
+  - label: 2.4 GHz ISM
+    detail: 2.400–2.480 GHz, IEEE 802.15.4, 15 radio channels
+    railFreqMhz: 2400
+topology: Full mesh — every device can route for others; self-organizing and self-healing
+latencyClass: Device update rates from 1 s to 60 min — monitoring and slow control class
+powerProfile: Battery-first — power-module life is rated against update rate (example below)
+bestFor: Plant-wide process monitoring with battery-powered field instruments
+keyParameters:
+  - key: standard
+    label: Standard
+    value: IEC 62591; WirelessHART is the wireless part of HART 7, first released in 2007
+    source: IEC 62591 Ed. 1.0 (2010); Phoenix Contact, WirelessHART Technology page
+  - key: phy
+    label: Radio (PHY)
+    value: IEEE 802.15.4 with DSSS, 2.4 GHz ISM band
+    source: Emerson Wireless Gateway 1410S PDS 00813-0600-4410 Rev AJ, network specifications
+  - key: channels
+    label: Channels
+    value: 15 radio channels in the 2.4 GHz band, used with time-synchronized channel hopping and blacklisting of bad channels
+    source: Emerson 1410S PDS 00813-0600-4410 Rev AJ; Emerson Engineering Guidelines 00809-0100-6129 Rev AB, App. C
+  - key: timeslot
+    label: TDMA timeslot
+    value: 10 ms — every transmission takes place in a 10 ms time slot on one of the 15 channels
+    source: Phoenix Contact, WirelessHART Technology page (Time Synchronized Communication)
+  - key: security
+    label: Security
+    value: AES-128 encryption with join, network and session keys — security is part of the protocol, not an add-on
+    source: Emerson Engineering Guidelines 00809-0100-6129 Rev AB, §6.14 and definitions
+  - key: updateRates
+    label: Supported device update rates
+    value: 1, 2, 4, 8, 16, 32 seconds, or 1 to 60 minutes (gateway-supported range)
+    source: Emerson Wireless Gateway 1410S PDS 00813-0600-4410 Rev AJ, network specifications
+  - key: reliability
+    label: Data reliability
+    value: Greater than 99% — the figure Emerson specifies for the self-organizing network
+    source: Emerson Wireless Gateway 1410S PDS 00813-0600-4410 Rev AJ, network specifications
+  - key: battery
+    label: Battery life (worked example)
+    value: 10-year power module life at a 1-minute update rate at reference conditions (21 °C, routing data for three additional devices) — Rosemount 648 wireless temperature transmitter
+    source: Emerson Rosemount 648 PDS 00813-0100-4648 Rev HF, power module specification and footnote 3
+  - key: application
+    label: Application layer
+    value: The HART application layer itself — the same commands, device descriptions and tools as wired HART; a WirelessHART device is managed by existing HART asset tools
+    source: FieldComm Group, WirelessHART technology page (compatibility with existing HART devices, commands and tools)
+  - key: range
+    label: Single-hop range
+    value: No fixed standard figure — Emerson's design rules are written in multiples of each installation's effective range, which is set by antenna, mounting height and obstructions
+    source: Emerson Engineering Guidelines 00809-0100-6129 Rev AB, §6.10.1 design rules
+gatewayCapacity:
+  - vendor: Emerson
+    model: Wireless Gateway 1410S with 781S antenna
+    maxDevices: "12"
+    condition: At a 1-second device update period (capacity load table)
+    source: Emerson 1410S PDS 00813-0600-4410 Rev AJ, network specifications
+  - vendor: Emerson
+    model: Wireless Gateway 1410S with 781S antenna
+    maxDevices: "100"
+    condition: At an 8-second device update period (capacity load table)
+    source: Emerson 1410S PDS 00813-0600-4410 Rev AJ, network specifications
+  - vendor: Emerson
+    model: Wireless Gateway 1410S with 781S antenna
+    maxDevices: "200"
+    condition: At a 16-second device update period; 200 is also the base per-network maximum
+    source: Emerson 1410S PDS 00813-0600-4410 Rev AJ, network specifications
+  - vendor: Emerson
+    model: Wireless Gateway 1410S with 781S antenna
+    maxDevices: "500"
+    condition: At a 60-second device update period, with the High Capacity option fitted
+    source: Emerson 1410S PDS 00813-0600-4410 Rev AJ, network specifications and ordering information
+  - vendor: Endress+Hauser
+    model: FieldGate SWG50
+    maxDevices: "100"
+    condition: Per gateway — wireless field devices and wired devices via WirelessHART adapters combined
+    source: Endress+Hauser FieldGate SWG50 Operating Instructions BA02235S/04/EN, §3 (Technical Information TI01677S/04/EN)
+linkStrip:
+  nodeA: Field device (battery transmitter)
+  nodeB: Gateway + network manager
+  linkLabel: WirelessHART · 2.4 GHz ISM · mesh hops
+  readings:
+    - label: Update rate
+      value: 1 s – 60 min
+    - label: Timeslot
+      value: 10 ms
+    - label: Data reliability
+      value: ">99%"
+sources:
+  - label: FieldComm Group — WirelessHART technology overview
+    url: https://www.fieldcommgroup.org/technologies/wirelesshart
+    dateChecked: 2026-11-14
+  - label: Emerson — Wireless Gateway 1410S with 781S Smart Antenna, Product Data Sheet 00813-0600-4410 Rev AJ (June 2025)
+    url: https://www.ca-caribe.com/asset/6593360
+    dateChecked: 2026-11-14
+  - label: Emerson — System Engineering Guidelines, IEC 62591 WirelessHART, 00809-0100-6129 Rev AB
+    url: https://www.spartancontrols.com/getattachment/4bfc2ccd-e47b-4996-87fc-2560c57703ca/system-engineering-guidelines-iec-62591-wirelesshart.pdf
+    dateChecked: 2026-11-14
+  - label: Emerson — Rosemount 648 Wireless Temperature Transmitter, Product Data Sheet 00813-0100-4648 Rev HF
+    url: https://controlsouthern.emersonimpactpartners.com/asset/v2/bb176a04-2b14-47b5-afb6-3ace7f312095
+    dateChecked: 2026-11-14
+  - label: Endress+Hauser — FieldGate SWG50 Operating Instructions BA02235S/04/EN
+    url: https://bdih-download.endress.com/file/3ea13778b8168d790b1e1b6c4f2df47b/BA02235SEN_0225-00.pdf
+    dateChecked: 2026-11-14
+  - label: Phoenix Contact — WirelessHART Technology (manufacturer technology page)
+    url: http://www.phoenixcontact.net/microsites/wireless-hart/895.htm
+    dateChecked: 2026-11-14

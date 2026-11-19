@@ -1,0 +1,98 @@
+---
+/**
+ * Resources — section index (blueprint R1.3): an annotated directory
+ * of the standards bodies, alliances and certification programs that
+ * publish the primary sources this site is built from. Each entry
+ * carries an editorial note on what the organization is FOR; links
+ * go to the organization, and entries are added only after the desk
+ * has worked from the source.
+ */
+import { getCollection } from 'astro:content';
+import PortalLayout from '../../layouts/PortalLayout.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import { buildSeo } from '../../utils/seo';
+
+const resources = (await getCollection('resources'))
+	.map((item) => item.data)
+	.sort((a, b) => a.name.localeCompare(b.name));
+
+const fmtDay = (date: Date) => date.toISOString().slice(0, 10);
+
+const seo = buildSeo(
+	{
+		id: 'resources',
+		locale: 'en',
+		title: 'Resources',
+		description:
+			'The primary-source directory: FieldComm Group, ISA100 WCI, the LoRa Alliance, the IO-Link Community and ISA — what each body publishes and where to read it.',
+		kind: 'section',
+	},
+	'/resources/',
+);
+---
+
+<PortalLayout seo={seo}>
+	<SectionHead name="Resources" asPageTitle />
+	<p class="lede">
+		This site is built from primary sources; these are the organizations that publish
+		them. Each entry says what the body is for and what to read there — the directory
+		grows only when the desk has worked from a source, not by submission.
+	</p>
+
+	<div class="table-wrap">
+		<table class="data">
+			<thead>
+				<tr>
+					<th scope="col">Organization</th>
+					<th scope="col">Kind</th>
+					<th scope="col">What it is for</th>
+					<th scope="col">Checked</th>
+				</tr>
+			</thead>
+			<tbody>
+				{
+					resources.map((resource) => (
+						<tr>
+							<th scope="row">
+								<a href={resource.url} rel="noopener">
+									{resource.name}
+								</a>
+							</th>
+							<td>{resource.kind}</td>
+							<td>{resource.note}</td>
+							<td class="num">{fmtDay(resource.dateChecked)}</td>
+						</tr>
+					))
+				}
+			</tbody>
+		</table>
+	</div>
+
+	<section class="panel method" aria-label="How sources are used">
+		<div class="panel-head">How these sources are used here</div>
+		<div class="panel-body">
+			<p>
+				Protocol parameters come from the standards bodies' publications; product
+				figures from the manufacturers' datasheets; market claims only from a named
+				source with a stated method. The sourcing rule is printed in the footer of
+				every page, and the <a href="/editorial-policy/">editorial policy</a> holds
+				the full text. Companion references for devices and sensors live with the
+				cluster: <a href="https://iiotdevices.com" rel="noopener">iiotdevices.com</a>{' '}
+				for IIoT devices and architecture,{' '}
+				<a href="https://sensorcatalog.com" rel="noopener">sensorcatalog.com</a> for
+				sensor specifications and selection.
+			</p>
+		</div>
+	</section>
+</PortalLayout>
+
+<style>
+	.method {
+		margin-top: 1.6rem;
+	}
+
+	.method p {
+		margin: 0;
+		max-width: 72ch;
+	}
+</style>

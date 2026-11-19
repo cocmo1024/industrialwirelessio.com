@@ -1,0 +1,38 @@
+vendor: Honeywell
+vendorSlug: honeywell
+model: OneWireless FDAP Gen3
+productType: gateway
+slug: honeywell-fdap
+status: active
+protocols:
+  - isa100
+  - wirelesshart
+frequencyBands:
+  - "2.4-2.483 GHz"
+txPowerDbm: 18
+rxSensitivityDbm: -100
+rxSensitivityCondition: "At 250 kbps"
+rangeClass: null
+antenna: null
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "Field device access point for OneWireless networks (ISA100.11a and WirelessHART modes per specification OW03 670 322)."
+upstreamInterfaces:
+  - "10BASE-T / 100BASE-T Ethernet"
+powerSupply: null
+powerConsumption: null
+batteryLife: null
+ipRating: "IP66 / IP67"
+operatingTemp: null
+certifications: []
+hazardousArea: null
+sourceUrl: https://prod-edam.honeywell.com/content/dam/honeywell-edam/pmt/hps/products/pas/wireless/field-device-access-point/onewireless-fdap-specification.pdf
+sourceType: datasheet
+sourceDocId: "OW03 670 322"
+dateChecked: 2026-11-14
+notes: "Data row only under blueprint §4.3 (gate boundary case): the radio identity is fully sourced, but the unit has a single upstream interface and no local I/O counts, so the I/O-substance gate is not met. Values per the FDAP specification OW03 670 322 (July 2022)."

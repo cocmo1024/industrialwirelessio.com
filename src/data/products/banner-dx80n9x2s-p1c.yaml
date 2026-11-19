@@ -1,0 +1,37 @@
+vendor: Banner Engineering
+vendorSlug: banner-engineering
+model: DX80N9X2S-P1C
+productType: wireless-io-module
+slug: banner-dx80n9x2s-p1c
+status: discontinued
+protocols:
+  - proprietary-900
+frequencyBands:
+  - "902-928 MHz ISM"
+txPowerDbm: 27
+txPowerCondition: "500 mW high-output setting (DIP-selectable; 250 mW / 24 dBm compatibility mode), datasheet 155748 Rev. S"
+rxSensitivityDbm: null
+rangeClass: null
+antenna: null
+io:
+  di: 2
+  do: 2
+  ai: 2
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "Counts per datasheet 155748 Rev. S: 2 discrete inputs, 2 discrete (PNP) outputs and 2 analog inputs. A thermistor input is also present and is not counted as an analog channel here; analog/discrete behaviour differs by operating mode (see datasheet)."
+upstreamInterfaces:
+  - Sure Cross wireless network (to a DX80 gateway)
+powerSupply: "10-30 V DC, or integrated battery / FlexPower options"
+powerConsumption: null
+batteryLife: null
+ipRating: IP20
+operatingTemp: null
+certifications: []
+hazardousArea: null
+sourceUrl: https://info.bannerengineering.com/cs/groups/public/documents/literature/155748.pdf
+sourceType: datasheet
+sourceDocId: "155748 Rev. S"
+dateChecked: 2026-11-14
+notes: "Banner lists this item as INACTIVE, and datasheet 155748 Rev. S lists the P1 node among models no longer available for order. The same datasheet also references a NEMA 4X housing variant; IP20 is recorded for this configuration and the inconsistency is noted rather than resolved. No numeric range is stated in Rev. S, so rangeClass is left blank."

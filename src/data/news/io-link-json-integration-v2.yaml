@@ -1,0 +1,11 @@
+slug: io-link-json-integration-v2
+headline: "IO-Link's JSON integration spec reaches Version 2 — with IO-Link Wireless inside"
+date: 2026-06-11
+sourceName: IO-Link Community / PI — newsroom
+sourceUrl: https://www.profibus.com/newsroom/press-news/io-link-releases-new-machine-readable-specification-for-json-mapping
+summary: "The IO-Link Community's 'JSON Integration for IO-Link' specification, Version 2, accounts for IO-Link Wireless explicitly for the first time: IO-Link data can be mapped to JSON over wireless connections — mobile applications, rotating machine parts, hard-to-reach installations — without losing the standardized data structure. The release also expands the MQTT functionality with more detailed topic structures for process data, parameters and events, and describes the mapping formally in OpenAPI and AsyncAPI, making the specification machine-readable throughout."
+editorsNote: "Wireless IO-Link devices already spoke the master's data model on the radio side; Version 2 closes the gap on the IT side, which is where the data lands — brokers, edge systems and cloud platforms."
+tag: Standards
+relatedProtocols:
+  - io-link-wireless
+dateChecked: 2026-11-19

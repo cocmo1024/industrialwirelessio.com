@@ -1,0 +1,129 @@
+---
+/**
+ * BaseLayout — the shell every page type inherits (blueprint §2.2):
+ * head (canonical/hreflang/JSON-LD from the route manifest + seo.ts),
+ * header with three-axis navigation, the "nameplate rail + main
+ * column" two-column skeleton, and the brand-facts footer.
+ *
+ * hreflang links are passed in from the route manifest
+ * (src/utils/routes.ts) so head, sitemap and manifest can never
+ * disagree about which locale versions of a page exist.
+ */
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { brand } from '../data/brand';
+import type { SeoResult } from '../utils/seo';
+import type { HreflangLink } from '../utils/routes';
+
+interface Props {
+	seo: SeoResult;
+	hreflang?: HreflangLink[];
+	/** Render the sticky nameplate rail column (object pages). */
+	hasRail?: boolean;
+}
+
+const { seo, hreflang = [], hasRail = false } = Astro.props;
+const fullTitle =
+	seo.title === brand.name ? `${brand.name} — ${brand.slogan}` : `${seo.title} | ${brand.name}`;
+---
+
+<!doctype html>
+<html lang={seo.languageTag}>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{fullTitle}</title>
+		<meta name="description" content={seo.description} />
+		<link rel="canonical" href={seo.canonicalUrl} />
+		<meta name="robots" content={seo.robots} />
+		{
+			hreflang.map((link) => (
+				<link rel="alternate" hreflang={link.hreflang} href={link.href} />
+			))
+		}
+		<meta property="og:type" content={seo.ogType} />
+		<meta property="og:site_name" content={brand.name} />
+		<meta property="og:title" content={seo.title} />
+		<meta property="og:description" content={seo.description} />
+		<meta property="og:url" content={seo.canonicalUrl} />
+		<meta property="og:locale" content={seo.ogLocale} />
+		<meta property="og:image" content={seo.imageUrl} />
+		<meta property="og:image:alt" content={seo.imageAlt} />
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={seo.title} />
+		<meta name="twitter:description" content={seo.description} />
+		<meta name="twitter:image" content={seo.imageUrl} />
+		<meta name="theme-color" content={brand.themeColor} />
+		<link rel="icon" href={brand.faviconPath} type="image/svg+xml" />
+		<link rel="apple-touch-icon" href={brand.appleTouchIconPath} />
+		<link rel="manifest" href="/site.webmanifest" />
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title={brand.name}
+			href="/rss.xml"
+		/>
+		{
+			seo.publishedTime && (
+				<meta property="article:published_time" content={seo.publishedTime} />
+			)
+		}
+		{
+			seo.modifiedTime && (
+				<meta property="article:modified_time" content={seo.modifiedTime} />
+			)
+		}
+		{
+			seo.structuredData.map((node) => (
+				<script type="application/ld+json" set:html={JSON.stringify(node)} />
+			))
+		}
+	</head>
+	<body>
+		<Header />
+		<div class:list={['shell', { 'has-rail': hasRail }]}>
+			{
+				hasRail && (
+					<aside class="rail" aria-label="Object nameplate">
+						<slot name="rail" />
+					</aside>
+				)
+			}
+			<main class="main">
+				<slot />
+			</main>
+		</div>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.shell {
+		max-width: var(--content-w);
+		margin: 0 auto;
+		padding: 1.2rem var(--gutter) 0;
+	}
+
+	.shell.has-rail {
+		display: grid;
+		grid-template-columns: var(--rail-w) minmax(0, 1fr);
+		gap: 1.5rem;
+		align-items: start;
+	}
+
+	.rail {
+		position: sticky;
+		top: 1rem;
+	}
+
+	@media (max-width: 60rem) {
+		.shell.has-rail {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.rail {
+			position: static;
+		}
+	}
+</style>

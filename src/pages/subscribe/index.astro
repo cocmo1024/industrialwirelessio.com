@@ -1,0 +1,59 @@
+---
+/**
+ * Subscribe — structural entry (blueprint R1.6). The briefing does
+ * not exist yet and no personal data is collected anywhere on this
+ * site (R1-C5: backend and data handling are decided before any
+ * form ships). This page states what the briefing will be, its
+ * current status, and the one working channel that exists today:
+ * the contact email.
+ */
+import PortalLayout from '../../layouts/PortalLayout.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import { brand } from '../../data/brand';
+import { buildSeo } from '../../utils/seo';
+
+const seo = buildSeo(
+	{
+		id: 'subscribe',
+		locale: 'en',
+		title: 'Subscribe',
+		description:
+			'The Industrial Wireless I/O briefing is in preparation: the week\u2019s sourced wireless moves and database changes. No form, no data collection — status and contact here.',
+		kind: 'foundation',
+	},
+	'/subscribe/',
+);
+---
+
+<PortalLayout seo={seo}>
+	<SectionHead name="Subscribe" asPageTitle />
+	<p class="lede">
+		A short industry briefing is in preparation: the week's industrial wireless moves —
+		standards, products, market evidence — each item dated and linked to its primary
+		source, plus the records added to the database that week.
+	</p>
+
+	<section class="panel" aria-label="Status">
+		<div class="panel-head">Status</div>
+		<div class="panel-body">
+			<p>
+				<strong>Not yet open.</strong> There is no form on this page and this site
+				collects no personal data: the subscription backend and its data handling
+				are settled before anything launches, and this page will say so plainly
+				when they are. The news line the briefing will draw from is already live —
+				read it on the <a href="/news/">news page</a> or via{' '}
+				<a href="/rss.xml">RSS</a>.
+			</p>
+			<p>
+				Questions, corrections and listing requests reach the desk at{' '}
+				<a href={`mailto:${brand.email}`}>{brand.email}</a>.
+			</p>
+		</div>
+	</section>
+</PortalLayout>
+
+<style>
+	.panel p {
+		max-width: 72ch;
+	}
+</style>

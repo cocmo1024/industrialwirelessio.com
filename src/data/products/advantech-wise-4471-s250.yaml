@@ -1,0 +1,37 @@
+vendor: Advantech
+vendorSlug: advantech
+model: WISE-4471-S250
+productType: wireless-io-module
+slug: advantech-wise-4471-s250
+status: active
+protocols:
+  - nb-iot
+  - lte-m
+frequencyBands:
+  - "LTE bands B2/B3/B4/B5/B8/B12/B13/B20/B28 (Cat M1 / NB1, 3GPP R13)"
+txPowerDbm: null
+rxSensitivityDbm: null
+rangeClass: null
+antenna: Built-in antenna
+io:
+  di: 6
+  do: 2
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: null
+upstreamInterfaces:
+  - RS-485
+powerSupply: null
+powerConsumption: null
+batteryLife: null
+ipRating: null
+operatingTemp: null
+certifications: []
+hazardousArea: null
+sourceUrl: "https://advdownload.blob.core.windows.net/productfile/PIS/WISE-4471-S250/Product - Datasheet/WISE-4471-S250_DS(11.07.18)20181204100219.pdf"
+sourceType: datasheet
+sourceDocId: "WISE-4471-S250 datasheet, last updated 7-Nov-2018"
+dateChecked: 2026-11-14
+notes: "Values per the Advantech datasheet on the Advantech download domain. Fields the datasheet does not state (power, temperature, IP rating) are left blank."

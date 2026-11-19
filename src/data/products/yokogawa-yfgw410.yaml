@@ -1,0 +1,35 @@
+vendor: Yokogawa
+vendorSlug: yokogawa
+model: YFGW410
+productType: gateway
+slug: yokogawa-yfgw410
+status: active
+protocols:
+  - isa100
+frequencyBands: []
+txPowerDbm: null
+rxSensitivityDbm: null
+rangeClass: null
+antenna: null
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "Field wireless management station: up to 200 field devices at a 1 s update rate or 500 at 5 s (GS 01W02D01-01EN). The station has no radio of its own; field devices connect through YFGW510 access points."
+upstreamInterfaces:
+  - Ethernet backbone (to YFGW510 access points)
+powerSupply: null
+powerConsumption: "Max. 10 W"
+batteryLife: null
+ipRating: IP20
+operatingTemp: null
+certifications: []
+hazardousArea: null
+sourceUrl: https://web-material3.yokogawa.com/GS01W02D01-01EN_008.pdf
+sourceType: datasheet
+sourceDocId: "GS 01W02D01-01EN"
+dateChecked: 2026-11-14
+notes: "Data row only under blueprint §4.3: a management station with no radio, so the wireless-identity gate cannot be met. It still belongs in protocol and comparison tables."

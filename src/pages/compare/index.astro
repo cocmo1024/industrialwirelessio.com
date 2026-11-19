@@ -1,0 +1,48 @@
+---
+/**
+ * Comparisons hub — blueprint §4.3: comparisons are editorially
+ * selected record pairs with a hand-written conclusion block, never
+ * mass-generated combinations. Protocol comparisons arrive with the
+ * Phase 1 protocol pages; product comparisons with Phase 2 records.
+ */
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { buildSeo } from '../../utils/seo';
+
+const seo = buildSeo(
+	{
+		id: 'compare',
+		locale: 'en',
+		title: 'Comparisons',
+		description:
+			'Conclusion-first comparisons of industrial wireless protocols and products, with budget-style tables built from the same sourced records as the reference pages.',
+		kind: 'section',
+	},
+	'/compare/',
+);
+---
+
+<BaseLayout seo={seo}>
+	<h1>Comparisons</h1>
+	<p class="lede">
+		Every comparison here opens with a conclusion and the condition that would reverse it,
+		then shows a budget-style table generated from the same records as the protocol and
+		product pages — never a second set of numbers.
+	</p>
+	<div class="empty-state">
+		<p class="empty-title">No comparisons published yet.</p>
+		<p class="empty-reason">
+			Comparisons are only published for pairs where both sides meet the sourced-record
+			standard. The first protocol comparison (WirelessHART vs ISA100.11a) lands with
+			the Phase 1 protocol pages.
+		</p>
+		<a class="btn" href="/protocols/">Browse the protocol reference pages</a>
+	</div>
+</BaseLayout>
+
+<style>
+	.lede {
+		font-size: var(--fs-lg);
+		color: var(--ink-2);
+		max-width: 68ch;
+	}
+</style>

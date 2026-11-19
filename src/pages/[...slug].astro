@@ -1,0 +1,1216 @@
+---
+/**
+ * Content route — generated ONLY from the route manifest
+ * (blueprint §5.1): every (page, locale) pair that exists on disk,
+ * and nothing else. There is no fallback rendering.
+ *
+ * Anatomies (blueprint §2.3):
+ *  - Protocol hub (slug `protocols`): spectrum rail + protocol matrix
+ *    rendered from protocol records, then the hub's MDX prose.
+ *  - Protocol pages (frontmatter `protocolSlug`): nameplate rail from
+ *    the protocol record, link strip, Quick answer definition block,
+ *    sourced parameter tables from the record, MDX prose, product
+ *    table slot (Phase 2 records), comparison entry, FAQ, sources.
+ *  - Comparison pages (frontmatter `comparisonOf`): conclusion block
+ *    first, budget-style table aligned from both protocol records,
+ *    dual link strips, MDX prose, FAQ, merged sources.
+ *  - Reference pages (everything else; Phase 4 migration): the full
+ *    migrated anatomy — Quick answer panel, body rendered natively
+ *    (Starlight-era components replaced by the native component set),
+ *    live data slots on category and vendor pages, FAQ, and a
+ *    related-objects link zone (explicit frontmatter relations first,
+ *    same-section siblings as the structural floor).
+ */
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import LinkStrip from '../components/LinkStrip.astro';
+import SpectrumRail from '../components/SpectrumRail.astro';
+import ProtocolMatrix from '../components/ProtocolMatrix.astro';
+import FaqSection from '../components/FaqSection.astro';
+import ProductTable from '../components/ProductTable.astro';
+import Slot from '../components/Slot.astro';
+import {
+	bandFamily,
+	buildCategoryDatasetNode,
+	buildDatasetNode,
+	ioTypes,
+	productGate,
+	productPath,
+	protocolLabel,
+	type ProductRecord,
+} from '../utils/products';
+import { brand } from '../data/brand';
+import { buildSeo, type PageKind } from '../utils/seo';
+import {
+	buildRouteManifest,
+	hreflangLinksFor,
+	type RouteEntry,
+} from '../utils/routes';
+
+const NOINDEX_IDS = new Set([
+	'privacy',
+	'terms-of-use',
+	'disclaimer',
+	'advertising',
+	'affiliate-disclosure',
+]);
+const FOUNDATION_IDS = new Set(['about', 'contact', 'editorial-policy', 'editorial-desk', 'review-desk']);
+
+export async function getStaticPaths() {
+	const entries = (await getCollection('pages')).filter((entry) => !entry.data.mergedTo);
+	const manifest = buildRouteManifest(entries);
+	const byId = new Map(entries.map((entry) => [entry.id, entry]));
+
+	return manifest
+		.filter((route) => !(route.locale === 'en' && route.slug === '')) // en home = src/pages/index.astro
+		.map((route) => {
+			const entry = byId.get(
+				route.slug === '' ? `${route.locale}/index` : `${route.locale}/${route.slug}`,
+			) ?? byId.get(`${route.locale}/${route.slug}/index`);
+			return {
+				params: { slug: route.path.replace(/^\/+|\/+$/g, '') },
+				props: { route, entry },
+			};
+		})
+		.filter((item) => item.props.entry);
+}
+
+interface Props {
+	route: RouteEntry;
+	entry: CollectionEntry<'pages'>;
+}
+
+const { route, entry } = Astro.props;
+const data = entry.data;
+const slug = route.slug;
+
+function kindFor(id: string, entrySlug: string): PageKind {
+	if (NOINDEX_IDS.has(id)) return 'policy';
+	if (FOUNDATION_IDS.has(id)) return 'foundation';
+	if (entrySlug.split('/').length <= 1) return 'section';
+	return 'content';
+}
+
+const kind = kindFor(slug.split('/').at(-1) ?? slug, slug);
+const seo = buildSeo(
+	{
+		id: slug || 'index',
+		locale: route.locale,
+		title: data.title,
+		description: data.description,
+		kind,
+		datePublished: data.datePublished,
+		dateModified: data.lastReviewed,
+		authorKey: data.authorKey,
+		editorKey: data.editorKey,
+	},
+	route.path,
+);
+
+const entries = (await getCollection('pages')).filter((entry) => !entry.data.mergedTo);
+const manifest = buildRouteManifest(entries);
+const hreflang = hreflangLinksFor(manifest, slug);
+const sectionLabel = brand.sectionLabels[slug.split('/')[0]] ?? null;
+
+/* ---- Data-layer wiring (Phase 1) ---- */
+const protocolEntries = await getCollection('protocols');
+const protocolRecords = protocolEntries.map((item) => item.data);
+const recordBySlug = new Map(protocolRecords.map((record) => [record.slug, record]));
+
+const isHub = slug === 'protocols';
+const protocolRecord = data.protocolSlug ? recordBySlug.get(data.protocolSlug) : undefined;
+const comparisonRecords = data.comparisonOf
+	?.map((recordSlug) => recordBySlug.get(recordSlug))
+	.filter((record) => Boolean(record));
+const isComparison = Boolean(comparisonRecords && comparisonRecords.length >= 2);
+
+/* ---- Product database wiring (Phase 2) ---- */
+const productEntries = await getCollection('products');
+const productRecords = productEntries.map((item) => item.data);
+const vendorEntries = await getCollection('vendors');
+const vendorRecords = vendorEntries.map((item) => item.data);
+const isProductIndex = slug === 'product-families' && Boolean(data.productIndex);
+const indexableProducts = productRecords.filter((record) => productGate(record).indexable);
+const productsForProtocol = protocolRecord
+	? productRecords.filter((record) => record.protocols.includes(protocolRecord.slug))
+	: [];
+const productProtocolsCovered = [...new Set(productRecords.flatMap((record) => record.protocols))];
+const latestProductCheck = productRecords.length
+	? new Date(Math.max(...productRecords.map((record) => record.dateChecked.getTime())))
+			.toISOString()
+			.slice(0, 10)
+	: null;
+const filterProtocols = productProtocolsCovered;
+const filterBands = [...new Set(productRecords.flatMap((record) => bandFamily(record)))].sort();
+const filterIoTypes = [...new Set(productRecords.flatMap((record) => ioTypes(record)))].sort();
+const filterVendors = vendorRecords
+	.filter((vendor) => productRecords.some((record) => record.vendorSlug === vendor.slug))
+	.sort((a, b) => a.name.localeCompare(b.name));
+
+/* ---- Vendor directory wiring (Phase 3 portal layer, R1.3) ---- */
+const isVendorIndex = slug === 'vendors' && Boolean(data.vendorIndex);
+const directoryRows = vendorRecords
+	.map((vendor) => {
+		const own = productRecords.filter((record) => record.vendorSlug === vendor.slug);
+		return {
+			vendor,
+			records: own.length,
+			pages: own.filter((record) => productGate(record).indexable).length,
+			protocols: [...new Set(own.flatMap((record) => record.protocols))],
+		};
+	})
+	.sort((a, b) => a.vendor.name.localeCompare(b.vendor.name));
+const directoryProtocols = [...new Set(directoryRows.flatMap((row) => row.protocols))].sort();
+
+const isNewAnatomy = isHub || Boolean(protocolRecord) || isComparison || isProductIndex || isVendorIndex;
+
+/* ---- Category / vendor data slots (Phase 4 migration) ----
+ * The two category essays carry the live records of their category
+ * (blueprint §7.3 mechanism 3: category pages stop being plain essays
+ * and carry the data table + a category Dataset, GEO B-11 Phase 4
+ * item). The three vendor family essays carry their maker's records. */
+const CATEGORY_WIRING: Record<
+	string,
+	{ types: ProductRecord['productType'][]; datasetName: string; datasetDescription: string }
+> = {
+	'product-families/wireless-remote-io-and-rtu-modules': {
+		types: ['wireless-io-module', 'adapter'],
+		datasetName: 'Wireless I/O Modules and Adapters — Industrial Wireless I/O Product Database (category subset)',
+		datasetDescription:
+			'Manufacturer-sourced specifications for the wireless I/O modules and adapters in the Industrial Wireless I/O Product Database: radio protocol, frequency band, transmit power, receiver sensitivity, I/O counts, upstream interfaces, power supply, ingress rating and certifications. Every value is transcribed from the manufacturer datasheet or official product documentation linked from each record; values that cannot be traced to a primary source are left out.',
+	},
+	'product-families/industrial-telemetry-gateways': {
+		types: ['gateway'],
+		datasetName: 'Industrial Telemetry Gateways — Industrial Wireless I/O Product Database (category subset)',
+		datasetDescription:
+			'Manufacturer-sourced specifications for the industrial telemetry gateways in the Industrial Wireless I/O Product Database: radio protocol, frequency band, transmit power, receiver sensitivity, upstream interfaces, power supply, ingress rating and certifications. Every value is transcribed from the manufacturer datasheet or official product documentation linked from each record; values that cannot be traced to a primary source are left out.',
+	},
+};
+const categoryWiring = CATEGORY_WIRING[slug];
+const categoryProducts = categoryWiring
+	? productRecords.filter((record) => categoryWiring.types.includes(record.productType))
+	: [];
+const CATEGORY_VENDOR_PAGES: Record<string, string> = {
+	'product-families/digi-ix10-and-ix20-for-remote-industrial-sites': 'digi',
+	'product-families/phoenix-contact-tc-router-for-unattended-telemetry-sites': 'phoenix-contact',
+	'product-families/siemens-scalance-m-for-industrial-remote-access-and-telemetry': 'siemens',
+	'vendors/phoenix-contact-field-connectivity': 'phoenix-contact',
+	'vendors/siemens-remote-connectivity': 'siemens',
+};
+const slotVendorSlug = CATEGORY_VENDOR_PAGES[slug];
+const slotVendor = slotVendorSlug
+	? vendorRecords.find((vendor) => vendor.slug === slotVendorSlug)
+	: undefined;
+const slotVendorProducts = slotVendorSlug
+	? productRecords.filter((record) => record.vendorSlug === slotVendorSlug)
+	: [];
+
+/* ---- Related-objects zone (blueprint §7.3 mechanism 2) ----
+ * Explicit frontmatter relations (relatedProtocols / relatedProducts /
+ * relatedTools) are the editorial layer; same-section siblings are
+ * the structural floor so no migrated page ships without outbound
+ * object links. Inbound depth is verified against the built link
+ * graph (scripts/link-graph-report.mjs). */
+const siblingRoutes = manifest
+	.filter(
+		(route) =>
+			route.locale === 'en' &&
+			slug.includes('/') &&
+			route.slug.startsWith(`${slug.split('/')[0]}/`) &&
+			route.slug !== slug &&
+			route.slug.split('/').length === 2,
+	)
+	.sort((a, b) => a.path.localeCompare(b.path))
+	.slice(0, 4);
+const siblingTitles = new Map(
+	entries.map((e) => {
+		const parsed = e.id.replace(/^en\//, '').replace(/\/index$/, '');
+		return [parsed, e.data.title];
+	}),
+);
+const relatedProtocolLinks = (data.relatedProtocols ?? [])
+	.map((protocolSlug) => recordBySlug.get(protocolSlug))
+	.filter(Boolean)
+	.map((record) => ({ href: `/protocols/${record!.slug}/`, label: record!.name }));
+const relatedProductLinks = (data.relatedProducts ?? [])
+	.map((productSlug) => productRecords.find((record) => record.slug === productSlug))
+	.filter(Boolean)
+	.map((record) => ({
+		href: productGate(record!).indexable ? productPath(record!) : record!.sourceUrl,
+		label: `${record!.vendor} ${record!.model}`,
+	}));
+const relatedToolLinks = (data.relatedTools ?? []).map((toolPath) => ({
+	href: toolPath,
+	label:
+		toolPath === '/tools/link-budget-calculator/'
+			? 'Link budget calculator'
+			: toolPath === '/tools/fresnel-zone-calculator/'
+				? 'Fresnel zone calculator'
+				: toolPath,
+}));
+const hasRelatedZone =
+	relatedProtocolLinks.length > 0 ||
+	relatedProductLinks.length > 0 ||
+	relatedToolLinks.length > 0 ||
+	siblingRoutes.length > 0;
+
+const { Content } = await render(entry);
+
+if (data.faq && data.faq.length > 0) {
+	seo.structuredData.push({
+		'@context': 'https://schema.org',
+		'@type': 'FAQPage',
+		'@id': `${seo.canonicalUrl}#faq`,
+		mainEntity: data.faq.map((item) => ({
+			'@type': 'Question',
+			name: item.question,
+			acceptedAnswer: { '@type': 'Answer', text: item.answer },
+		})),
+	});
+}
+
+if (isProductIndex) {
+	seo.structuredData.push(buildDatasetNode(productRecords));
+}
+
+if (categoryWiring && categoryProducts.length > 0) {
+	seo.structuredData.push(
+		buildCategoryDatasetNode(categoryProducts, {
+			slug: slug.split('/').at(-1)!,
+			name: categoryWiring.datasetName,
+			description: categoryWiring.datasetDescription,
+		}),
+	);
+}
+
+/* Comparison table rows: fixed identity rows + key parameters aligned by key. */
+const comparisonRows: { label: string; values: string[] }[] = [];
+if (isComparison && comparisonRecords) {
+	const [first, second] = [comparisonRecords[0]!, comparisonRecords[1]!];
+	comparisonRows.push(
+		{ label: 'Standard', values: [first.standardDesignation, second.standardDesignation] },
+		{ label: 'Standards body', values: [first.standardsBody, second.standardsBody] },
+		{
+			label: 'Band',
+			values: [
+				first.bands.map((band) => band.label).join(' · '),
+				second.bands.map((band) => band.label).join(' · '),
+			],
+		},
+		{ label: 'Topology', values: [first.topology, second.topology] },
+		{ label: 'Update / latency class', values: [first.latencyClass, second.latencyClass] },
+		{ label: 'Power profile', values: [first.powerProfile, second.powerProfile] },
+	);
+	const keys: string[] = [];
+	for (const record of [first, second]) {
+		for (const param of record.keyParameters) {
+			if (!keys.includes(param.key)) keys.push(param.key);
+		}
+	}
+	for (const key of keys) {
+		if (key === 'standard') continue; // covered by the fixed identity rows above
+		const params = [first, second].map(
+			(record) => record.keyParameters.find((param) => param.key === key)?.value,
+		);
+		if (params[0] && params[1] && params[0] !== params[1]) {
+			comparisonRows.push({
+				label:
+					first.keyParameters.find((param) => param.key === key)?.label ??
+					second.keyParameters.find((param) => param.key === key)?.label ??
+					key,
+				values: [params[0], params[1]],
+			});
+		}
+	}
+}
+
+const comparisonSources = isComparison
+	? [
+			...new Map(
+				(comparisonRecords ?? [])
+					.flatMap((record) => record!.sources)
+					.map((source) => [source.url, source]),
+			).values(),
+		]
+	: [];
+
+const latestChecked = (sources: { dateChecked: Date }[]) =>
+	sources.length
+		? new Date(Math.max(...sources.map((source) => source.dateChecked.getTime())))
+				.toISOString()
+				.slice(0, 10)
+		: null;
+---
+
+<BaseLayout seo={seo} hreflang={hreflang} hasRail>
+	<Fragment slot="rail">
+		{
+			isVendorIndex ? (
+				<div class="panel nameplate">
+					<div class="panel-head">Vendor directory</div>
+					<div class="panel-body">
+						<dl>
+							<dt>Makers listed</dt>
+							<dd class="num">{directoryRows.length}</dd>
+							<dt>Product records</dt>
+							<dd class="num">{productRecords.length}</dd>
+							<dt>Full spec pages</dt>
+							<dd class="num">{indexableProducts.length}</dd>
+							<dt>Listing status</dt>
+							<dd>Listed = recorded by the editors from the maker's own documentation, unclaimed</dd>
+							<dt>Source standard</dt>
+							<dd>{brand.sourcing}</dd>
+						</dl>
+					</div>
+				</div>
+			) : isProductIndex ? (
+				<div class="panel nameplate">
+					<div class="panel-head">Product database</div>
+					<div class="panel-body">
+						<dl>
+							<dt>Records</dt>
+							<dd class="num">{productRecords.length}</dd>
+							<dt>Full record pages</dt>
+							<dd class="num">{indexableProducts.length}</dd>
+							<dt>Makers recorded</dt>
+							<dd class="num">{filterVendors.length}</dd>
+							<dt>Protocols covered</dt>
+							<dd>{productProtocolsCovered.map(protocolLabel).join(' · ')}</dd>
+							<dt>Latest source check</dt>
+							<dd class="num">{latestProductCheck}</dd>
+							<dt>Source standard</dt>
+							<dd>{brand.sourcing}</dd>
+						</dl>
+					</div>
+				</div>
+			) : protocolRecord ? (
+				<div class="panel nameplate">
+					<div class="panel-head">Protocol</div>
+					<div class="panel-body">
+						<dl>
+							<dt>Name</dt>
+							<dd>{protocolRecord.fullName}</dd>
+							<dt>Standard</dt>
+							<dd>
+								{protocolRecord.standardDesignation} · {protocolRecord.standardsBody}
+							</dd>
+							<dt>Band</dt>
+							<dd>{protocolRecord.bands.map((band) => band.label).join(' · ')}</dd>
+							<dt>Topology</dt>
+							<dd>{protocolRecord.topology}</dd>
+							<dt>Coverage</dt>
+							<dd>{protocolRecord.coverage}</dd>
+							<dt>Sources checked</dt>
+							<dd class="num">{latestChecked(protocolRecord.sources)}</dd>
+						</dl>
+					</div>
+				</div>
+			) : isComparison && comparisonRecords ? (
+				<div class="panel nameplate">
+					<div class="panel-head">Compared</div>
+					<div class="panel-body">
+						<dl>
+							{comparisonRecords.map((record) => (
+								<>
+									<dt>{record!.name}</dt>
+									<dd>
+										{record!.standardDesignation} · {record!.standardsBody} ·{' '}
+										<a href={`/protocols/${record!.slug}/`}>Protocol page</a>
+									</dd>
+								</>
+							))}
+							<dt>Sources checked</dt>
+							<dd class="num">{latestChecked(comparisonSources)}</dd>
+						</dl>
+					</div>
+				</div>
+			) : (
+				<div class="panel nameplate">
+					<div class="panel-head">{sectionLabel ?? brand.name}</div>
+					<div class="panel-body">
+						<dl>
+							<dt>Page</dt>
+							<dd>{data.title}</dd>
+							{data.contentStatus && (
+								<>
+									<dt>Coverage</dt>
+									<dd>{data.contentStatus}</dd>
+								</>
+							)}
+							{data.datePublished && (
+								<>
+									<dt>Published</dt>
+									<dd class="num">{data.datePublished.toISOString().slice(0, 10)}</dd>
+								</>
+							)}
+							{data.lastReviewed && (
+								<>
+									<dt>Last reviewed</dt>
+									<dd class="num">{data.lastReviewed.toISOString().slice(0, 10)}</dd>
+								</>
+							)}
+							<dt>Source standard</dt>
+							<dd>{brand.sourcing}</dd>
+						</dl>
+					</div>
+				</div>
+			)
+		}
+	</Fragment>
+
+	{
+		isHub ? (
+			<article>
+				<h1>{data.title}</h1>
+				{data.description && <p class="lede">{data.description}</p>}
+				<section class="panel spectrum" aria-label="Protocols by band">
+					<div class="panel-head">Spectrum rail — find a protocol by its band</div>
+					<div class="panel-body">
+						<SpectrumRail protocols={protocolRecords} />
+					</div>
+				</section>
+				<section aria-label="Protocol matrix">
+					<h2>Protocol matrix</h2>
+					<ProtocolMatrix protocols={protocolRecords} />
+					<p class="matrix-note">
+						Every row is generated from the same protocol record that drives the
+						protocol's own page — the matrix is a view of the records, not a second
+						set of numbers. Rows are added as protocol records are verified against
+						primary sources.
+					</p>
+				</section>
+				{Content && (
+					<div class="prose">
+						<Content />
+					</div>
+				)}
+			</article>
+		) : protocolRecord ? (
+			<article>
+				<h1>{data.title}</h1>
+				{data.description && <p class="lede">{data.description}</p>}
+				<LinkStrip {...protocolRecord.linkStrip} />
+				{data.readerTakeaway && (
+					<section class="panel">
+						<div class="panel-head">Quick answer</div>
+						<div class="panel-body">
+							<p>{data.readerTakeaway}</p>
+						</div>
+					</section>
+				)}
+				<section aria-label="Key parameters">
+					<h2>Key parameters</h2>
+					<div class="table-wrap">
+						<table class="data">
+							<thead>
+								<tr>
+									<th scope="col">Parameter</th>
+									<th scope="col">Value</th>
+									<th scope="col">Source</th>
+								</tr>
+							</thead>
+							<tbody>
+								{protocolRecord.keyParameters.map((param) => (
+									<tr>
+										<th scope="row">{param.label}</th>
+										<td>{param.value}</td>
+										<td class="source-cell">{param.source}</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+				</section>
+				{protocolRecord.gatewayCapacity && (
+					<section aria-label="Gateway capacity">
+						<h2>Gateway capacity by model</h2>
+						<div class="table-wrap">
+							<table class="data">
+								<thead>
+									<tr>
+										<th scope="col">Gateway</th>
+										<th scope="col">Max. field devices</th>
+										<th scope="col">Condition (update rate)</th>
+										<th scope="col">Source</th>
+									</tr>
+								</thead>
+								<tbody>
+									{protocolRecord.gatewayCapacity.map((row) => (
+										<tr>
+											<th scope="row">
+												{row.vendor} {row.model}
+											</th>
+											<td>{row.maxDevices}</td>
+											<td>{row.condition}</td>
+											<td class="source-cell">{row.source}</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+						<p class="matrix-note">
+							Capacity figures are each manufacturer's own rating for that model —
+							they are not interchangeable between vendors, and every rating falls
+							as device update rates get faster. See the gateway sizing notes below.
+						</p>
+					</section>
+				)}
+				{protocolRecord.payloadLimits && (
+					<section aria-label="Payload limits">
+						<h2>Payload limits by region and data rate</h2>
+						<div class="table-wrap">
+							<table class="data">
+								<thead>
+									<tr>
+										<th scope="col">Region</th>
+										<th scope="col">Data rate</th>
+										<th scope="col">Max MAC payload</th>
+										<th scope="col">Max application payload</th>
+										<th scope="col">Source</th>
+									</tr>
+								</thead>
+								<tbody>
+									{protocolRecord.payloadLimits.map((row) => (
+										<tr>
+											<th scope="row">{row.region}</th>
+											<td>{row.dataRate}</td>
+											<td class="num">{row.maxMacPayload}</td>
+											<td class="num">{row.maxAppPayload ?? '—'}</td>
+											<td class="source-cell">{row.source}</td>
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>
+						{protocolRecord.payloadLimits.some((row) => row.note) && (
+							<p class="matrix-note">
+								{protocolRecord.payloadLimits.find((row) => row.note)?.note}
+							</p>
+						)}
+					</section>
+				)}
+				{Content && (
+					<div class="prose">
+						<Content />
+					</div>
+				)}
+				<section aria-label="Products using this protocol">
+					<h2>Products on this protocol</h2>
+					{
+						productsForProtocol.length > 0 ? (
+							<>
+								<ProductTable products={productsForProtocol} variant="protocol" />
+								<p class="matrix-note">
+									Live from the product database — every row is a record with its
+									manufacturer source attached; records still being completed link
+									to that source instead of a page. The full database is on the{' '}
+									<a href="/product-families/">product database index</a>.
+								</p>
+							</>
+						) : (
+							<div class="panel">
+								<div class="panel-body">
+									<div class="empty-state">
+										<p class="empty-title">
+											No product records carry this protocol yet.
+										</p>
+										<p class="empty-reason">
+											Product records enter the database only with manufacturer
+											datasheet sources attached. When the first gateways,
+											adapters and modules for {protocolRecord.name} are
+											recorded, they appear here as a live table filtered from
+											the database.
+										</p>
+										<a class="btn" href="/product-families/">
+											Browse the product database
+										</a>
+									</div>
+								</div>
+							</div>
+						)
+					}
+				</section>
+				{data.relatedProtocols
+					?.filter((related) => recordBySlug.has(related) && related !== protocolRecord.slug)
+					.map((related) => {
+						const other = recordBySlug.get(related)!;
+						return (
+							<p class="compare-entry">
+								Comparing radios? Read the{' '}
+								<a href={`/protocols/${other.slug}/`}>{other.name} protocol page</a>{' '}
+								or go straight to the{' '}
+								<a href="/protocols/">protocol matrix</a>.
+							</p>
+						);
+					})}
+				{data.faq && data.faq.length > 0 && <FaqSection items={data.faq} />}
+				<section aria-label="Sources">
+					<h2>Sources</h2>
+					<ul class="source-list">
+						{protocolRecord.sources.map((source) => (
+							<li>
+								<a href={source.url}>{source.label}</a>{' '}
+								<span class="source-date num">
+									checked {source.dateChecked.toISOString().slice(0, 10)}
+								</span>
+							</li>
+						))}
+					</ul>
+					<p class="matrix-note">
+						Every figure on this page traces to one of these primary sources —
+						standards-body publications and manufacturer datasheets. Figures that
+						could not be traced are left out, not estimated.
+					</p>
+				</section>
+			</article>
+		) : isComparison && comparisonRecords ? (
+			<article>
+				<h1>{data.title}</h1>
+				{data.description && <p class="lede">{data.description}</p>}
+				{data.readerTakeaway && (
+					<section class="panel">
+						<div class="panel-head">Conclusion first</div>
+						<div class="panel-body">
+							<p>{data.readerTakeaway}</p>
+						</div>
+					</section>
+				)}
+				<section aria-label="Side-by-side comparison">
+					<h2>
+						{comparisonRecords[0]!.name} vs {comparisonRecords[1]!.name}, side by side
+					</h2>
+					<div class="table-wrap">
+						<table class="data">
+							<thead>
+								<tr>
+									<th scope="col">Dimension</th>
+									<th scope="col">{comparisonRecords[0]!.name}</th>
+									<th scope="col">{comparisonRecords[1]!.name}</th>
+								</tr>
+							</thead>
+							<tbody>
+								{comparisonRows.map((row) => (
+									<tr>
+										<th scope="row">{row.label}</th>
+										<td>{row.values[0]}</td>
+										<td>{row.values[1]}</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+					<p class="matrix-note">
+						Rows are aligned from the two protocol records — the same records that
+						drive each protocol's own page — so this table cannot drift from the
+						protocol pages.
+					</p>
+				</section>
+				<section aria-label="Reference links">
+					<h2>The two reference links</h2>
+					{comparisonRecords.map((record) => (
+						<>
+							<p class="link-caption">{record!.name} reference link</p>
+							<LinkStrip {...record!.linkStrip} />
+						</>
+					))}
+				</section>
+				{Content && (
+					<div class="prose">
+						<Content />
+					</div>
+				)}
+				{data.faq && data.faq.length > 0 && <FaqSection items={data.faq} />}
+				<section aria-label="Sources">
+					<h2>Sources</h2>
+					<ul class="source-list">
+						{comparisonSources.map((source) => (
+							<li>
+								<a href={source.url}>{source.label}</a>{' '}
+								<span class="source-date num">
+									checked {source.dateChecked.toISOString().slice(0, 10)}
+								</span>
+							</li>
+						))}
+					</ul>
+					<p class="matrix-note">
+						Comparison rows trace to the standards bodies and manufacturers listed
+						here; vendor comparison white papers were used as leads only, never as
+						the source of a row.
+					</p>
+				</section>
+			</article>
+		) : isProductIndex ? (
+			<article>
+				<h1>{data.title}</h1>
+				{data.description && <p class="lede">{data.description}</p>}
+				{data.readerTakeaway && (
+					<section class="panel">
+						<div class="panel-head">Quick answer</div>
+						<div class="panel-body">
+							<p>{data.readerTakeaway}</p>
+						</div>
+					</section>
+				)}
+				<section class="panel" aria-label="Filter the database">
+					<div class="panel-head">Filter records</div>
+					<div class="panel-body">
+						<form class="filters" id="product-filters">
+							<label>
+								Protocol
+								<select name="protocol">
+									<option value="">All protocols</option>
+									{filterProtocols.map((slug) => (
+										<option value={slug}>{protocolLabel(slug)}</option>
+									))}
+								</select>
+							</label>
+							<label>
+								Band
+								<select name="band">
+									<option value="">All bands</option>
+									{filterBands.map((band) => (
+										<option value={band}>{band}</option>
+									))}
+								</select>
+							</label>
+							<label>
+								I/O type
+								<select name="io">
+									<option value="">All I/O types</option>
+									{filterIoTypes.map((type) => (
+										<option value={type}>{type}</option>
+									))}
+								</select>
+							</label>
+							<label>
+								Maker
+								<select name="vendor">
+									<option value="">All makers</option>
+									{filterVendors.map((vendor) => (
+										<option value={vendor.slug}>{vendor.name}</option>
+									))}
+								</select>
+							</label>
+							<button type="reset" class="btn">Reset filters</button>
+						</form>
+						<p class="filter-count" aria-live="polite">
+							<span class="num" data-visible-count>{productRecords.length}</span> of{' '}
+							<span class="num">{productRecords.length}</span> records shown
+						</p>
+					</div>
+				</section>
+				<ProductTable products={productRecords} variant="index" />
+				<p class="matrix-note">
+					Every row is transcribed from the manufacturer's datasheet or official
+					product documentation linked from the record — figures that cannot be
+					traced to a primary source are left out, not estimated. Records marked
+					“page pending source completion” already feed this table and the protocol
+					pages; they earn a full specification page when their source set is
+					complete.
+				</p>
+				{Content && (
+					<div class="prose">
+						<Content />
+					</div>
+				)}
+				{data.faq && data.faq.length > 0 && <FaqSection items={data.faq} />}
+				<script>
+					const form = document.getElementById('product-filters') as HTMLFormElement | null;
+					const rows = [...document.querySelectorAll('[data-product-row]')];
+					const counter = document.querySelector('[data-visible-count]');
+					function applyFilters() {
+						if (!form) return;
+						const data = new FormData(form);
+						const protocol = String(data.get('protocol') ?? '');
+						const band = String(data.get('band') ?? '');
+						const io = String(data.get('io') ?? '');
+						const vendor = String(data.get('vendor') ?? '');
+						let visible = 0;
+						for (const row of rows) {
+							const el = row as HTMLElement;
+							const show =
+								(!protocol || (el.dataset.protocols ?? '').split(' ').includes(protocol)) &&
+								(!band || (el.dataset.bands ?? '').split('|').includes(band)) &&
+								(!io || (el.dataset.io ?? '').split(' ').includes(io)) &&
+								(!vendor || el.dataset.vendor === vendor);
+							el.style.display = show ? '' : 'none';
+							if (show) visible += 1;
+						}
+						if (counter) counter.textContent = String(visible);
+					}
+					form?.addEventListener('change', applyFilters);
+					form?.addEventListener('reset', () => requestAnimationFrame(applyFilters));
+				</script>
+			</article>
+		) : isVendorIndex ? (
+			<article>
+				<h1>{data.title}</h1>
+				{data.description && <p class="lede">{data.description}</p>}
+				{data.readerTakeaway && (
+					<section class="panel">
+						<div class="panel-head">Quick answer</div>
+						<div class="panel-body">
+							<p>{data.readerTakeaway}</p>
+						</div>
+					</section>
+				)}
+				<section class="panel" aria-label="Filter the directory">
+					<div class="panel-head">Filter makers</div>
+					<div class="panel-body">
+						<form class="filters" id="vendor-filters">
+							<label>
+								Protocol
+								<select name="protocol">
+									<option value="">All protocols</option>
+									{directoryProtocols.map((slugOption) => (
+										<option value={slugOption}>{protocolLabel(slugOption)}</option>
+									))}
+								</select>
+							</label>
+							<button type="reset" class="btn">Reset filter</button>
+						</form>
+						<p class="filter-count" aria-live="polite">
+							<span class="num" data-visible-count>{directoryRows.length}</span> of{' '}
+							<span class="num">{directoryRows.length}</span> makers shown
+						</p>
+					</div>
+				</section>
+				<div class="table-wrap">
+					<table class="data">
+						<thead>
+							<tr>
+								<th scope="col">Maker</th>
+								<th scope="col">Protocols in its records</th>
+								<th scope="col">Product lines covered</th>
+								<th scope="col">Records</th>
+								<th scope="col">Listing status</th>
+							</tr>
+						</thead>
+						<tbody>
+							{
+								directoryRows.map((row) => (
+									<tr data-vendor-row data-protocols={row.protocols.join(' ')}>
+										<th scope="row">
+											{row.records >= 1 ? (
+												<a href={`/vendors/${row.vendor.slug}/`}>
+													{row.vendor.name}
+												</a>
+											) : (
+												<a href={row.vendor.website} rel="noopener">
+													{row.vendor.name}
+												</a>
+											)}
+										</th>
+										<td>
+											{row.protocols.length
+												? row.protocols.map(protocolLabel).join(' · ')
+												: '—'}
+										</td>
+										<td>{row.vendor.productLines.join(' · ')}</td>
+										<td class="num">
+											{row.records}
+											{row.pages > 0 && (
+												<span class="pages-note">
+													{' '}
+													({row.pages} with spec pages)
+												</span>
+											)}
+										</td>
+										<td>{row.vendor.listingStatus}</td>
+									</tr>
+								))
+							}
+						</tbody>
+					</table>
+				</div>
+				<p class="matrix-note">
+					A listing is compiled from the maker's own documentation and carries the
+					records to prove it. “Listed” means recorded by the editors and not yet
+					claimed; makers claim a listing through the entry on their directory page.
+					Makers with no verifiable wireless documentation are not listed.
+				</p>
+				<Slot name="featured-vendor" />
+				{Content && (
+					<div class="prose">
+						<Content />
+					</div>
+				)}
+				{data.faq && data.faq.length > 0 && <FaqSection items={data.faq} />}
+				<script>
+					const vForm = document.getElementById('vendor-filters') as HTMLFormElement | null;
+					const vRows = [...document.querySelectorAll('[data-vendor-row]')];
+					const vCounter = document.querySelector('[data-visible-count]');
+					function applyVendorFilters() {
+						if (!vForm) return;
+						const protocol = String(new FormData(vForm).get('protocol') ?? '');
+						let visible = 0;
+						for (const row of vRows) {
+							const el = row as HTMLElement;
+							const show =
+								!protocol || (el.dataset.protocols ?? '').split(' ').includes(protocol);
+							el.style.display = show ? '' : 'none';
+							if (show) visible += 1;
+						}
+						if (vCounter) vCounter.textContent = String(visible);
+					}
+					vForm?.addEventListener('change', applyVendorFilters);
+					vForm?.addEventListener('reset', () => requestAnimationFrame(applyVendorFilters));
+				</script>
+			</article>
+		) : (
+			<article>
+				<h1>{data.title}</h1>
+				{data.description && <p class="lede">{data.description}</p>}
+				{data.readerTakeaway && (
+					<section class="panel">
+						<div class="panel-head">Quick answer</div>
+						<div class="panel-body">
+							<p>{data.readerTakeaway}</p>
+						</div>
+					</section>
+				)}
+				{data.keyQuestions && data.keyQuestions.length > 0 && (
+					<section>
+						<h2>Key questions</h2>
+						<ul>
+							{data.keyQuestions.map((question) => (
+								<li>{question}</li>
+							))}
+						</ul>
+					</section>
+				)}
+				{Content && (
+					<div class="prose">
+						<Content />
+					</div>
+				)}
+				{categoryProducts.length > 0 && (
+					<section>
+						<h2>Records in this category</h2>
+						<p class="pages-note">
+							Live from the product database — every figure transcribed from the
+							manufacturer source linked from each record; records that pass the
+							publishing gate link to their product page, the rest link to the source.
+						</p>
+						<ProductTable products={categoryProducts} variant="protocol" />
+					</section>
+				)}
+				{slotVendorProducts.length > 0 && (
+					<section>
+						<h2>{slotVendor ? `${slotVendor.name} in the product database` : 'In the product database'}</h2>
+						<ProductTable products={slotVendorProducts} variant="protocol" />
+						{slotVendor && (
+							<p class="pages-note">
+								Full record set and company profile:{' '}
+								<a href={`/vendors/${slotVendor.slug}/`}>{slotVendor.name} vendor page</a>
+							</p>
+						)}
+					</section>
+				)}
+				{data.faq && data.faq.length > 0 && <FaqSection items={data.faq} />}
+				{hasRelatedZone && (
+					<section class="related-zone" aria-label="Related references">
+						<h2>Related references</h2>
+						{relatedProtocolLinks.length > 0 && (
+							<>
+								<h3>Protocols</h3>
+								<ul>
+									{relatedProtocolLinks.map((link) => (
+										<li>
+											<a href={link.href}>{link.label}</a>
+										</li>
+									))}
+								</ul>
+							</>
+						)}
+						{relatedProductLinks.length > 0 && (
+							<>
+								<h3>Products in the database</h3>
+								<ul>
+									{relatedProductLinks.map((link) => (
+										<li>
+											<a href={link.href}>{link.label}</a>
+										</li>
+									))}
+								</ul>
+							</>
+						)}
+						{relatedToolLinks.length > 0 && (
+							<>
+								<h3>Engineering tools</h3>
+								<ul>
+									{relatedToolLinks.map((link) => (
+										<li>
+											<a href={link.href}>{link.label}</a>
+										</li>
+									))}
+								</ul>
+							</>
+						)}
+						{siblingRoutes.length > 0 && (
+							<>
+								<h3>More in this section</h3>
+								<ul>
+									{siblingRoutes.map((route) => (
+										<li>
+											<a href={route.path}>{siblingTitles.get(route.slug) ?? route.slug}</a>
+										</li>
+									))}
+								</ul>
+							</>
+						)}
+					</section>
+				)}
+			</article>
+		)
+	}
+</BaseLayout>
+
+<style>
+	.lede {
+		font-size: var(--fs-lg);
+		color: var(--ink-2);
+		max-width: 68ch;
+	}
+
+	.nameplate dl {
+		margin: 0;
+	}
+
+	.nameplate dt {
+		font-size: var(--fs-xs);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		margin-top: 0.6rem;
+	}
+
+	.nameplate dt:first-child {
+		margin-top: 0;
+	}
+
+	.nameplate dd {
+		margin: 0.15rem 0 0;
+	}
+
+	article section {
+		margin-bottom: 1.2rem;
+	}
+
+	.related-zone {
+		border-top: 2px solid var(--line-strong);
+		margin-top: 2rem;
+		padding-top: 1rem;
+	}
+
+	.related-zone h3 {
+		font-size: var(--fs-sm);
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		margin: 1rem 0 0.4rem;
+	}
+
+	.related-zone ul {
+		margin: 0;
+	}
+
+	.prose {
+		max-width: 72ch;
+	}
+
+	.prose :global(h2) {
+		margin-top: 1.6rem;
+	}
+
+	.prose :global(table) {
+		border-collapse: collapse;
+		width: 100%;
+		margin-bottom: 1rem;
+	}
+
+	.prose :global(th),
+	.prose :global(td) {
+		border: 1px solid var(--line);
+		padding: 0.45rem 0.8rem;
+		text-align: left;
+		vertical-align: top;
+	}
+
+	.source-cell {
+		font-size: var(--fs-sm);
+		color: var(--ink-2);
+	}
+
+	.source-list {
+		list-style: none;
+		margin: 0 0 0.6rem;
+		padding: 0;
+	}
+
+	.source-list li {
+		padding: 0.35rem 0;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.source-date {
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+	}
+
+	.matrix-note {
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+		margin-top: 0.5rem;
+	}
+
+	.link-caption {
+		font-weight: 600;
+		margin-bottom: 0.4rem;
+	}
+
+	.compare-entry {
+		border-left: 3px solid var(--accent);
+		padding-left: 0.8rem;
+	}
+
+	.filters {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.8rem 1.2rem;
+		align-items: end;
+	}
+
+	.filters label {
+		display: flex;
+		flex-direction: column;
+		gap: 0.3rem;
+		font-size: var(--fs-sm);
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+	}
+
+	.filters select {
+		font: inherit;
+		font-size: var(--fs-md);
+		letter-spacing: normal;
+		text-transform: none;
+		color: var(--ink);
+		padding: 0.4rem 0.6rem;
+		border: 1px solid var(--line-strong);
+		background: var(--surface, transparent);
+		min-width: 11rem;
+	}
+
+	.filter-count {
+		margin-top: 0.7rem;
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+	}
+
+	.pages-note {
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+	}
+</style>

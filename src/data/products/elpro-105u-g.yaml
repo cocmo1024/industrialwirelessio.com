@@ -1,0 +1,46 @@
+vendor: ELPRO
+vendorSlug: elpro
+model: 105U-G Wireless Gateway
+productType: gateway
+slug: elpro-105u-g
+status: active
+protocols:
+  - proprietary-licensed
+frequencyBands:
+  - "148-512 MHz (licensed bands, by variant)"
+txPowerDbm: null
+rxSensitivityDbm: -114
+rxSensitivityCondition: "148-512 MHz variants (datasheet EL-DS-105U-G)"
+rangeClass:
+  value: "55"
+  unit: km
+  conditions: "Up to 35 miles (55 km) with multi-hop repeating, as headlined in datasheet EL-DS-105U-G (Aug 2021). Transmit power is stated in the datasheet as 0.1-5 W by band variant (watts, not dBm)."
+  sourceRef: "EL-DS-105U-G (Aug 2021)"
+antenna: null
+io:
+  di: 8
+  do: 8
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "The 8 I/O points are one shared block of configurable inputs/outputs, not 16 separate points (datasheet)."
+upstreamInterfaces:
+  - "Ethernet (Modbus TCP, EtherNet/IP) - ET1 variant"
+  - "RS-485 (Modbus RTU) - MD1 variant"
+  - "Profibus DP - PR variant"
+powerSupply: null
+powerConsumption: null
+batteryLife: null
+ipRating: null
+operatingTemp: null
+certifications:
+  - FCC Part 90
+  - "EN 300 220 / EN 300 113"
+  - RSS-119
+hazardousArea: null
+sourceUrl: https://elprotech.com/wp-content/uploads/2024/07/EL-DS-105U-G_Aug2021.pdf
+sourceType: datasheet
+sourceDocId: "EL-DS-105U-G (Aug 2021)"
+dateChecked: 2026-11-14
+notes: "An earlier Eaton-era manual gives receiver sensitivity as -112 dBm; the current ELPRO datasheet value (-114 dBm) is used. Transmit power is published in watts by band variant, so no dBm figure is asserted."

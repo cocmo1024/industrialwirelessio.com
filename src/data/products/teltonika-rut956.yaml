@@ -1,0 +1,35 @@
+vendor: Teltonika
+vendorSlug: teltonika
+model: RUT956
+productType: router
+slug: teltonika-rut956
+status: active
+protocols:
+  - lte
+frequencyBands: []
+txPowerDbm: 23
+txPowerCondition: "At LTE (Quick Start Guide radio power table)"
+rxSensitivityDbm: null
+rangeClass: null
+antenna: null
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "The Quick Start Guide wording on I/O is ambiguous (2 inputs / 2 outputs, plus 1 DI / 1 DO associated with the 4-pin connector), so counts are left blank until the datasheet wording is transcribed."
+upstreamInterfaces: []
+powerSupply: null
+powerConsumption: null
+batteryLife: null
+ipRating: null
+operatingTemp: null
+certifications: []
+hazardousArea: null
+sourceUrl: https://wiki.teltonika-networks.com/view/QSG_RUT956
+sourceType: manual
+sourceDocId: null
+dateChecked: 2026-11-14
+notes: "Data row only under blueprint §4.3: the citable source transcribed this round is the official Quick Start Guide, which carries no document number, so source binding for a page is not met. Datasheet versions also differ on LTE transmit power (23 vs 25 dBm); the QSG figure is recorded and the discrepancy noted rather than merged. Promotion path: verify the official Teltonika product page / datasheet URL, transcribe band and I/O tables from it, and the record can take a page."

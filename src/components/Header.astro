@@ -1,0 +1,130 @@
+---
+/**
+ * Header — portal top bar (blueprint R1.4, replacing the Phase 0
+ * three-axis top bar in the R1.8 adaptation):
+ *   brand row (name + slogan)
+ *   → primary nav: the six portal sections, in R1 commercial order
+ *   → utility nav, visually separated: Data Center | Tools | Search |
+ *     Subscribe.
+ * The three axes live on inside the Data Center (DataCenterNav).
+ * There is deliberately no full-site document tree.
+ */
+import { brand } from '../data/brand';
+---
+
+<header class="site-header">
+	<div class="brand-row">
+		<a class="brand-name" href="/">{brand.name}</a>
+		<span class="brand-tagline">{brand.tagline}</span>
+	</div>
+	<div class="nav-row">
+		<nav class="section-nav" aria-label="Sections">
+			<ul>
+				{
+					brand.portalSections.map((section) => (
+						<li>
+							<a href={section.path}>{section.label}</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+		<nav class="utility-nav" aria-label="Utility">
+			<ul>
+				{
+					brand.utilityLinks.map((link) => (
+						<li>
+							<a href={link.path}>{link.label}</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+	</div>
+</header>
+
+<style>
+	.site-header {
+		background: var(--sidebar);
+		color: var(--rail-ink);
+	}
+
+	.brand-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.4rem 1rem;
+		max-width: var(--content-w);
+		margin: 0 auto;
+		padding: 0.8rem var(--gutter) 0.3rem;
+	}
+
+	.brand-name {
+		color: var(--rail-ink);
+		font-size: var(--fs-xl);
+		font-weight: 600;
+		text-decoration: none;
+	}
+
+	.brand-name:hover {
+		color: var(--rail-ink);
+		text-decoration: underline;
+	}
+
+	.brand-tagline {
+		color: var(--rail-mute);
+		font-size: var(--fs-sm);
+	}
+
+	.nav-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.3rem 2rem;
+		max-width: var(--content-w);
+		margin: 0 auto;
+		padding: 0.3rem var(--gutter) 0.7rem;
+	}
+
+	.section-nav ul,
+	.utility-nav ul {
+		display: flex;
+		flex-wrap: wrap;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.section-nav ul {
+		gap: 0.2rem 1.4rem;
+	}
+
+	.section-nav a {
+		color: var(--rail-ink);
+		text-decoration: none;
+		font-size: var(--fs-lg);
+		font-weight: 600;
+	}
+
+	.section-nav a:hover {
+		text-decoration: underline;
+	}
+
+	.utility-nav ul {
+		gap: 0.2rem 1rem;
+		border-left: 1px solid var(--rail-mute);
+		padding-left: 1rem;
+	}
+
+	.utility-nav a {
+		color: var(--rail-mute);
+		text-decoration: none;
+		font-size: var(--fs-md);
+	}
+
+	.utility-nav a:hover {
+		color: var(--rail-ink);
+		text-decoration: underline;
+	}
+</style>

@@ -1,0 +1,40 @@
+vendor: SignalFire
+vendorSlug: signalfire
+model: RANGER
+productType: wireless-io-module
+slug: signalfire-ranger
+status: active
+protocols:
+  - lte-m
+  - nb-iot
+frequencyBands:
+  - "LTE Cat-M1 / NB-IoT (multi-band; see datasheet for the full band list)"
+txPowerDbm: 23
+txPowerCondition: "Maximum, LTE Cat M1 (datasheet)"
+rxSensitivityDbm: null
+rangeClass: null
+antenna: "LTE antenna with internal GPS"
+io:
+  di: 2
+  do: null
+  ai: 1
+  ao: null
+  relay: 1
+  pulse: null
+ioNotes: null
+upstreamInterfaces:
+  - "MQTT / Sparkplug B over LTE-M / NB-IoT"
+powerSupply: "Internal lithium battery pack (4 D-cell, 76 Ah) or external / solar power"
+powerConsumption: null
+batteryLife: null
+ipRating: IP67
+operatingTemp: "-40 °C to +85 °C"
+certifications:
+  - "CSA C22.2 No. 213 / UL 121201 (Class I Division 2)"
+  - CE
+hazardousArea: "Class I Division 2, Groups A-D"
+sourceUrl: https://www.signal-fire.com/wp-content/uploads/2022/12/SF-Ranger-DS-RANGERDS2024-July2024.pdf
+sourceType: datasheet
+sourceDocId: "RANGERDS2024 (July 2024 datasheet)"
+dateChecked: 2026-11-14
+notes: "The datasheet states battery life as up to 8 years with no test conditions; batteryLife is left blank because no update-rate or condition basis is given."

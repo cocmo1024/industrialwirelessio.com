@@ -1,10 +1,1 @@
-{
-  "extends": "astro/tsconfigs/strict",
-  "include": [
-    ".astro/types.d.ts",
-    "node_modules/@astrojs/starlight/virtual.d.ts",
-    "node_modules/@astrojs/starlight/virtual-internal.d.ts",
-    "**/*"
-  ],
-  "exclude": ["dist"]
-}
+{"exclude":["dist"],"extends":"astro/tsconfigs/strict","include":[".astro/types.d.ts","**/*"]}

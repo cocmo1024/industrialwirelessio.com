@@ -1,0 +1,55 @@
+---
+title: Industrial Wireless Product Database
+description: A manufacturer-sourced database of industrial wireless gateways, adapters, I/O modules, cellular routers and LoRaWAN gateways — every specification transcribed from the maker's own datasheet.
+referenceType: product-database
+adProfile: product-family
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: industrial wireless product database
+searchIntent: learn
+decisionStage: problem-aware
+targetRoles:
+  - Telemetry engineers
+  - Controls engineers
+  - Utilities teams
+  - System integrators
+contentStatus: cornerstone
+contentCluster: telemetry-device-selection
+canonicalCluster: telemetry-device-selection
+pageType: hub
+lifecycle: hub
+refreshPriority: high
+authorKey: editorial-desk
+editorKey: review-desk
+lastReviewed: 2026-11-14
+problemSolved: Lets engineers compare industrial wireless hardware on specifications that trace to manufacturer datasheets, instead of marketing summaries that cannot be checked.
+readerTakeaway: "Every record in this database is transcribed from the manufacturer's own datasheet or product documentation, linked from the record. Figures a manufacturer does not state are left out — never estimated. Start from your I/O count and update rate, then choose the network form, then the model."
+productIndex: true
+faq:
+  - question: How do I choose a wireless I/O module?
+    answer: "Count the I/O first — types and points, and the update rate the loop actually needs. Then choose the network form: a point-to-point mirrored pair replaces a cable run, while a networked module reports to a gateway or host over Modbus or a protocol uplink. Only then compare models, using the band and licensing rules at the site, the power source available at the mounting point, and the fail-safe behaviour the outputs must show when the link drops."
+  - question: What is the difference between a wireless I/O module, an RTU and a telemetry gateway?
+    answer: "A wireless I/O module moves field signals — it reads inputs and drives outputs at the point where the wires would have run. An RTU adds local control logic, data logging and scheduled reporting at a remote site. A telemetry gateway translates and forwards: it converts protocols, buffers data through backhaul outages, handles alarms and manages the wide-area link. Many products combine two of the roles, but the selection question is which role is missing from your architecture."
+  - question: What does an industrial telemetry gateway do?
+    answer: "Four jobs define the category: protocol conversion between the field network and the host, local buffering with store-and-forward behaviour so data survives a backhaul outage, alarm handling at the edge, and management of the backhaul link itself — cellular, Ethernet or satellite. A plain router only moves IP packets; a gateway understands the industrial protocols it carries."
+---
+
+## How to choose a wireless I/O module
+
+Nine criteria decide the shortlist, in the order engineers actually have to settle them: I/O types and count, update rate and latency, network form, band and licensing, range against a real site survey, power source, fail-safe behaviour, hazardous-area and ingress requirements, and the host interface. The decision order matters: **count I/O and update rate first, choose the network form second, and compare brands and models last.**
+
+The full criteria set — each criterion with what to decide and why it decides the shortlist — is canonical on the category page: [Wireless remote I/O and RTU modules](/product-families/wireless-remote-io-and-rtu-modules/). The numbers belong to individual records in the table above, where each one carries its manufacturer source.
+
+## Module, RTU or gateway: three different jobs
+
+A wireless I/O module moves field signals where the wires would have run. An RTU adds local control logic, logging and scheduled reporting at a remote site. A telemetry gateway translates and forwards between networks. Many products combine two of the roles; the selection question is which role is missing from your architecture. The full comparison is canonical with the criteria above on the [wireless remote I/O category page](/product-families/wireless-remote-io-and-rtu-modules/).
+
+## What a telemetry gateway is
+
+A telemetry gateway sits between a field network and a host system and does four jobs: **protocol conversion**, **local buffering** with store-and-forward behaviour so readings survive a backhaul outage, **alarm handling** at the edge, and **backhaul management**. A router moves IP packets without understanding the industrial protocols inside them; a gateway is a translator that happens to buffer. The category definition, the capability floor and the gateway records are on the [industrial telemetry gateways category page](/product-families/industrial-telemetry-gateways/).
+
+The database's own composition — records by category, vendor and protocol — is published as the [2026 database census](/markets/database-census-2026/), and refreshed as the record set grows.
+
+## How this database is built
+
+Each record is one product, transcribed from one manufacturer primary source — the datasheet where one is published, the official product documentation where it is not — and the record names that source and the date it was checked. A record earns a full specification page when its source set is complete enough to fill the wireless identity and at least one specification table with sourced values; until then it appears as a row here and in the protocol tables, linked to its source. Specifications are added model by model, never scraped from aggregators and never averaged between sources.

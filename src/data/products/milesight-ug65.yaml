@@ -1,0 +1,56 @@
+vendor: Milesight
+vendorSlug: milesight
+model: UG65
+productType: gateway
+slug: milesight-ug65
+status: active
+protocols:
+  - lorawan
+frequencyBands:
+  - CN470
+  - IN865
+  - EU868
+  - RU864
+  - US915
+  - AU915
+  - KR920
+  - AS923
+txPowerDbm: 27
+txPowerCondition: Maximum
+rxSensitivityDbm: -140
+rxSensitivityCondition: At 292 bps
+rangeClass:
+  value: "2"
+  unit: km
+  conditions: Urban area signal penetration, as stated on the manufacturer product page
+  sourceRef: Milesight UG65 product page, specifications
+antenna: External LoRa antenna on 1 × 50 Ω N-Female connector; integrated cellular and Wi-Fi antennas
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: 8 LoRa channels (half/full-duplex), Semtech SX1302; supports around 2,000 Class A/B/C devices at a 10-minute uplink interval
+upstreamInterfaces:
+  - Gigabit Ethernet (1 × RJ45, PoE PD)
+  - Wi-Fi 802.11 b/g/n, 2.4 GHz
+  - 4G LTE (optional)
+powerSupply: DC 9–24 V, 802.3af PoE, or 5 V / 1 A via USB Type-C
+powerConsumption: Typical 2.9 W, max 4.2 W
+batteryLife: null
+ipRating: IP65
+operatingTemp: "-40 °C to +70 °C (reduced cellular performance above 60 °C)"
+certifications:
+  - CE (RED)
+  - FCC
+  - IC
+  - Telec
+  - JATE
+  - RCM
+hazardousArea: null
+sourceUrl: https://www.milesight.com/iot/product/lorawan-gateway/ug65
+sourceType: product-page
+sourceDocId: null
+dateChecked: 2026-11-14

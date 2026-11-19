@@ -1,0 +1,44 @@
+---
+/**
+ * PortalLayout — the editorial-grid shell for the portal layer
+ * (blueprint R1.8 adaptation item): front page, section indexes and
+ * portal features. It reuses BaseLayout for head/header/footer (the
+ * brand-facts and entity plumbing stay single-sourced) and drops the
+ * nameplate rail — portal pages are read as a newspaper grid, not as
+ * object sheets. Module pages (products, protocols, tools) keep
+ * BaseLayout with the rail.
+ */
+import BaseLayout from './BaseLayout.astro';
+import type { SeoResult } from '../utils/seo';
+import type { HreflangLink } from '../utils/routes';
+
+interface Props {
+	seo: SeoResult;
+	hreflang?: HreflangLink[];
+}
+
+const { seo, hreflang = [] } = Astro.props;
+---
+
+<BaseLayout seo={seo} hreflang={hreflang}>
+	<div class="portal">
+		<slot />
+	</div>
+</BaseLayout>
+
+<style>
+	.portal {
+		/* Editorial rhythm: slots breathe more than module pages. */
+	}
+
+	.portal :global(section) {
+		margin-bottom: 1.8rem;
+	}
+
+	.portal :global(.lede) {
+		font-size: var(--fs-lg);
+		line-height: var(--lede-lh);
+		color: var(--ink-2);
+		max-width: 68ch;
+	}
+</style>

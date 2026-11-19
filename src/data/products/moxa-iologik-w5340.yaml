@@ -1,0 +1,37 @@
+vendor: Moxa
+vendorSlug: moxa
+model: ioLogik W5340
+productType: wireless-io-module
+slug: moxa-iologik-w5340
+status: legacy
+protocols:
+  - gprs
+frequencyBands:
+  - "850/900/1800/1900 MHz (quad-band GPRS)"
+txPowerDbm: null
+rxSensitivityDbm: null
+rangeClass: null
+antenna: null
+io:
+  di: null
+  do: null
+  ai: 4
+  ao: null
+  relay: 2
+  pulse: null
+ioNotes: "4 analog inputs and 2 relay outputs, plus 8 configurable digital I/O channels (manual v3.0). The base model is GPRS-only; HSPA is the separate W5340-HSPA variant."
+upstreamInterfaces:
+  - Ethernet (RJ45)
+  - "RS-232/422/485 serial"
+powerSupply: null
+powerConsumption: null
+batteryLife: null
+ipRating: null
+operatingTemp: "-10 °C to +55 °C (W5340; -T variant -40 °C to +75 °C)"
+certifications: []
+hazardousArea: null
+sourceUrl: https://moxa.com/Moxa/media/PDIM/S100000445/moxa-iologik-w5340-active-gprs-io-manual-v3.0.pdf
+sourceType: manual
+sourceDocId: null
+dateChecked: 2026-11-14
+notes: "Data row only under blueprint §4.3: the citable source is the user manual, which carries no document number, so source binding for a page is not met. Status is recorded as legacy on age of the line; Moxa publishes no EOL notice for it, so it is not marked discontinued."

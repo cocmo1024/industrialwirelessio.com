@@ -1,0 +1,29 @@
+---
+/**
+ * Slot — a commercial placeholder in the layout grid (blueprint
+ * R1.6). It marks WHERE a sponsor / featured / partner unit will sit
+ * when the user approves monetization, and nothing more:
+ *
+ *   - it renders an empty element carrying only `data-slot="<name>"`;
+ *   - it has no size, no border, no label — an empty slot can cause
+ *     no layout shift and shows the reader nothing;
+ *   - it loads no script and no third-party resource, ever.
+ *
+ * Filling a slot is a separate, user-approved change; this component
+ * is the structural reservation, not an ad unit.
+ */
+interface Props {
+	/** Slot name, e.g. "sponsor-headline". */
+	name: string;
+}
+
+const { name } = Astro.props;
+---
+
+<div class="slot" data-slot={name} hidden></div>
+
+<style>
+	.slot {
+		display: none;
+	}
+</style>

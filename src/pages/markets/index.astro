@@ -1,0 +1,177 @@
+---
+/**
+ * Markets — section index (blueprint R1.3): section head, the trend
+ * feature list, and the data strip generated from the records (the
+ * same computation as the front page's H3 — counts are never typed
+ * by hand). The section launches with one feature; the "in
+ * production" note states the desk's queue honestly instead of
+ * padding the index with stubs.
+ */
+import { getCollection } from 'astro:content';
+import PortalLayout from '../../layouts/PortalLayout.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import SpectrumRail from '../../components/SpectrumRail.astro';
+import { buildSeo } from '../../utils/seo';
+import { productGate } from '../../utils/products';
+
+const productRecords = (await getCollection('products')).map((item) => item.data);
+const vendorRecords = (await getCollection('vendors')).map((item) => item.data);
+const protocolRecords = (await getCollection('protocols')).map((item) => item.data);
+const indexableCount = productRecords.filter((record) => productGate(record).indexable).length;
+const latestCheck = productRecords.length
+	? new Date(Math.max(...productRecords.map((record) => record.dateChecked.getTime())))
+			.toISOString()
+			.slice(0, 10)
+	: null;
+
+const seo = buildSeo(
+	{
+		id: 'markets',
+		locale: 'en',
+		title: 'Markets & Trends',
+		description:
+			'Industrial wireless market coverage grounded in countable things: the product database census, standards-body market evidence and tender data — every figure sourced or computed from the records.',
+		kind: 'section',
+	},
+	'/markets/',
+);
+---
+
+<PortalLayout seo={seo}>
+	<SectionHead name="Markets & Trends" asPageTitle />
+	<p class="lede">
+		Market coverage that starts from things that can be counted: the records in our own
+		database, the standards bodies' published evidence, and procurement data with a named
+		methodology. If a number cannot be traced, it does not run.
+	</p>
+
+	<article class="feature">
+		<p class="kicker">Feature · Database census</p>
+		<h2>
+			<a href="/markets/database-census-2026/">
+				Forty records in: what the industrial wireless database actually shows
+			</a>
+		</h2>
+		<p class="dek">
+			Gateways outnumber modules, proprietary 900 MHz ties LoRaWAN, and every second
+			protocol in the field is still a single-vendor radio. Our first census of the
+			product database — every figure computed from the records themselves, with the
+			limits of the sample stated on the page.
+		</p>
+		<p><a href="/markets/database-census-2026/">Read the census →</a></p>
+	</article>
+
+	<section class="panel" aria-label="Database counts">
+		<div class="panel-head">The database, counted</div>
+		<div class="panel-body">
+			<dl class="strip-nums">
+				<div>
+					<dt>Product records</dt>
+					<dd class="num">{productRecords.length}</dd>
+				</div>
+				<div>
+					<dt>Full spec pages</dt>
+					<dd class="num">{indexableCount}</dd>
+				</div>
+				<div>
+					<dt>Makers listed</dt>
+					<dd class="num">{vendorRecords.length}</dd>
+				</div>
+				<div>
+					<dt>Protocol references</dt>
+					<dd class="num">{protocolRecords.length}</dd>
+				</div>
+				<div>
+					<dt>Latest source check</dt>
+					<dd class="num">{latestCheck}</dd>
+				</div>
+			</dl>
+			<SpectrumRail protocols={protocolRecords} />
+			<p class="strip-note">
+				Generated from the records at build time. The census feature reads these
+				numbers the way an analyst would — including what a curated, datasheet-bound
+				sample cannot prove.
+			</p>
+		</div>
+	</section>
+
+	<section class="panel" aria-label="In production">
+		<div class="panel-head">In production</div>
+		<div class="panel-body">
+			<p class="queue-note">
+				This section opened with the census. In the desk's queue: a tender-language
+				watch built on the LoRa Alliance's published metering evidence, and a
+				cellular-versus-LPWAN gateway mix update when the next record batch lands.
+				Features publish when their sources check out — the section does not run
+				scheduled filler.
+			</p>
+		</div>
+	</section>
+</PortalLayout>
+
+<style>
+	.feature {
+		border-bottom: 2px solid var(--ink);
+		padding-bottom: 1.2rem;
+		margin-bottom: 1.4rem;
+	}
+
+	.kicker {
+		font-size: var(--fs-xs);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--accent);
+		font-weight: 600;
+		margin-bottom: 0.3rem;
+	}
+
+	.feature h2 {
+		font-size: var(--fs-headline);
+		max-width: 46ch;
+	}
+
+	.feature h2 a {
+		color: var(--ink);
+		text-decoration: none;
+	}
+
+	.feature h2 a:hover {
+		color: var(--accent-hover);
+		text-decoration: underline;
+	}
+
+	.feature .dek {
+		color: var(--ink-2);
+		max-width: 68ch;
+	}
+
+	.strip-nums {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.8rem 2rem;
+		margin: 0 0 0.8rem;
+	}
+
+	.strip-nums dt {
+		font-size: var(--fs-xs);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+	}
+
+	.strip-nums dd {
+		margin: 0;
+		font-size: var(--fs-2xl);
+	}
+
+	.strip-note,
+	.queue-note {
+		color: var(--ink-2);
+		margin: 0.6rem 0 0;
+		max-width: 72ch;
+	}
+
+	.queue-note {
+		margin: 0;
+	}
+</style>

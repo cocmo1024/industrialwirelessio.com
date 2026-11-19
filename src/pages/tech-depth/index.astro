@@ -1,0 +1,166 @@
+---
+/**
+ * Tech Depth — section index (blueprint R1.3): editorially weighted
+ * features grouped by theme — protocol deep dives, link engineering,
+ * and the topic archive. Deliberately NOT a document tree and NOT a
+ * date-ordered list: features are pinned by the desk, groups are
+ * thematic, and the archive group names the legacy topic hubs whose
+ * full texts are being re-edited into the new anatomies.
+ */
+import PortalLayout from '../../layouts/PortalLayout.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import Slot from '../../components/Slot.astro';
+import { buildSeo } from '../../utils/seo';
+
+const features = [
+	{
+		group: 'Protocol deep dives',
+		items: [
+			{
+				title: 'WirelessHART (IEC 62591)',
+				dek: 'The process-industry mesh: definition block, sourced parameters, and gateway capacity by model — 1410S, SWG50 and peers with their ratings kept separate.',
+				href: '/protocols/wirelesshart/',
+			},
+			{
+				title: 'ISA100.11a (IEC 62734)',
+				dek: 'The other process standard: subnet architecture, backbone routing and the security model the WCI actually specifies.',
+				href: '/protocols/isa100/',
+			},
+			{
+				title: 'WirelessHART vs ISA100.11a',
+				dek: 'The head-to-head: one table aligned from both records, a conclusion stated up front, and the conditions that reverse it.',
+				href: '/protocols/wirelesshart-vs-isa100/',
+			},
+			{
+				title: 'LoRaWAN',
+				dek: 'Regional parameters and payload ceilings from RP002 itself, with the duty-cycle arithmetic most summaries skip.',
+				href: '/protocols/lorawan/',
+			},
+			{
+				title: 'IO-Link Wireless (IEC 61139-3)',
+				dek: 'Deterministic 5 ms cycles in the 2.4 GHz band: how the System Extensions fit 40 devices behind one master.',
+				href: '/protocols/io-link-wireless/',
+			},
+		],
+	},
+	{
+		group: 'Link engineering',
+		items: [
+			{
+				title: 'Link budget calculator',
+				dek: 'Will the link close? Power and gains against path, cable and fade losses, against a sensitivity you can preset from real product records.',
+				href: '/tools/link-budget-calculator/',
+			},
+			{
+				title: 'Fresnel zone calculator',
+				dek: 'First-zone radius and the 60% clearance convention, computed for the obstacle point that actually matters on your path.',
+				href: '/tools/fresnel-zone-calculator/',
+			},
+			{
+				title: 'The protocol matrix',
+				dek: 'Every protocol record on one page — band, topology, latency class and best-fit, generated from the same records as the deep dives.',
+				href: '/protocols/',
+			},
+		],
+	},
+	{
+		group: 'Topic archive',
+		items: [
+			{
+				title: 'Applications',
+				dek: 'Where wireless I/O earns its keep: pump stations, tank farms, utilities and plant retrofits.',
+				href: '/applications/',
+			},
+			{
+				title: 'Network paths',
+				dek: 'Backhaul choices — cellular, licensed radio, mesh and hybrid paths — and what each does to a design.',
+				href: '/network-paths/',
+			},
+			{
+				title: 'Reliability',
+				dek: 'Alarm design, reporting discipline and the failure modes that decide whether a wireless site stays trusted.',
+				href: '/reliability/',
+			},
+			{
+				title: 'Hardware',
+				dek: 'Enclosures, power and antennas: the physical layer that link budgets assume and sites get wrong.',
+				href: '/hardware/',
+			},
+		],
+	},
+];
+
+const seo = buildSeo(
+	{
+		id: 'tech-depth',
+		locale: 'en',
+		title: 'Tech Depth',
+		description:
+			'The editorial deep end: protocol deep dives built from standards documents, link-engineering tools with their formulas shown, and the topic archive — selected by the desk, not sorted by date.',
+		kind: 'section',
+	},
+	'/tech-depth/',
+);
+---
+
+<PortalLayout seo={seo}>
+	<SectionHead name="Tech Depth" asPageTitle />
+	<p class="lede">
+		The deep end of the portal: protocol references written from the standards
+		documents, engineering tools that show their formulas, and the long-form archive —
+		grouped by theme and pinned by editorial weight, never poured out by date.
+	</p>
+
+	<Slot name="sponsor-section-tech-depth" />
+
+	{
+		features.map((group) => (
+			<section aria-label={group.group}>
+				<SectionHead name={group.group} />
+				<div class="feature-list">
+					{group.items.map((item) => (
+						<article class="feature-item">
+							<h3>
+								<a href={item.href}>{item.title}</a>
+							</h3>
+							<p>{item.dek}</p>
+						</article>
+					))}
+				</div>
+			</section>
+		))
+	}
+</PortalLayout>
+
+<style>
+	.feature-list {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+		gap: 1.2rem 1.5rem;
+	}
+
+	.feature-item {
+		border-top: 3px solid var(--accent);
+		padding-top: 0.55rem;
+	}
+
+	.feature-item h3 {
+		font-size: var(--fs-lg);
+		margin-bottom: 0.25rem;
+	}
+
+	.feature-item h3 a {
+		color: var(--ink);
+		text-decoration: none;
+	}
+
+	.feature-item h3 a:hover {
+		color: var(--accent-hover);
+		text-decoration: underline;
+	}
+
+	.feature-item p {
+		color: var(--ink-2);
+		margin: 0;
+	}
+</style>

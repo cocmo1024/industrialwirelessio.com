@@ -1,0 +1,41 @@
+vendor: FreeWave
+vendorSlug: freewave
+model: ZumLink Z9-PE
+productType: radio-modem
+slug: freewave-z9-pe
+status: active
+protocols:
+  - proprietary-900
+frequencyBands:
+  - "902-928 MHz"
+txPowerDbm: null
+rxSensitivityDbm: null
+rangeClass:
+  value: "97"
+  unit: km
+  conditions: "Line of sight (manufacturer product page)"
+  sourceRef: FreeWave ZumLink product page
+antenna: "External antenna via TNC connector (Z9-PE)"
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "Radio modem: no local I/O."
+upstreamInterfaces:
+  - Ethernet
+  - "Serial (2 ports)"
+powerSupply: null
+powerConsumption: "355 mA transmit / 145 mA receive at 12 V (product page)"
+batteryLife: null
+ipRating: null
+operatingTemp: "-40 °C to +75 °C"
+certifications: []
+hazardousArea: "Class I Division 2"
+sourceUrl: https://www.freewave.com/transport/zumlink/
+sourceType: product-page
+sourceDocId: "LDS0005AA Rev Jan-2018 (datasheet)"
+dateChecked: 2026-11-14
+notes: "A transmit-power figure appears in a FreeWave manual overview but not in the product-page or datasheet specification tables, so transmit power and sensitivity are left blank here. The Z9-PE is the current ZumLink model; the older FGR2-PE is no longer published on freewave.com."

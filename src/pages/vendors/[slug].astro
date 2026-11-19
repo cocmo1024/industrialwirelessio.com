@@ -1,0 +1,251 @@
+---
+/**
+ * Vendor page — generated for every vendor record that carries at
+ * least one product record (blueprint R1.3 floor: a name-and-website
+ * shell earns no page). Anatomy: nameplate rail (identity, official
+ * site, listing status) → recorded products (the shared database
+ * table) → vendor movement from the news line → claim slot
+ * (structural, R1.6) → protocol references.
+ *
+ * Listing status semantics (R1.6): `listed` = recorded by the
+ * editors from the maker's own documentation, unclaimed. `claimed`
+ * and `verified` are set only by an actual claim/verification event
+ * — never inferred.
+ */
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProductTable from '../../components/ProductTable.astro';
+import Slot from '../../components/Slot.astro';
+import { brand } from '../../data/brand';
+import { buildSeo } from '../../utils/seo';
+import { protocolLabel, type VendorRecord } from '../../utils/products';
+
+export async function getStaticPaths() {
+	const vendorEntries = await getCollection('vendors');
+	const productEntries = await getCollection('products');
+	const counts = new Map<string, number>();
+	for (const entry of productEntries) {
+		counts.set(entry.data.vendorSlug, (counts.get(entry.data.vendorSlug) ?? 0) + 1);
+	}
+	return vendorEntries
+		.map((entry) => entry.data)
+		.filter((vendor) => (counts.get(vendor.slug) ?? 0) >= 1)
+		.map((vendor) => ({ params: { slug: vendor.slug }, props: { vendor } }));
+}
+
+interface Props {
+	vendor: VendorRecord;
+}
+
+const { vendor } = Astro.props;
+
+const allProducts = (await getCollection('products')).map((entry) => entry.data);
+const products = allProducts
+	.filter((record) => record.vendorSlug === vendor.slug)
+	.sort((a, b) => a.model.localeCompare(b.model));
+const protocolRecords = (await getCollection('protocols')).map((entry) => entry.data);
+const protocolSlugsWithPages = new Set(protocolRecords.map((protocol) => protocol.slug));
+const vendorProtocols = [...new Set(products.flatMap((record) => record.protocols))];
+const news = (await getCollection('news'))
+	.map((item) => item.data)
+	.filter((item) => item.relatedVendors?.includes(vendor.slug))
+	.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+const STATUS_LABELS: Record<VendorRecord['listingStatus'], string> = {
+	listed: 'Listed — recorded by the editors, unclaimed',
+	claimed: 'Claimed by the maker',
+	verified: 'Verified with the maker',
+};
+
+const fmtDay = (date: Date) => date.toISOString().slice(0, 10);
+
+const seo = buildSeo(
+	{
+		id: `vendors/${vendor.slug}`,
+		locale: 'en',
+		title: `${vendor.name} — vendor listing`,
+		description: `${vendor.name} in the industrial wireless vendor directory: ${vendor.productLines.join(', ')}; ${products.length} product${products.length === 1 ? '' : 's'} recorded from manufacturer documentation.`,
+		kind: 'section',
+	},
+	`/vendors/${vendor.slug}/`,
+);
+---
+
+<BaseLayout seo={seo} hasRail>
+	<Fragment slot="rail">
+		<div class="panel nameplate">
+			<div class="panel-head">Vendor</div>
+			<div class="panel-body">
+				<dl>
+					<dt>Maker</dt>
+					<dd>{vendor.name}</dd>
+					<dt>Official site</dt>
+					<dd><a href={vendor.website} rel="noopener">{new URL(vendor.website).hostname}</a></dd>
+					<dt>Listing status</dt>
+					<dd>{STATUS_LABELS[vendor.listingStatus]}</dd>
+					<dt>Product lines covered</dt>
+					<dd>{vendor.productLines.join(' · ')}</dd>
+					<dt>Records in database</dt>
+					<dd class="num">{products.length}</dd>
+					{
+						vendor.founded != null && (
+							<>
+								<dt>Founded</dt>
+								<dd class="num">{vendor.founded}</dd>
+							</>
+						)
+					}
+					{
+						vendor.headquarters && (
+							<>
+								<dt>Headquarters</dt>
+								<dd>{vendor.headquarters}</dd>
+							</>
+						)
+					}
+				</dl>
+			</div>
+		</div>
+	</Fragment>
+
+	<article>
+		<h1>{vendor.name}</h1>
+		<p class="lede">
+			{vendor.name} builds {vendor.productLines.join(' and ').toLowerCase()} —{' '}
+			{products.length} of its products are recorded in this site's database, each
+			transcribed from {vendor.name}'s own datasheets or product documentation.
+		</p>
+
+		<section aria-label="Recorded products">
+			<h2>Recorded products</h2>
+			<ProductTable products={products} variant="index" />
+			<p class="table-note">
+				Rows are records, not advertisements: a product earns a full specification
+				page when its manufacturer source set is complete, and stays a row — linked
+				to its source — until then.
+			</p>
+		</section>
+
+		{
+			news.length > 0 && (
+				<section aria-label="Vendor movement">
+					<h2>Movement</h2>
+					{news.map((item) => (
+						<article class="news-item">
+							<p class="item-meta">
+								<span class="num">{fmtDay(item.date)}</span> · {item.sourceName}
+							</p>
+							<h3>
+								<a href={item.sourceUrl} rel="noopener">
+									{item.headline}
+								</a>
+							</h3>
+							<p>{item.summary}</p>
+						</article>
+					))}
+				</section>
+			)
+		}
+
+		<section class="panel claim" aria-label="Claim this listing">
+			<div class="panel-head">Claim this listing</div>
+			<div class="panel-body">
+				<p>
+					This listing was compiled from {vendor.name}'s public documentation and
+					has not been claimed. Makers can claim their listing to correct product
+					lines and point the desk at current datasheets — write to{' '}
+					<a href={`mailto:${brand.email}?subject=Listing%20claim%3A%20${encodeURIComponent(vendor.name)}`}>
+						{brand.email}
+					</a>
+					.
+				</p>
+				<Slot name={`claim-vendor-${vendor.slug}`} />
+			</div>
+		</section>
+
+		{
+			vendorProtocols.length > 0 && (
+				<section aria-label="Protocols">
+					<h2>Protocols in this maker's records</h2>
+					<ul>
+						{vendorProtocols.map((slug) => (
+							<li>
+								{protocolSlugsWithPages.has(slug) ? (
+									<a href={`/protocols/${slug}/`}>
+										{protocolLabel(slug)} — protocol reference
+									</a>
+								) : (
+									protocolLabel(slug)
+								)}
+							</li>
+						))}
+					</ul>
+				</section>
+			)
+		}
+	</article>
+</BaseLayout>
+
+<style>
+	.lede {
+		font-size: var(--fs-lg);
+		color: var(--ink-2);
+		max-width: 68ch;
+	}
+
+	.nameplate dl {
+		margin: 0;
+	}
+
+	.nameplate dt {
+		font-size: var(--fs-xs);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		margin-top: 0.6rem;
+	}
+
+	.nameplate dt:first-child {
+		margin-top: 0;
+	}
+
+	.nameplate dd {
+		margin: 0.15rem 0 0;
+	}
+
+	article section {
+		margin-bottom: 1.2rem;
+	}
+
+	.table-note {
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+		margin-top: 0.5rem;
+	}
+
+	.news-item {
+		padding: 0.6rem 0;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.item-meta {
+		font-size: var(--fs-sm);
+		color: var(--ink-2);
+		margin-bottom: 0.3rem;
+	}
+
+	.news-item h3 a {
+		color: var(--ink);
+		text-decoration: none;
+	}
+
+	.news-item h3 a:hover {
+		color: var(--accent-hover);
+		text-decoration: underline;
+	}
+
+	.claim p {
+		margin: 0;
+		max-width: 68ch;
+	}
+</style>

@@ -1,0 +1,48 @@
+vendor: MultiTech
+vendorSlug: multitech
+model: Conduit IP67 Base Station
+productType: gateway
+slug: multitech-conduit-ip67
+status: active
+protocols:
+  - lorawan
+frequencyBands:
+  - EU868
+  - IN865
+  - US915
+  - AU915
+  - AS923
+  - KR920
+txPowerDbm: 27
+txPowerCondition: "Before antenna: 868 MHz models 14–27 dBm (EIRP limited to 14 dBm across most of the band, 27 dBm at 869.4–869.5 MHz); 915 MHz models 25.1 dBm"
+rxSensitivityDbm: null
+rangeClass: null
+antenna: External antennas — LoRa and Wi-Fi/BT on RP-SMA female, cellular and GPS on SMA female
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: 8 LoRa channels (half-duplex), SF5–SF12; one or two LoRa radios depending on variant (MTCDTIP series)
+upstreamInterfaces:
+  - Ethernet 10/100 (RJ45, PoE)
+  - 4G LTE Cat 4 (L4G1 variants)
+  - Wi-Fi 802.11 a/b/g/n and Bluetooth (-267 variants)
+powerSupply: PoE 37–57 V DC (IEEE 802.3at)
+powerConsumption: null
+batteryLife: null
+ipRating: IP67
+operatingTemp: "-40 °C to +70 °C"
+certifications:
+  - CE
+  - UKCA
+  - FCC Part 15 Class A
+  - ICES-003 Class A
+hazardousArea: null
+sourceUrl: https://multitech.com/wp-content/uploads/86002242.pdf
+sourceType: datasheet
+sourceDocId: MultiTech Conduit IP67 Base Station global models datasheet 86002242
+dateChecked: 2026-11-14
+notes: "Receiver sensitivity is not published in the official datasheets or hardware guide consulted (S000837) — left null. Hardware Guide S000837 lists -30 °C minimum operating temperature for some L4E1/L4N1 variants; the record follows the global datasheet figure."

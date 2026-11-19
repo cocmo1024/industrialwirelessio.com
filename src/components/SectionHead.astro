@@ -1,0 +1,56 @@
+---
+/**
+ * SectionHead — the portal's section header unit (blueprint R1.5):
+ * section name + rule line + optional "all" entry link. One shape for
+ * every front-page slot and every section index, so a reader learns
+ * the pattern once (R3 in the portal layer: same-type surfaces stay
+ * isomorphic). Section identity is carried by the name and the rule —
+ * never by color (R5 spirit, R1.5).
+ */
+interface Props {
+	/** Section name, e.g. "Industry News". */
+	name: string;
+	/** Optional "all" entry — href + label. */
+	allHref?: string;
+	allLabel?: string;
+	/** Render as the page's h1 (section index pages) instead of an h2. */
+	asPageTitle?: boolean;
+}
+
+const { name, allHref, allLabel, asPageTitle = false } = Astro.props;
+---
+
+<div class="section-head">
+	{asPageTitle ? <h1>{name}</h1> : <h2>{name}</h2>}
+	{
+		allHref && (
+			<a class="section-all" href={allHref}>
+				{allLabel ?? 'All'} →
+			</a>
+		)
+	}
+</div>
+
+<style>
+	.section-head {
+		display: flex;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 1rem;
+		border-bottom: 2px solid var(--ink);
+		padding-bottom: 0.35rem;
+		margin-bottom: 0.9rem;
+	}
+
+	.section-head h1,
+	.section-head h2 {
+		margin: 0;
+		font-size: var(--fs-xl);
+		letter-spacing: 0.01em;
+	}
+
+	.section-all {
+		font-size: var(--fs-sm);
+		white-space: nowrap;
+	}
+</style>

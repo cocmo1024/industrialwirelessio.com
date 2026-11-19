@@ -1,0 +1,7 @@
+# Cloudflare Pages redirects — industrialwirelessio.com rebuild.
+# Only the two MERGE pairs established by blueprint v1 (2026-11-12)
+# and carried into blueprint v2 §7.2. The source pages are excluded
+# from the build (frontmatter `mergedTo` tombstones), so no static
+# file exists at these paths and the 301s apply directly.
+/reliability/remote-telemetry-alarm-flood-reduction-deadbands-persistence-and-operator-trust/ /protocols/alarm-priority-and-deadband-design-for-remote-telemetry/ 301
+/reliability/when-should-a-remote-site-alarm-immediately-vs-buffer-locally/ /protocols/report-by-exception-and-store-and-forward/ 301

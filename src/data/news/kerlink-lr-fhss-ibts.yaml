@@ -1,0 +1,13 @@
+slug: kerlink-lr-fhss-ibts
+headline: "Kerlink activates LR-FHSS reception on deployed Wirnet iBTS gateways — by software upgrade"
+date: 2026-11-10
+sourceName: Kerlink — member press release via the LoRa Alliance
+sourceUrl: https://lora-alliance.org/member-press-release/kerlink-brings-lr-fhss-to-lorawan-gatewaysexpanding-network-capacity-for-utilities/
+summary: "Kerlink says it is the first gateway manufacturer to offer LR-FHSS reception in its gateway line: the Wirnet iBTS, iBTS Compact and iBTS 64 Highway can receive the frequency-hopping uplink modulation — developed by Semtech and standardized as data rates in the LoRaWAN Regional Parameters — after a software update, with no hardware change and no additional license fee. LR-FHSS is uplink-only; joins and downlinks continue over LoRa, and the network server selects the modulation per device."
+editorsNote: "A capacity upgrade that arrives as firmware changes gateway sizing math: an installed iBTS fleet can absorb denser metering rollouts without a hardware swap, which is exactly the kind of headroom link budgets rarely get for free."
+tag: Products
+relatedVendors:
+  - kerlink
+relatedProtocols:
+  - lorawan
+dateChecked: 2026-11-19

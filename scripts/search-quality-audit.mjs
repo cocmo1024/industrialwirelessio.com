@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const root = process.cwd();
-const docsDir = path.join(root, 'src', 'content', 'docs');
+const docsDir = path.join(root, 'src', 'content', 'pages', 'en');
 
 const sitePages = new Set([
 	'about.mdx',

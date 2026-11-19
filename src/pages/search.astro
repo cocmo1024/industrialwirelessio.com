@@ -1,0 +1,40 @@
+---
+/**
+ * Search — Pagefind (blueprint §1.3: static, no backend). The index
+ * is generated into /pagefind/ by the postbuild step; this page is
+ * its single canonical entry (R2).
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { buildSeo } from '../utils/seo';
+
+const seo = buildSeo(
+	{ id: 'search', locale: 'en', title: 'Search', kind: 'foundation' },
+	'/search/',
+);
+---
+
+<BaseLayout seo={seo}>
+	<h1>Search</h1>
+	<p class="lede">Search protocol pages, product records, tools and guides.</p>
+	<div id="search" class="search-box"></div>
+	<link href="/pagefind/pagefind-ui.css" rel="stylesheet" />
+	<script is:inline src="/pagefind/pagefind-ui.js"></script>
+	<script is:inline>
+		window.addEventListener('DOMContentLoaded', () => {
+			if (typeof PagefindUI !== 'undefined') {
+				new PagefindUI({ element: '#search', showSubResults: true });
+			}
+		});
+	</script>
+</BaseLayout>
+
+<style>
+	.lede {
+		font-size: var(--fs-lg);
+		color: var(--ink-2);
+	}
+
+	.search-box {
+		margin-top: 1rem;
+	}
+</style>

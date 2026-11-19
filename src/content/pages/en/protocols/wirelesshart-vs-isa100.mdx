@@ -1,0 +1,80 @@
+---
+title: "WirelessHART vs ISA100.11a: Same Radio, Different Ecosystems"
+description: "WirelessHART (IEC 62591) and ISA100.11a (IEC 62734) share a radio and a job but not a network. The sourced comparison: architecture, application layer, security, ecosystem."
+referenceType: comparison
+adProfile: none
+commercialIntent: low
+reviewCadence: Semiannual review
+primaryKeyword: WirelessHART vs ISA100
+searchIntent: compare
+decisionStage: solution-aware
+targetRoles:
+  - Process engineers
+  - Instrumentation engineers
+  - Controls engineers
+  - System integrators
+contentStatus: cornerstone
+contentCluster: protocol-graph
+canonicalCluster: protocol-graph
+pageType: comparison
+lifecycle: evergreen
+refreshPriority: high
+authorKey: editorial-desk
+editorKey: review-desk
+datePublished: 2026-11-14
+lastReviewed: 2026-11-14
+problemSolved: Most WirelessHART-versus-ISA100 material is vendor advocacy or repeats two claims the standards bodies do not support (that ISA100 security is optional, and that its timeslots are simply 'configurable'). This page compares the two standards from their owners' and manufacturers' own publications and names the layer that actually decides real selections.
+readerTakeaway: "WirelessHART (IEC 62591) and ISA100.11a (IEC 62734) use the same 2.4 GHz IEEE 802.15.4 radio, the same AES-128 encryption and the same monitoring-class update rates — and they cannot interoperate at all. In practice the choice is rarely decided by radio parameters: it is decided by the ecosystem already installed in the plant — the DCS, the instrument base and the vendor who will support the network. The exception: on a greenfield, stand-alone monitoring network with no incumbent ecosystem, either standard does the job, and local vendor support should make the call."
+keyQuestions:
+  - What is the difference between WirelessHART and ISA100.11a, and which one should I choose?
+  - Can WirelessHART and ISA100.11a devices run on the same network?
+comparisonOf:
+  - wirelesshart
+  - isa100
+relatedProtocols:
+  - wirelesshart
+  - isa100
+faq:
+  - question: What is the difference between WirelessHART and ISA100.11a, and which one should I choose?
+    answer: "The radios are the same (IEEE 802.15.4, 2.4 GHz, AES-128); the architectures differ. WirelessHART extends the HART world — every device meshes, a gateway-resident network manager schedules 10 ms slots, and the application layer is the HART command set. ISA100.11a is IP-first: backbone routers and star-mesh topologies, native IPv6 addressing, manager-assigned slots under communication contracts, and an object application model that can tunnel other protocols. Choose by your installed ecosystem: HART/Emerson-centred plants land on WirelessHART; Yokogawa or Honeywell-centred plants, or designs that want IP to the instrument, land on ISA100.11a."
+  - question: Can WirelessHART and ISA100.11a devices run on the same network?
+    answer: "No. Despite sharing the radio, the two protocols have different network and application layers, and a device joins one network or the other — there is no dual-protocol field device mode and no bridging at device level. They can coexist in the same plant and even under shared infrastructure: Emerson's 1410S gateway can run a separate IEC 62734 network on a second antenna, and Honeywell's OneWireless manager and access points administer both standards side by side. Coexistence works because both hop channels and support blacklisting — but coexistence is not interoperability."
+---
+
+## Start with what is the same
+
+Strip the branding away and the two standards converge more than either camp advertises. Both run on **IEEE 802.15.4 radios in the 2.4 GHz ISM band** with channel hopping and blacklisting for coexistence. Both **encrypt with AES-128** and authenticate devices before they join. Both serve the **same application envelope** — battery field instruments reporting process values at monitoring-class rates (WirelessHART gateways support update periods from 1 second to 60 minutes; ISA100 implementations start at 0.5 seconds, with WCI positioning the standard for latencies on the order of 100 ms). Both are **full IEC standards** — IEC 62591 and IEC 62734 — with certification regimes (FieldComm Group on one side, the ISA100 Wireless Compliance Institute on the other). A selection argued from radio specifications alone is an argument about the layer where the two are most alike.
+
+## Where they actually differ
+
+**Application layer.** WirelessHART *is* HART: the wireless extension carries the same command set, device descriptions and tooling as the wired HART instruments the plant already owns, which is why a WirelessHART device is intelligible to existing asset-management software on day one. ISA100.11a defines its own **object model** and reaches other protocols by carrying them — tunneling HART, Modbus, Profibus, Foundation Fieldbus — rather than by being one of them. If the point of the network is to harvest data from a HART installed base, the difference is decisive in WirelessHART's favour; if the point is one infrastructure for a museum of protocols, it cuts the other way.
+
+**Network architecture.** A WirelessHART network is a true mesh of peers: every device can route, the schedule is built by a network manager that typically lives in the gateway, and timing runs on a fixed 10 ms slot grid. An ISA100.11a network is hierarchical: battery I/O devices are deliberately kept simple (many cannot route at all), mains-powered **backbone routers** carry the traffic, a **system manager** assigns slots and grants communication contracts, and device-to-device redundancy is engineered through mechanisms like duocast. The ISA100 design spends infrastructure to save device energy and to make behaviour centrally administrable; the WirelessHART design spends device energy to make infrastructure minimal. Plants feel this difference in spares, in survey practice and in who owns network health — not in the air.
+
+**Addressing.** ISA100.11a is IPv6 end to end (with 6LoWPAN compression on the radio link); WirelessHART addresses devices in HART terms and translates at the gateway. For IT/OT-converged architectures that want IP to reach the instrument, this is ISA100's cleanest win. For plants whose host systems are DCS and asset tools rather than IP applications, it is mostly a philosophical one.
+
+**Security administration.** Both are AES-128, and Honeywell's own access-point specification states that both require process data encrypted and devices authenticated before joining — the durable difference is administrative, not cryptographic. WirelessHART runs one model: join key, network and session keys, managed with the network. ISA100.11a runs a richer hierarchy (join, master, data-link and session keys with expiry and renewal) under a dedicated **security manager** role, with policy choices WCI describes as policy-based and scalable, and provisioning specified over infrared or over the air. Richer means more capable and more to administer; which of those matters is a site-policy question.
+
+**Ecosystem.** WirelessHART rides the HART installed base: every major instrument vendor ships WirelessHART devices, because HART is the default language of process instruments. ISA100.11a's certified listing is led by two vendors — Yokogawa and Honeywell — with a specialist tail. This asymmetry, more than any row in the table above, is what real selections turn on: spares, local service, DCS integration testing and the twenty-year support question all resolve differently per ecosystem.
+
+## Three claims to retire
+
+Vendor-era comparisons repeat claims that the primary sources do not support; this hub does not use them, and neither should a selection document. First, **"ISA100 security is optional"**: WCI describes policy-based, scalable, two-layer AES-128, and Honeywell's specification says encryption is *required* — no standards-body source offers an off switch. Second, **"ISA100 timeslots are configurable, WirelessHART's are fixed"**: the fixed half is true (10 ms), but WCI's published material states no ISA100 slot duration at all — only that slots are manager-assigned and that CSMA modes exist. Third, **"one is open, the other proprietary"**: both are IEC standards with conformance testing; the openness that differs is the size of the certified device market, which is an ecosystem fact, not a licensing one.
+
+## Three selections, worked
+
+**A refinery standardized on Emerson and DeltaV, adding 300 monitoring points.** WirelessHART, and it is not close. The instrument base speaks HART, the asset tools already understand the devices, the gateway line integrates with the control system (noting the datasheet's own caveat that DeltaV configurations cap a network at 100 devices — a sizing fact, not an obstacle, with multiple gateways in the design), and every instrument vendor on the approved list offers a native device. ISA100.11a would import a second ecosystem to save nothing.
+
+**A Yokogawa plant harvesting data from a mixed HART and Modbus installed base.** ISA100.11a has the stronger hand. The control system relationship already exists, the YFGW410's tunneling encapsulates the HART and Modbus devices the plant actually owns, and the subnet model maps onto the plant's unit structure. A WirelessHART design would cover the HART majority natively and then strand the Modbus remainder behind separate integration work.
+
+**A greenfield tank farm, stand-alone monitoring, no incumbent DCS ecosystem.** This is the reversal condition from the conclusion: either standard performs the duty. Decide on the local bench — which vendor's gateway your integrators have commissioned before, whose spares are on a shelf within a day's drive, which instrument shortlist prices better at your update-rate mix — and write the decision down as a support decision, not a protocol verdict. Also price the honest alternative that neither camp will propose: for slow level and temperature points across open ground, a private [LoRaWAN](/protocols/lorawan/) network may cover the farm at a fraction of the infrastructure, reserving the process standards for the points that need managed diagnostics.
+
+## Running both, and migrating neither
+
+Plants that inherit both standards — after an acquisition, or where two units standardized a decade apart — should resist the consolidation project. The two networks coexist in the same band without drama: both hop, both blacklist, and a single spectrum survey serves both. Infrastructure-level coexistence is even a product category: Emerson's 1410S can host a separate IEC 62734 network (rated to 99 devices) on a second antenna alongside its WirelessHART network, and Honeywell's OneWireless manager and FDAP access points administer both standards as one system. What cannot be shared is the field device layer — an instrument is commissioned into exactly one network — so "migration" between the standards means replacing instruments, which means it happens at turnaround economics or not at all. The grown-up architecture is two managed networks, one survey discipline, and host-level integration where the data meets.
+
+## So which one should you choose?
+
+Work down the layers in this order, and stop at the first one that decides it. **Installed DCS and instrument base**: an Emerson/HART-centred plant gets WirelessHART's tooling compatibility for free; a Yokogawa or Honeywell plant gets the same from ISA100.11a — fighting your incumbent ecosystem costs more than any protocol advantage repays. **Data you must harvest**: predominantly HART diagnostics argues WirelessHART; a genuine multi-protocol brownfield argues ISA100 tunneling. **Architecture policy**: a mandate for IP addressing to the instrument argues ISA100.11a. **Only if none of these decide it** — the greenfield, stand-alone monitoring network — treat the two as equivalent for monitoring duty and choose on the local vendor's support bench, spares shelf and references in your industry. That last condition is the reversal clause on this page's conclusion: ecosystem decides *because one exists*; where none does, support decides.
+
+Whichever way the decision lands, scope the network per process unit, plan capacity from the update-rate mix rather than the instrument count (both pages — [WirelessHART](/protocols/wirelesshart/) and [ISA100.11a](/protocols/isa100/) — work through their vendors' capacity tables), and write the coexistence plan for the shared 2.4 GHz band before the survey, not after it. The [protocol matrix](/protocols/) shows where both standards sit against the wider field, including the factory-automation and wide-area protocols that solve different problems entirely.

@@ -1,0 +1,8 @@
+slug: moxa
+name: Moxa
+website: https://www.moxa.com
+listingStatus: listed
+featuredEligible: false
+productLines:
+  - Modbus gateways
+  - Remote I/O

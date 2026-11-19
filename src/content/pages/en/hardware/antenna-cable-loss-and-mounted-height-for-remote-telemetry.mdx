@@ -1,0 +1,192 @@
+---
+title: Antenna Cable Loss and Mounted Height for Remote Telemetry
+description: A practical guide for remote telemetry projects where antenna choice, feedline loss, and mounted height quietly determine whether the site is dependable.
+referenceType: hardware
+adProfile: hardware
+commercialIntent: high
+reviewCadence: Quarterly review
+primaryKeyword: antenna cable loss and mounted height for remote telemetry
+searchIntent: select
+decisionStage: shortlist
+targetRoles:
+  - Telemetry designers
+  - Field engineers
+  - Integrators
+  - Remote operations teams
+contentStatus: cornerstone
+problemSolved: How to design antenna mounting, cable runs, and height decisions for remote telemetry so the physical layer improves site reliability instead of silently undermining it.
+readerTakeaway: You should leave with a practical antenna-planning model tied to cable loss, mounting height, access burden, and field survivability.
+keyQuestions:
+  - When does extra antenna height help enough to justify the mounting complexity?
+  - How much cable loss quietly destroys an otherwise reasonable remote telemetry design?
+  - What physical-layer choices create long-term service burden at unattended sites?
+notFor:
+  - Indoor or very short-run sites where antenna placement is trivial
+  - Projects centered on detailed RF engineering across complex multi-radio systems
+  - Teams that can already guarantee strong coverage at the mounting point without any site tradeoffs
+updateTriggers:
+  - New field lessons on antenna and feedline planning for remote telemetry
+  - Changes in common deployment patterns for fixed-site cellular and remote telemetry hardware
+  - New survivability or maintenance issues tied to antenna installation choices
+contentCluster: field-hardware-design
+canonicalCluster: field-hardware-design
+pageType: hardware-guide
+lifecycle: evergreen
+refreshPriority: high
+authorKey: editorial-desk
+editorKey: review-desk
+lastReviewed: 2026-11-19
+relatedTools:
+  - /tools/link-budget-calculator/
+  - /tools/fresnel-zone-calculator/
+faq:
+  - question: How much signal do you lose in a long antenna cable run?
+    answer: "It depends on the cable and the frequency, and the figures are published: at 900 MHz, Times Microwave rates LMR-400 at 3.9 dB per 100 ft, LMR-240 at 7.6 dB, LMR-195 at 11.1 dB and RG-58 at 16.5 dB — so a 10 m run of LMR-240 costs about 2.5 dB, and the same run of RG-58 costs about 5.4 dB. Connectors and surge arrestors add their own insertion loss on top. Cable loss subtracts directly from antenna gain, which is why moving the radio to the antenna often beats buying a bigger antenna."
+  - question: How high should I mount the antenna at a remote telemetry site?
+    answer: "High enough to clear the first Fresnel zone over the path's obstructions — not simply as high as the mast allows. The working target is at least 60% of the first Fresnel zone clear at the worst obstruction point, which is an engineering convention from link-planning practice; the zone radius grows with path length and shrinks with frequency, so the required height is a calculation for the specific path, not a rule of thumb. Extra height beyond clearance buys little and costs cable loss, wind load and lightning exposure."
+---
+
+import LinkCard from '../../../../components/LinkCard.astro';
+
+# Antenna Cable Loss and Mounted Height for Remote Telemetry
+
+Remote telemetry teams often spend more time comparing routers than comparing the antenna path that will decide whether the site is actually stable. A mediocre router with a disciplined antenna installation can outperform a better router attached to a long lossy cable run, poor mounting point, or hard-to-service mast. The physical path between radio and air is part of the system. If it is weak, everything upstream becomes harder to trust.
+
+## What matters first
+
+The basic rule is simple: extra antenna height only helps if the gain from placement is not erased by cable loss, mounting difficulty, and maintenance risk. A shorter, cleaner cable run at a decent mounting point is often better than a taller installation with avoidable loss and miserable service access. Remote telemetry hardware should be designed for survivability and support, not only signal optimism.
+
+## What this page is for
+
+Use this page when the site needs:
+
+- a practical antenna-planning method for fixed telemetry deployments;
+- guidance on when cable loss outweighs higher mounting;
+- a way to compare rooftop, pole, mast, or cabinet-adjacent mounting choices;
+- hardware decisions tied to maintenance and field access, not only signal bars.
+
+## The three decisions that matter most
+
+Most remote telemetry antenna planning reduces to three questions:
+
+| Decision | Why it matters |
+| --- | --- |
+| Where can the antenna see acceptable coverage? | Drives baseline link confidence |
+| How much cable loss sits between the radio and antenna? | Determines whether the better view is still worth it |
+| How difficult is the installation to inspect and service later? | Controls long-term field cost |
+
+Teams often do the first and ignore the other two.
+
+## When extra height is worth it
+
+Higher mounting is usually justified when:
+
+- nearby obstructions or terrain materially improve with elevation;
+- the site suffers from unstable signal quality rather than only low nominal strength;
+- the added mounting point is still safe and supportable;
+- the cable run can stay disciplined enough that the signal gain survives.
+
+It is much less compelling when the site is already usable at lower height and the extra mast only increases service burden.
+
+## Where cable loss quietly ruins good decisions
+
+Cable loss becomes dangerous when:
+
+- the antenna run is much longer than the team first planned;
+- connectors, transitions, and weather exposure accumulate at several points;
+- the radio is mounted far from the best antenna location for convenience;
+- the site relies on marginal coverage, so each avoidable dB matters.
+
+This is why antenna decisions should be made with the full path in view, not only with a preferred mounting point.
+
+## Maintenance is part of RF design
+
+The strongest remote sites are not the ones with the most heroic mast. They are the ones where:
+
+- the antenna can be inspected without unreasonable effort;
+- cables and connectors are protected and documented;
+- replacement can happen without a full specialty crew every time;
+- the installation is understandable to the next technician, not only the original integrator.
+
+That is what keeps a remote link dependable over years rather than weeks.
+
+## Common failure modes
+
+These installations usually disappoint when:
+
+- the antenna is mounted high for optimism rather than evidence;
+- cable loss is treated as a small theoretical issue;
+- connector count and weather exposure grow without discipline;
+- the antenna is placed where service is painful and therefore delayed;
+- the physical-layer design is separated from the ongoing support model.
+
+The result is a link that looks engineered but behaves inconsistently in the field.
+
+## What a good site review should prove
+
+Before finalizing the antenna design, the team should prove that:
+
+- the mounting point materially improves the link compared with simpler alternatives;
+- the cable path is short and disciplined enough to preserve that gain;
+- inspection and replacement are realistic under the site's access conditions;
+- the physical installation can survive weather and routine service.
+
+## Coax attenuation: the published figures
+
+Cable loss is not a matter of opinion — manufacturers publish attenuation per length at stated frequencies. The table below is transcribed from Times Microwave Systems' LMR selection guide (attenuation in dB per 100 ft at +25 °C); the manufacturer's calculator gives exact values at other frequencies.
+
+| Cable | At 900 MHz | At 1,500 MHz |
+|---|---|---|
+| LMR-195 | 11.1 dB / 100 ft | 14.5 dB / 100 ft |
+| LMR-240 | 7.6 dB / 100 ft | 9.9 dB / 100 ft |
+| LMR-400 | 3.9 dB / 100 ft | 5.1 dB / 100 ft |
+| RG-58 | 16.5 dB / 100 ft | not listed in the guide at this frequency |
+
+Worked from the table: a 10 m (about 33 ft) run of LMR-240 at 900 MHz costs roughly 2.5 dB; the same run of RG-58 costs roughly 5.4 dB. Every connector pair and any inline surge arrestor adds further insertion loss on top of the cable figure — count them in the same budget, because the radio cannot tell the difference between loss in the cable and loss in a connector.
+
+## Three field conclusions
+
+**Cable loss spends antenna gain.** A 6 dBi antenna on 10 m of RG-58 at 900 MHz delivers less to the radio than a 3 dBi antenna on a short LMR-400 run. Gain figures are quoted at the antenna port; what the link gets is gain minus everything between the port and the radio.
+
+**Raise the antenna before you enlarge it.** Height clears obstructions and the Fresnel zone; gain only narrows the beam. The order of operations at a weak site is: clear the path, shorten or upgrade the cable, then consider gain.
+
+**Shortening the run usually beats upgrading the radio.** Moving the radio into an outdoor enclosure at the antenna removes the long run entirely. That is often cheaper than the dB it recovers are worth elsewhere in the budget — run the numbers in the [link budget calculator](/tools/link-budget-calculator/) before buying hardware.
+
+## How high: clearance is a calculation
+
+The mounting-height question has a computable answer. The first Fresnel zone — the ellipsoid around the direct path that must stay substantially clear — has a radius set by the path length, the frequency, and where the obstruction sits. The working target is at least 60% of that zone clear at the worst obstruction; the 60% figure is an engineering convention from link-planning practice, not a standard's limit. The [Fresnel zone calculator](/tools/fresnel-zone-calculator/) works the geometry for a specific path; this page's job is the judgement around it: height past clearance buys wind load, lightning exposure and cable loss, not reliability.
+
+## Implementation checklist
+
+Before freezing the hardware plan, confirm that:
+
+- the chosen mounting height was justified by observed site conditions;
+- cable type, length, and connectors were reviewed as a system;
+- service access is acceptable for the site's maintenance model;
+- antenna placement and cable protection are documented for future field work;
+- the hardware decision still makes sense after maintenance burden is included.
+
+## Compare next
+
+<div class="portal-links">
+	<LinkCard
+		title="Power, enclosures, and antennas"
+		href="/hardware/power-enclosures-and-antennas/"
+		description="Connect antenna planning back to the broader physical stack at the site."
+	/>
+	<LinkCard
+		title="Cellular router selection for fixed-site telemetry"
+		href="/hardware/cellular-router-selection-for-fixed-site-telemetry/"
+		description="Do not choose the router class in isolation from the antenna and mounting plan."
+	/>
+	<LinkCard
+		title="LEO satellite vs cellular for remote telemetry"
+		href="/network-paths/leo-satellite-vs-cellular-for-remote-industrial-telemetry/"
+		description="Revisit the backhaul choice if the physical-layer burden starts to look unreasonable."
+	/>
+	<LinkCard
+		title="Site survivability planning"
+		href="/reliability/site-survivability-planning/"
+		description="Pressure-test the antenna design against long-term field survivability and service access."
+	/>
+</div>

@@ -1,0 +1,11 @@
+slug: lorawan-smart-metering-scale
+headline: "LoRaWAN smart metering reaches scale: 30 million of 150 million LoRaWAN devices are now meters"
+date: 2026-11-10
+sourceName: LoRa Alliance — press release
+sourceUrl: https://lora-alliance.org/lora-alliance-press-release/lorawan-smart-metering-reaches-scale-as-european-tenders-quadruple/
+summary: "Reporting from Enlit Europe in Vienna, the LoRa Alliance said more than 30 million of the 150 million LoRaWAN devices connected worldwide are meters — one device in five — with water metering leading demand. EU-wide public tenders mentioning LoRaWAN more than quadrupled between 2019 and 2025, according to Kurrant's Tender Tracker, and Netmore's analysis of England and Wales AMP8 water decisions found LoRaWAN present in 70% of them. The Alliance counts more than 340 member organizations, 58 of them new in 2026, and more than 700 certified devices."
+editorsNote: "Metering is the volume end of industrial wireless: the same gateway class that fills our product database carries these rollouts, and public tenders are now naming the protocol itself, not just the outcome they want."
+tag: Markets
+relatedProtocols:
+  - lorawan
+dateChecked: 2026-11-19

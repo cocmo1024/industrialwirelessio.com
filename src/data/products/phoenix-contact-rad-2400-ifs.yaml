@@ -1,0 +1,44 @@
+vendor: Phoenix Contact
+vendorSlug: phoenix-contact
+model: RAD-2400-IFS
+productType: wireless-io-module
+slug: phoenix-contact-rad-2400-ifs
+status: active
+protocols:
+  - proprietary-2-4
+frequencyBands:
+  - "2.4 GHz ISM"
+txPowerDbm: 20
+txPowerCondition: "Maximum; 19 dBm in Europe (manufacturer product page)"
+rxSensitivityDbm: -106
+rxSensitivityCondition: "At 16 kbps"
+rangeClass:
+  value: "5"
+  unit: km
+  conditions: "Line of sight (manufacturer product page)"
+  sourceRef: "Phoenix Contact product page, item 2901541"
+antenna: "RSMA (female) antenna connector"
+io:
+  di: null
+  do: null
+  ai: null
+  ao: null
+  relay: null
+  pulse: null
+ioNotes: "No onboard I/O: I/O is added with up to 32 RAD-IFS extension modules (product page)."
+upstreamInterfaces:
+  - RS-232
+  - "RS-485 (Modbus RTU mode)"
+powerSupply: null
+powerConsumption: null
+batteryLife: null
+ipRating: IP20
+operatingTemp: "-40 °C to +70 °C"
+certifications:
+  - "FCC Part 15.247 (ID YG3RAD2400A)"
+  - Zone 2 approval
+hazardousArea: Zone 2
+sourceUrl: https://www.phoenixcontact.com/en-us/products/wireless-module-rad-2400-ifs-2901541
+sourceType: product-page
+sourceDocId: null
+dateChecked: 2026-11-14

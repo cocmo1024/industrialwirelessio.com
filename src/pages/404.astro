@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { buildSeo } from '../utils/seo';
+
+const seo = buildSeo(
+	{ id: '404', locale: 'en', title: 'Page not found', kind: 'not-found' },
+	'/404/',
+);
+---
+
+<BaseLayout seo={seo}>
+	<h1>Page not found</h1>
+	<div class="empty-state">
+		<p class="empty-title">This address does not resolve to a page on this site.</p>
+		<p class="empty-reason">
+			The page may have been merged into a hub during the rebuild, or the address may be
+			mistyped. Untranslated language versions are never generated, so a locale-prefixed
+			address can also mean the translation does not exist yet.
+		</p>
+		<a class="btn primary" href="/">Go to the homepage</a>
+	</div>
+</BaseLayout>

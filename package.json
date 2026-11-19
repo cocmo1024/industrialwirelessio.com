@@ -1,41 +1,33 @@
 {
-  "name": "industrialwirelessio.com",
-  "type": "module",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro check && astro build",
-    "audit:search-quality": "node ./scripts/search-quality-audit.mjs",
-    "preview": "astro preview",
-    "astro": "astro",
-    "indexnow": "node ./scripts/indexnow-submit.mjs",
-    "cf:dev": "npm run build && wrangler dev",
-    "cf:deploy": "wrangler deploy",
-    "cf:typegen": "wrangler types"
-  },
-  "dependencies": {
-    "@astrojs/sitemap": "^3.7.2",
-    "@astrojs/starlight": "^0.38.2",
-    "@astrojs/starlight-tailwind": "^5.0.0",
-    "@fontsource/ibm-plex-mono": "^5.2.7",
-    "@fontsource/ibm-plex-sans": "^5.2.8",
-    "@fontsource/manrope": "^5.2.8",
-    "@fontsource/source-serif-4": "^5.2.9",
-    "@fontsource/space-grotesk": "^5.2.10",
-    "@fontsource/space-mono": "^5.2.9",
-    "@tailwindcss/vite": "^4.1.18",
-    "astro": "^6.1.3",
-    "sharp": "^0.34.2",
-    "tailwindcss": "^4.1.18"
-  },
-  "devDependencies": {
-    "@astrojs/check": "^0.9.8",
-    "typescript": "^5.9.3",
-    "wrangler": "^4.80.0"
-  },
-  "overrides": {
-    "vite": "^7.3.1"
-  }
+    "dependencies": {
+        "@astrojs/mdx": "^5.0.0",
+        "@astrojs/sitemap": "^3.7.2",
+        "@fontsource/ibm-plex-mono": "^5.2.7",
+        "@fontsource/ibm-plex-sans": "^5.2.8",
+        "astro": "^6.1.3",
+        "sharp": "^0.34.2"
+    },
+    "devDependencies": {
+        "@astrojs/check": "^0.9.8",
+        "pagefind": "^1.4.0",
+        "typescript": "^5.9.3"
+    },
+    "name": "industrialwirelessio.com",
+    "overrides": {
+        "vite": "^7.3.1"
+    },
+    "private": true,
+    "scripts": {
+        "astro": "astro",
+        "audit:search-quality": "node ./scripts/search-quality-audit.mjs",
+        "build": "astro build",
+        "dev": "astro dev",
+        "indexnow": "node ./scripts/indexnow-submit.mjs",
+        "postbuild": "pagefind --site dist",
+        "preview": "astro preview",
+        "reports": "node ./scripts/build-reports.mjs",
+        "start": "astro dev"
+    },
+    "type": "module",
+    "version": "0.2.0"
 }
