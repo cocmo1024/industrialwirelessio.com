@@ -20,7 +20,7 @@ keyQuestions:
   - When should a remote site use wireless remote I/O?
   - When is an RTU better than a router or gateway?
   - Which field-side responsibilities should remain local during an outage?
-lastReviewed: 2026-05-01
+lastReviewed: 2026-11-19
 contentCluster: telemetry-device-selection
 canonicalCluster: telemetry-device-selection
 pageType: product-family
@@ -28,6 +28,20 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
+relatedProtocols:
+  - wirelesshart
+  - isa100
+  - lorawan
+  - io-link-wireless
+relatedTools:
+  - /tools/link-budget-calculator/
+faq:
+  - question: How do I choose a wireless I/O module for remote monitoring?
+    answer: "Count the I/O first — the types and points, and the update rate the loop actually needs. Then choose the network form: a point-to-point mirrored pair replaces a cable run, while a networked module reports to a gateway or host over Modbus or a protocol uplink. Only then compare models, against the band and licensing rules at the site, the power available at the mounting point, and the fail-safe behaviour the outputs must show when the link drops."
+  - question: What is the difference between a wireless I/O module, an RTU and a telemetry gateway?
+    answer: "A wireless I/O module moves field signals — it reads inputs and drives outputs where the wires would have run. An RTU adds local control logic, data logging and scheduled reporting at a remote site. A telemetry gateway translates and forwards: it converts protocols, buffers data through backhaul outages, handles alarms and manages the wide-area link. Many products combine two of the roles; the selection question is which role is missing from your architecture."
+  - question: What should I check before replacing a cable run with wireless I/O?
+    answer: "Check the path, the failure behaviour and the maintenance model before the radio. Survey the actual path for obstructions and interference, decide what outputs must do when the link drops (hold, drive safe, or time out), confirm the update rate and latency the loop tolerates, and make sure the power source at the mounting point supports the reporting pattern. A cable fails visibly; a radio link fails statistically, so the design has to state what happens on the bad days."
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -52,6 +66,24 @@ For searchers using the phrase **wireless I/O**, the practical question is usual
 | RTU-class module | Alarm handling, local state, simple control, store-and-forward, harsh unattended sites | Pure networking or high-throughput edge compute |
 | Telemetry gateway | Protocol translation, data buffering, upstream delivery, several connected devices | Direct field wiring without enough local I/O support |
 | Industrial router | Cellular or Ethernet backhaul, VPN, remote access, failover | Field-side signal ownership or local alarm logic |
+
+## The selection criteria, in decision order
+
+This is the canonical criteria set for the category — the same nine criteria the product database index summarises. Each criterion is stated without model numbers on purpose: the numbers belong to individual records in the live table below, where every figure carries its manufacturer source.
+
+| Criterion | What to decide | Why it decides the shortlist |
+|---|---|---|
+| I/O types and count | Which of DI / DO / AI / AO the point needs, and how many of each | The module is bought per point; a mismatch here cannot be fixed by any radio feature |
+| Update rate and latency | How fresh the values must be, and whether outputs are control or monitoring | Update rate drives battery life, gateway capacity and band occupancy more than any other choice |
+| Network form | Point-to-point signal mirroring, or a networked module reporting to a gateway or host | Mirrored pairs replace one cable run; networked modules scale to plants — different products, different failure modes |
+| Band and licensing | Licensed or licence-free band, and the regional rules where the device will be installed | The same model is often a different radio in the EU and the US; a band the site survey cannot support is a non-starter |
+| Range and site survey | Real path conditions — obstructions, antenna height, interference — against the manufacturer's condition-bound range figure | Range is only meaningful with its stated conditions; unsourced "up to" figures are not comparable between makers |
+| Power source | Battery, solar, loop power or wired supply at the mounting point | Power decides the maintenance model of the whole installation and caps the update rate |
+| Fail-safe behaviour | What outputs must do when the link drops — hold last value, drive to a safe state, or time out | This is a safety property of the loop, not a feature checkbox; it must be specified, not discovered |
+| Hazardous area and ingress | The area classification and IP rating the location demands | Certification is per-model and per-variant; it eliminates otherwise suitable products outright |
+| Host interface | How values reach the PLC or SCADA system — Modbus, EtherNet/IP, OPC UA, MQTT, a protocol uplink | The best radio is useless if the host cannot read it without a second conversion |
+
+The decision order matters: **count I/O and update rate first, choose the network form second, and compare brands and models last.** Reversing that order — starting from a catalogue — is how projects end up with excellent radios wired to the wrong I/O.
 
 ## Wireless I/O versus RTU: the real split
 
@@ -99,6 +131,26 @@ RTU-class behavior becomes more important when:
 - or the site cannot wait for cloud or SCADA availability before taking a local action.
 
 In those cases, the local device is part of the reliability architecture, not just an I/O adapter.
+
+## Before you replace a cable run with wireless I/O
+
+Replacing a cable run is the most common reason this category gets bought, and the checks are different from a new-build selection:
+
+1. **Survey the real path.** Walk the route the signal will take: obstructions, metal structures, seasonal foliage, and other radios on the band. A manufacturer's range figure only counts with its stated conditions — antenna height and line of sight dominate.
+2. **State the link-loss behaviour.** A cut cable is obvious; a fading radio is not. Decide per output whether it holds its last value, drives to a safe state, or times out — and how the host learns the link is down.
+3. **Match the update pattern to the loop.** A status point that changes twice a day and a control loop that needs a one-second refresh are different products, even at the same I/O count. Report-by-exception behaviour is what makes battery power realistic.
+4. **Price the whole change.** The cable disappears, but antennas, surge protection, mounting and a survey appear. The saving is usually in trenching and downtime, not in hardware.
+5. **Plan the spare.** A wired run is repaired with cable and connectors; a wireless point is repaired with a configured spare module. Stock the spare and record its configuration.
+
+## How wireless I/O reaches the PLC or SCADA system
+
+The radio link is only the first hop. Values reach the host in one of three patterns:
+
+- **Mirrored pairs** deliver the signal as if the wire still existed — the receiving unit reproduces the inputs as local outputs or register values the PLC already reads.
+- **Networked modules** report to a gateway or host over a field protocol — Modbus registers are the most common shape, with WirelessHART, ISA100.11a and IO-Link Wireless networks presenting their values through their gateway.
+- **Gateway uplinks** carry the aggregated data onward as Modbus TCP, OPC UA or MQTT. That conversion belongs to the gateway layer, not the module — the layering is covered in [telemetry protocol fit](/protocols/telemetry-protocol-fit/).
+
+If the host cannot consume any of these shapes without a second converter, the module choice is wrong no matter how good the radio is.
 
 ## Acceptance checks
 

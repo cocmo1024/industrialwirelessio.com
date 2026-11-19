@@ -35,7 +35,12 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
+faq:
+  - question: What is report-by-exception, and why does it save bandwidth and battery?
+    answer: "Report-by-exception means a site transmits when a value crosses a defined boundary — a deadband, a state change, an alarm condition — instead of sending every reading on a fixed polling cycle. It saves bandwidth because quiet periods generate almost no traffic, and it saves battery because the radio, the most power-hungry part of a field device, stays asleep between events; a heartbeat timer still proves the site is alive, and store-and-forward buffering preserves what happened while the link was down."
+  - question: What happens to wireless sensor data when the network goes down?
+    answer: "On a properly designed site, the data is not lost: the field device or gateway buffers readings and events locally — store-and-forward — and delivers them, in sequence, when the link returns. What the host sees during the outage is the last known state, which is why stale-data rules matter: the display must show that values are old, not present them as current. Sites without local buffering lose the outage window entirely."
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -47,6 +52,12 @@ Remote telemetry systems often work better when they transmit less, not more. In
 ## What matters first
 
 Report immediately when the site crosses an operationally meaningful boundary. Buffer when the change is useful but not urgent, or when the link is unavailable. The goal is not low traffic for its own sake. The goal is preserving the events that matter while keeping the site inexpensive, understandable, and resilient during outages.
+
+## What report-by-exception means
+
+Report-by-exception is the rule that a site transmits when something crosses a defined boundary — a value leaves its deadband, a discrete point changes state, an alarm condition becomes true — instead of sending every reading on a fixed schedule. The periodic report does not disappear; it shrinks into a heartbeat whose only job is to prove the site is alive and unchanged.
+
+It saves bandwidth because a quiet site generates almost no traffic: a tank that moves once a day reports once a day, plus heartbeats. It saves battery for the same reason — the radio is the most power-hungry component in a field device, and exception reporting keeps it asleep between events. The trade is design effort: somebody has to decide which changes are exceptions, which is exactly the alarm and deadband work covered in [alarm priority and deadband design](/protocols/alarm-priority-and-deadband-design-for-remote-telemetry/).
 
 ## Public price snapshot checked April 4, 2026
 
@@ -147,6 +158,26 @@ The behavior model is healthy when:
 - the site remains understandable after a communications interruption.
 
 If several of those are vague, the telemetry behavior still needs design work.
+
+## Alarm immediately, or buffer locally?
+
+The exception rule needs a companion decision: which events leave the site at once, and which are preserved locally for later delivery. The split is operational, not purely technical — it depends on what the remote team can act on, how fast the site can deteriorate, and what must survive even if the link is imperfect.
+
+**Alarm immediately** when delayed visibility changes the outcome:
+
+- critical power loss or battery risk;
+- generator fail-to-start or backup-power failure;
+- flood, overflow, pressure, or integrity conditions with a real response consequence;
+- communications-path loss while the site is already in a high-risk state;
+- intrusion or cabinet conditions that threaten the telemetry boundary itself.
+
+**Buffer locally** when the event matters for diagnosis rather than response:
+
+- frequent state chatter and nuisance transitions that only matter in sequence;
+- repeated digital changes around a single fault story;
+- diagnostic detail the remote team will want for reconstruction, not for action.
+
+If everything alarms immediately, operators stop trusting the channel, data plans get consumed by noise, and serious events are buried in chatter. If too much is buffered, serious problems disappear into later review. Working systems deliberately run both lanes — and store-and-forward is what makes the buffered lane safe, because buffered data is delivered, in order, when the link returns.
 
 ## Compare next
 

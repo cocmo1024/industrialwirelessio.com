@@ -36,36 +36,17 @@ faq:
 
 ## How to choose a wireless I/O module
 
-Selection criteria for wireless I/O, in the order engineers actually have to settle them. Each criterion is stated without model numbers on purpose: the numbers belong to individual records in the table above, where each one carries its manufacturer source.
+Nine criteria decide the shortlist, in the order engineers actually have to settle them: I/O types and count, update rate and latency, network form, band and licensing, range against a real site survey, power source, fail-safe behaviour, hazardous-area and ingress requirements, and the host interface. The decision order matters: **count I/O and update rate first, choose the network form second, and compare brands and models last.**
 
-| Criterion | What to decide | Why it decides the shortlist |
-|---|---|---|
-| I/O types and count | Which of DI / DO / AI / AO the point needs, and how many of each | The module is bought per point; a mismatch here cannot be fixed by any radio feature |
-| Update rate and latency | How fresh the values must be, and whether outputs are control or monitoring | Update rate drives battery life, gateway capacity and band occupancy more than any other choice |
-| Network form | Point-to-point signal mirroring, or a networked module reporting to a gateway or host | Mirrored pairs replace one cable run; networked modules scale to plants — different products, different failure modes |
-| Band and licensing | Licensed or licence-free band, and the regional rules where the device will be installed | The same model is often a different radio in the EU and the US; a band the site survey cannot support is a non-starter |
-| Range and site survey | Real path conditions — obstructions, antenna height, interference — against the manufacturer's condition-bound range figure | Range is only meaningful with its stated conditions; unsourced "up to" figures are not comparable between makers |
-| Power source | Battery, solar, loop power or wired supply at the mounting point | Power decides the maintenance model of the whole installation and caps the update rate |
-| Fail-safe behaviour | What outputs must do when the link drops — hold last value, drive to a safe state, or time out | This is a safety property of the loop, not a feature checkbox; it must be specified, not discovered |
-| Hazardous area and ingress | The area classification and IP rating the location demands | Certification is per-model and per-variant; it eliminates otherwise suitable products outright |
-| Host interface | How values reach the PLC or SCADA system — Modbus, EtherNet/IP, OPC UA, MQTT, a protocol uplink | The best radio is useless if the host cannot read it without a second conversion |
-
-The decision order matters: **count I/O and update rate first, choose the network form second, and compare brands and models last.** Reversing that order — starting from a catalogue — is how projects end up with excellent radios wired to the wrong I/O.
+The full criteria set — each criterion with what to decide and why it decides the shortlist — is canonical on the category page: [Wireless remote I/O and RTU modules](/product-families/wireless-remote-io-and-rtu-modules/). The numbers belong to individual records in the table above, where each one carries its manufacturer source.
 
 ## Module, RTU or gateway: three different jobs
 
-| | Wireless I/O module | RTU | Telemetry gateway |
-|---|---|---|---|
-| Core job | Move field signals over a radio link | Control, log and report at a remote site | Convert, buffer and forward between networks |
-| Local logic | None or minimal | Programmable control and logging | Protocol mapping, alarm rules |
-| Typical position | At the sensor/actuator, replacing the cable run | At the unmanned site, as the site controller | At the boundary between field network and host/backhaul |
-| Selection driven by | I/O count, update rate, band | I/O plus logic, logging and reporting needs | Protocol pairs, buffering behaviour, backhaul type |
+A wireless I/O module moves field signals where the wires would have run. An RTU adds local control logic, logging and scheduled reporting at a remote site. A telemetry gateway translates and forwards between networks. Many products combine two of the roles; the selection question is which role is missing from your architecture. The full comparison is canonical with the criteria above on the [wireless remote I/O category page](/product-families/wireless-remote-io-and-rtu-modules/).
 
 ## What a telemetry gateway is
 
-A telemetry gateway is the device that sits between a field network and a host system and does four jobs: **protocol conversion** (for example WirelessHART to Modbus TCP or HART-IP), **local buffering** with store-and-forward behaviour so readings survive a backhaul outage, **alarm handling** at the edge, and **backhaul management** — keeping the cellular, Ethernet or satellite link up and reporting its health.
-
-That separates it from its neighbours. A router moves IP packets without understanding the industrial protocols inside them. An RTU is a site controller that happens to communicate; a gateway is a translator that happens to buffer. When a datasheet calls a product a gateway, check it against the four jobs: store-and-forward buffering through an outage, remote management, watchdog self-recovery, and an industrial temperature and power-supply range are the capabilities that make the category real. The gateway records in the table above are checked against their manufacturers' documentation for exactly those properties.
+A telemetry gateway sits between a field network and a host system and does four jobs: **protocol conversion**, **local buffering** with store-and-forward behaviour so readings survive a backhaul outage, **alarm handling** at the edge, and **backhaul management**. A router moves IP packets without understanding the industrial protocols inside them; a gateway is a translator that happens to buffer. The category definition, the capability floor and the gateway records are on the [industrial telemetry gateways category page](/product-families/industrial-telemetry-gateways/).
 
 ## How this database is built
 

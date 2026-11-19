@@ -33,7 +33,10 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
+faq:
+  - question: How do you stop alarm floods in a wireless telemetry system?
+    answer: "Classify alarms by consequence first, then tune the stream: add deadbands and persistence to noisy analog points so normal fluctuation stops alarming, latch short discrete events that matter, suppress the duplicates one root cause generates, and show communications loss as one site-state condition instead of a burst of device alarms. Review every remaining alarm by the action it should trigger — an alarm nobody acts on should be downgraded, grouped, or removed from the urgent stream."
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -164,6 +167,25 @@ Before finalizing deadbands and priorities, test:
 - and whether buffered events still preserve the operating story after reconnect.
 
 If the field team cannot explain the tuning logic, the settings are probably too clever or too brittle.
+
+## Alarm floods: making the stream match the risk
+
+A telemetry system usually fails socially before it fails technically. The site sends data, the dashboard updates, the alarm path works — but operators stop trusting it, because too many alarms are noisy, duplicated, transient, or stale. Alarm flood reduction is not about hiding problems; it is about making the alarm stream match real field risk, so the site is loud when something matters and quiet when normal variation requires no action.
+
+The common causes are consistent: analog values reporting every tiny fluctuation; level, pressure, or flow alarms without persistence; discrete inputs that chatter during normal transitions; several alarms generated from one root event; network loss displayed as many device alarms instead of one site-state condition; stale values presented as current; and report-by-exception rules that treat every change as equally important.
+
+The design levers, used together:
+
+| Lever | Use it when | Risk if misused |
+|---|---|---|
+| Deadband | Analog values move constantly but small changes do not matter | Too wide a deadband hides real drift |
+| Persistence | A condition must remain true before it should alarm | Too long a delay hides fast failures |
+| Latching | A short event matters even if it clears by itself | Too much latching creates stale clutter |
+| Priority | Some alarms genuinely require faster action than others | Everything becomes high priority, so nothing is |
+| Suppression | One root cause creates many downstream symptoms | Suppression hides independent faults |
+| Stale-data rules | The value may be old rather than normal | Operators confuse a quiet site with an offline one |
+
+And the review method that keeps the stream honest — for each alarm, ask: What action should this trigger? Who owns that action? How fast must they know? What normal field behaviour might create a false version of it? Is it a root condition or a symptom? Should the site report it immediately, buffer it locally, or wait for persistence? What should the operator see when the data behind it is stale? If nobody can name the action, the alarm needs to be downgraded, grouped, or removed from the urgent stream.
 
 ## Related paths
 

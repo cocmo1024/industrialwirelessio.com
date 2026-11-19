@@ -33,7 +33,14 @@ lifecycle: evergreen
 refreshPriority: high
 authorKey: editorial-desk
 editorKey: review-desk
-lastReviewed: 2026-05-09
+lastReviewed: 2026-11-19
+relatedProtocols:
+  - wirelesshart
+  - isa100
+  - lorawan
+faq:
+  - question: What is an industrial telemetry gateway and what does it actually do?
+    answer: "A telemetry gateway sits between a field network and a host system and does four jobs: protocol conversion between the field network and the host, local buffering with store-and-forward behaviour so data survives a backhaul outage, alarm handling at the edge, and management of the backhaul link itself — cellular, Ethernet or satellite. A plain router only moves IP packets; a gateway understands the industrial protocols it carries, which is why the two categories are not interchangeable."
 ---
 
 import LinkCard from '../../../../components/LinkCard.astro';
@@ -41,6 +48,17 @@ import LinkCard from '../../../../components/LinkCard.astro';
 # Industrial Telemetry Gateways
 
 Telemetry gateways sit where field signals, remote asset context, buffering, translation, and upstream transport all meet. In many remote monitoring designs, the gateway is the architectural center of the site. That makes this one of the strongest long-term product-family categories for buyer research: teams are often trying to decide which device should own the boundary between field equipment and the wider monitoring system.
+
+## The category definition: four jobs
+
+A telemetry gateway is the device that sits between a field network and a host system and does four jobs:
+
+1. **Protocol conversion** — translating between the field network and the host, for example WirelessHART to Modbus TCP or HART-IP, or a serial Modbus device presented as network data.
+2. **Local buffering** — store-and-forward behaviour, so readings and events survive a backhaul outage and arrive, in order, when the link returns.
+3. **Alarm handling** — evaluating alarm conditions at the edge, so the host hears about the events that matter instead of every raw transition.
+4. **Backhaul management** — keeping the cellular, Ethernet or satellite link up, and reporting the link's own health as data.
+
+That definition separates the category from its neighbours. A router moves IP packets without understanding the industrial protocols inside them. An RTU is a site controller that happens to communicate; a gateway is a translator that happens to buffer. When a datasheet calls a product a gateway, check it against the four jobs — and against the capability floor that makes them real: buffering through an outage, remote management, watchdog self-recovery, and an industrial temperature and power-supply range. The gateway records in the live table below are transcribed from their manufacturers' documentation with those properties in view.
 
 ## What a telemetry gateway usually does
 
@@ -52,6 +70,18 @@ The category usually exists to:
 - provide local diagnostics or light logic near the site.
 
 When those responsibilities are weak or undefined, teams often buy the wrong class of hardware.
+
+## Store-and-forward is the dividing line
+
+Of the four jobs, buffering is the one that separates a telemetry gateway from a router with a protocol converter bolted on. Backhaul at unattended sites fails regularly — cellular congestion, carrier maintenance, antenna damage, a tripped breaker on the tower side. The question is never whether the link will drop, but what the site does while it is down and what the host sees afterwards.
+
+A gateway that buffers properly keeps timestamped readings and events in local storage, in acquisition order, and delivers them when the link returns — flagged as backfill, so the historian can tell live data from recovered data. It also keeps alarming locally: the absence of a backhaul must not silence a high-level alarm that a local output or a store-and-forward priority rule should still act on. When a datasheet is vague about buffer depth, timestamp behaviour, or delivery order, treat the buffering claim as unproven until the manual answers it; those three details decide whether an outage costs you a gap in the record or nothing at all.
+
+## Reading gateway datasheets against the category
+
+Gateway marketing borrows vocabulary freely, so read each candidate against the four jobs in order. Protocol conversion: which protocol pairs, in which direction, and are the mappings configurable per point or fixed templates? Buffering: how much local storage, in what form, and does it survive a power cycle? Alarm handling: can the device evaluate conditions and prioritise, or does it forward everything raw? Backhaul management: does it supervise the link, fail over between paths, and report link health as data?
+
+Then check the unglamorous rows: power-supply range against what the cabinet actually provides, operating temperature against the enclosure's summer reality, and the mounting and antenna provisions. A gateway that passes the four-jobs test but needs a power supply the site cannot provide is the wrong gateway. The records in the live table below are transcribed with this reading order in mind — each figure names the manufacturer document it came from, and a property the source does not state is left blank rather than inferred.
 
 ## When this category is the right fit
 
