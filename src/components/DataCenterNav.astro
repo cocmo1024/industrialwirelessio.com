@@ -1,0 +1,83 @@
+---
+/**
+ * DataCenterNav — the three-axis navigation (by protocol / by object
+ * / by task), demoted from the site top bar to the Data Center's
+ * internal module navigation by blueprint R1.4/R1.8. The axes are the
+ * right wayfinding for someone querying data; they are no longer the
+ * portal's face. Used by the Data Center hub page.
+ */
+const axes = [
+	{
+		label: 'By protocol',
+		links: [
+			{ label: 'Protocol matrix', href: '/protocols/' },
+			{ label: 'WirelessHART', href: '/protocols/wirelesshart/' },
+			{ label: 'ISA100.11a', href: '/protocols/isa100/' },
+			{ label: 'LoRaWAN', href: '/protocols/lorawan/' },
+			{ label: 'IO-Link Wireless', href: '/protocols/io-link-wireless/' },
+		],
+	},
+	{
+		label: 'By object',
+		links: [
+			{ label: 'Product database', href: '/product-families/' },
+			{ label: 'Vendor directory', href: '/vendors/' },
+			{ label: 'Comparisons', href: '/compare/' },
+			{ label: 'Tools', href: '/tools/' },
+		],
+	},
+	{
+		label: 'By task',
+		links: [
+			{ label: 'Select wireless I/O', href: '/product-families/wireless-remote-io-and-rtu-modules/' },
+			{ label: 'Budget a link', href: '/tools/link-budget-calculator/' },
+			{ label: 'Check a path', href: '/tools/fresnel-zone-calculator/' },
+			{ label: 'Troubleshoot a site', href: '/reliability/' },
+		],
+	},
+];
+---
+
+<nav class="dc-nav" aria-label="Data center modules">
+	{
+		axes.map((axis) => (
+			<div class="dc-axis">
+				<span class="dc-axis-label">{axis.label}</span>
+				<ul>
+					{axis.links.map((link) => (
+						<li>
+							<a href={link.href}>{link.label}</a>
+						</li>
+					))}
+				</ul>
+			</div>
+		))
+	}
+</nav>
+
+<style>
+	.dc-nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.8rem 2.5rem;
+	}
+
+	.dc-axis-label {
+		display: block;
+		font-size: var(--fs-xs);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		margin-bottom: 0.25rem;
+	}
+
+	.dc-axis ul {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.dc-axis li {
+		padding: 0.15rem 0;
+	}
+</style>

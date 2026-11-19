@@ -1,43 +1,15 @@
 ---
 /**
- * Header — brand block + three-axis navigation (blueprint §2.4).
- * Axes: by protocol / by object / by task. There is deliberately no
- * full-site document tree (the Starlight sidebar pattern is gone).
- * Axis targets are hub routes; hubs land phase by phase (Phase 1:
- * protocols; Phase 2: product database; Phase 3: tools).
+ * Header — portal top bar (blueprint R1.4, replacing the Phase 0
+ * three-axis top bar in the R1.8 adaptation):
+ *   brand row (name + slogan)
+ *   → primary nav: the six portal sections, in R1 commercial order
+ *   → utility nav, visually separated: Data Center | Tools | Search |
+ *     Subscribe.
+ * The three axes live on inside the Data Center (DataCenterNav).
+ * There is deliberately no full-site document tree.
  */
 import { brand } from '../data/brand';
-
-const axes = [
-	{
-		label: 'By protocol',
-		links: [
-			{ label: 'Protocol matrix', href: '/protocols/' },
-			{ label: 'WirelessHART', href: '/protocols/wirelesshart/' },
-			{ label: 'ISA100.11a', href: '/protocols/isa100-11a/' },
-			{ label: 'LoRaWAN', href: '/protocols/lorawan/' },
-			{ label: 'IO-Link Wireless', href: '/protocols/io-link-wireless/' },
-		],
-	},
-	{
-		label: 'By object',
-		links: [
-			{ label: 'Product database', href: '/product-families/' },
-			{ label: 'Vendors', href: '/vendors/' },
-			{ label: 'Comparisons', href: '/compare/' },
-			{ label: 'Tools', href: '/tools/' },
-		],
-	},
-	{
-		label: 'By task',
-		links: [
-			{ label: 'Select wireless I/O', href: '/product-families/wireless-remote-io-and-rtu-modules/' },
-			{ label: 'Budget a link', href: '/tools/link-budget-calculator/' },
-			{ label: 'Troubleshoot a site', href: '/reliability/' },
-			{ label: 'Search', href: '/search/' },
-		],
-	},
-];
 ---
 
 <header class="site-header">
@@ -45,22 +17,30 @@ const axes = [
 		<a class="brand-name" href="/">{brand.name}</a>
 		<span class="brand-tagline">{brand.tagline}</span>
 	</div>
-	<nav class="axis-nav" aria-label="Primary">
-		{
-			axes.map((axis) => (
-				<div class="axis">
-					<span class="axis-label">{axis.label}</span>
-					<ul>
-						{axis.links.map((link) => (
-							<li>
-								<a href={link.href}>{link.label}</a>
-							</li>
-						))}
-					</ul>
-				</div>
-			))
-		}
-	</nav>
+	<div class="nav-row">
+		<nav class="section-nav" aria-label="Sections">
+			<ul>
+				{
+					brand.portalSections.map((section) => (
+						<li>
+							<a href={section.path}>{section.label}</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+		<nav class="utility-nav" aria-label="Utility">
+			<ul>
+				{
+					brand.utilityLinks.map((link) => (
+						<li>
+							<a href={link.path}>{link.label}</a>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+	</div>
 </header>
 
 <style>
@@ -76,7 +56,7 @@ const axes = [
 		gap: 0.4rem 1rem;
 		max-width: var(--content-w);
 		margin: 0 auto;
-		padding: 0.8rem var(--gutter) 0.4rem;
+		padding: 0.8rem var(--gutter) 0.3rem;
 	}
 
 	.brand-name {
@@ -96,40 +76,55 @@ const axes = [
 		font-size: var(--fs-sm);
 	}
 
-	.axis-nav {
+	.nav-row {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.5rem 2.5rem;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.3rem 2rem;
 		max-width: var(--content-w);
 		margin: 0 auto;
-		padding: 0.4rem var(--gutter) 0.8rem;
+		padding: 0.3rem var(--gutter) 0.7rem;
 	}
 
-	.axis-label {
-		display: block;
-		font-size: var(--fs-xs);
-		letter-spacing: 0.08em;
-		text-transform: uppercase;
-		color: var(--rail-mute);
-		margin-bottom: 0.2rem;
-	}
-
-	.axis ul {
+	.section-nav ul,
+	.utility-nav ul {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0.2rem 1rem;
 		list-style: none;
 		margin: 0;
 		padding: 0;
 	}
 
-	.axis a {
+	.section-nav ul {
+		gap: 0.2rem 1.4rem;
+	}
+
+	.section-nav a {
 		color: var(--rail-ink);
+		text-decoration: none;
+		font-size: var(--fs-lg);
+		font-weight: 600;
+	}
+
+	.section-nav a:hover {
+		text-decoration: underline;
+	}
+
+	.utility-nav ul {
+		gap: 0.2rem 1rem;
+		border-left: 1px solid var(--rail-mute);
+		padding-left: 1rem;
+	}
+
+	.utility-nav a {
+		color: var(--rail-mute);
 		text-decoration: none;
 		font-size: var(--fs-md);
 	}
 
-	.axis a:hover {
+	.utility-nav a:hover {
+		color: var(--rail-ink);
 		text-decoration: underline;
 	}
 </style>
