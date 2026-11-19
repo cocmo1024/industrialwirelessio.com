@@ -1,0 +1,113 @@
+---
+/**
+ * Events — section index (blueprint R1.3): a dated table of the
+ * shows and conferences where industrial wireless is specified,
+ * bought and argued about. Dates and venues come from the
+ * organizer's own pages (each record carries its check date); the
+ * table links out to the organizer, never to a listing farm.
+ */
+import { getCollection } from 'astro:content';
+import PortalLayout from '../../layouts/PortalLayout.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import Slot from '../../components/Slot.astro';
+import { buildSeo } from '../../utils/seo';
+
+const events = (await getCollection('events'))
+	.map((item) => item.data)
+	.sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
+
+const fmtDay = (date: Date) => date.toISOString().slice(0, 10);
+
+const seo = buildSeo(
+	{
+		id: 'events',
+		locale: 'en',
+		title: 'Events',
+		description:
+			'Industrial automation events where wireless connectivity is on the floor: SPS, HANNOVER MESSE, Automate — dates and venues taken from the organizers, with the wireless angle noted.',
+		kind: 'section',
+	},
+	'/events/',
+);
+---
+
+<PortalLayout seo={seo}>
+	<SectionHead name="Events" asPageTitle />
+	<p class="lede">
+		The shows where this industry specifies, buys and argues about connectivity — dated
+		from the organizers' own pages, with the wireless angle noted for each.
+	</p>
+
+	<Slot name="sponsor-section-events" />
+
+	<div class="table-wrap">
+		<table class="data">
+			<thead>
+				<tr>
+					<th scope="col">Event</th>
+					<th scope="col">Dates</th>
+					<th scope="col">Place</th>
+					<th scope="col">Organizer</th>
+					<th scope="col">Why it matters here</th>
+				</tr>
+			</thead>
+			<tbody>
+				{
+					events.map((event) => (
+						<tr>
+							<th scope="row">
+								<a href={event.url} rel="noopener">
+									{event.name}
+								</a>
+							</th>
+							<td class="num">
+								{fmtDay(event.startDate)} → {fmtDay(event.endDate)}
+							</td>
+							<td>
+								{event.city}
+								<span class="venue">{event.venue}</span>
+							</td>
+							<td>{event.organizer}</td>
+							<td>{event.note}</td>
+						</tr>
+					))
+				}
+			</tbody>
+		</table>
+	</div>
+	<p class="table-note">
+		Dates and venues were checked against the organizers' publications on the dates
+		recorded with each entry (latest check shown per record in the data files; the
+		table is re-verified as editions approach). Always confirm on the organizer's site
+		before booking travel.
+	</p>
+
+	<section aria-label="Coverage">
+		<SectionHead name="From the Floor" allHref="/news/" allLabel="All news" />
+		<p class="coverage-note">
+			Event-driven announcements — specification releases timed to a show, capability
+			launches, agenda signals like the SPS 2026 focus on the Cyber Resilience Act —
+			run on the <a href="/news/">news line</a> with their primary sources linked.
+		</p>
+	</section>
+</PortalLayout>
+
+<style>
+	.venue {
+		display: block;
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+	}
+
+	.table-note,
+	.coverage-note {
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+		margin-top: 0.5rem;
+		max-width: 72ch;
+	}
+
+	.coverage-note {
+		font-size: var(--fs-md);
+	}
+</style>

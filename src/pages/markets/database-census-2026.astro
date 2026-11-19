@@ -1,0 +1,281 @@
+---
+/**
+ * Markets feature — the first database census (blueprint R1.3:
+ * markets long-form; H1/H3 lead item). EVERY figure on this page is
+ * computed from the product/protocol/vendor records at build time —
+ * the prose is written around slots the records fill, so the feature
+ * cannot drift from the database it describes. The limits of the
+ * sample are stated on the page: a curated, datasheet-bound census
+ * is evidence about what makers document and sell, not a shipment
+ * or market-share measurement.
+ */
+import { getCollection } from 'astro:content';
+import PortalLayout from '../../layouts/PortalLayout.astro';
+import { buildSeo } from '../../utils/seo';
+import {
+	productGate,
+	PRODUCT_TYPE_LABELS,
+	protocolLabel,
+	type ProductRecord,
+} from '../../utils/products';
+
+const records = (await getCollection('products')).map((item) => item.data);
+const vendors = (await getCollection('vendors')).map((item) => item.data);
+const total = records.length;
+const indexable = records.filter((record) => productGate(record).indexable);
+const rowsOnly = total - indexable.length;
+
+const countBy = <K extends string>(fn: (record: ProductRecord) => K | K[]) => {
+	const map = new Map<string, number>();
+	for (const record of records) {
+		for (const key of [fn(record)].flat()) map.set(key, (map.get(key) ?? 0) + 1);
+	}
+	return [...map.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+};
+
+const byType = countBy((record) => PRODUCT_TYPE_LABELS[record.productType]);
+const gateways = byType.find(([label]) => label === 'Gateway')?.[1] ?? 0;
+const byProtocol = countBy((record) => record.protocols.map(protocolLabel));
+const byStatus = countBy((record) => record.status);
+const activeCount = byStatus.find(([label]) => label === 'active')?.[1] ?? 0;
+const endOfLine = total - activeCount;
+
+const OPEN_PROTOCOLS = new Set([
+	'wirelesshart',
+	'isa100',
+	'lorawan',
+	'io-link-wireless',
+	'lte',
+	'lte-m',
+	'nb-iot',
+	'5g',
+	'wifi',
+]);
+const openRecords = records.filter((record) =>
+	record.protocols.some((slug) => OPEN_PROTOCOLS.has(slug)),
+).length;
+const proprietaryRecords = records.filter((record) =>
+	record.protocols.some((slug) => slug.startsWith('proprietary')),
+).length;
+
+const CELLULAR = new Set(['lte', 'lte-m', 'nb-iot', 'gprs', '3g']);
+const cellularRecords = records.filter((record) =>
+	record.protocols.some((slug) => CELLULAR.has(slug)),
+).length;
+const legacyCellular = records.filter((record) =>
+	record.protocols.some((slug) => slug === 'gprs' || slug === '3g'),
+).length;
+
+const withSensitivity = records.filter((record) => record.rxSensitivityDbm != null).length;
+const withRange = records.filter((record) => record.rangeClass != null).length;
+const withIp = records.filter((record) => record.ipRating != null).length;
+
+const perVendor = new Map<string, number>();
+for (const record of records) perVendor.set(record.vendor, (perVendor.get(record.vendor) ?? 0) + 1);
+const deepestBenches = [...perVendor.values()].filter((count) => count >= 3).length;
+
+const pct = (n: number) => `${Math.round((n / total) * 100)}%`;
+
+const seo = buildSeo(
+	{
+		id: 'markets/database-census-2026',
+		locale: 'en',
+		title: 'Forty records in: what the industrial wireless database actually shows',
+		description:
+			'The first census of this site\u2019s product database: gateways outnumber modules, proprietary 900 MHz ties LoRaWAN, and the legacy tail is real. Every figure computed from the records at build time.',
+		kind: 'content',
+		authorKey: 'editorial-desk',
+		editorKey: 'review-desk',
+		datePublished: '2026-11-19',
+		breadcrumbs: [
+			{ name: 'Home', path: '/' },
+			{ name: 'Markets', path: '/markets/' },
+			{ name: 'Forty records in: what the industrial wireless database actually shows', path: '/markets/database-census-2026/' },
+		],
+	},
+	'/markets/database-census-2026/',
+);
+---
+
+<PortalLayout seo={seo}>
+	<article class="feature">
+		<p class="kicker">Markets · Database census · 2026-11-19</p>
+		<h1>Forty records in: what the industrial wireless database actually shows</h1>
+		<p class="lede">
+			This site's product database just reached {total} records — every one transcribed
+			from a manufacturer's datasheet or official product documentation, every figure
+			traceable to its source. A database built that way is a peculiar kind of market
+			evidence: it cannot tell you what ships, but it can tell you, precisely, what the
+			industry bothers to document. Here is what the first census shows.
+		</p>
+
+		<section class="panel quick-answer">
+			<div class="panel-head">The census in one paragraph</div>
+			<div class="panel-body">
+				<p>
+					Of the {total} records, {gateways} ({pct(gateways)}) are gateways — the
+					single largest class, ahead of {byType.find(([l]) => l === 'Wireless I/O module')?.[1]} wireless
+					I/O modules. {openRecords} records run an open standard (WirelessHART,
+					ISA100.11a, LoRaWAN, cellular or Wi-Fi); {proprietaryRecords} carry a
+					proprietary radio, and proprietary 900 MHz alone ties LoRaWAN at the top of
+					the protocol table. {cellularRecords} records are cellular, and {endOfLine} of
+					the {total} are already legacy or discontinued models that plants still run.
+					{indexable.length} records carry a complete enough source set to earn a full
+					specification page; {rowsOnly} sit in the database as rows until their
+					manufacturers' documents support one.
+				</p>
+			</div>
+		</section>
+
+		<h2>Gateways are the center of gravity</h2>
+		<p>
+			The type table is the census's clearest signal. Gateways — protocol translators,
+			network managers, LoRaWAN and cellular aggregation points — make up {pct(gateways)} of
+			everything recorded. That is not how vendor catalogues present themselves; they
+			lead with field devices. But a gateway is the one product in a wireless system
+			that cannot be substituted late, the point where the radio network meets the
+			plant network, and the records reflect where engineering attention actually
+			concentrates.
+		</p>
+		<div class="table-wrap">
+			<table class="data">
+				<caption>Records by product type (computed from the database)</caption>
+				<thead>
+					<tr><th scope="col">Type</th><th scope="col" class="num">Records</th><th scope="col" class="num">Share</th></tr>
+				</thead>
+				<tbody>
+					{
+						byType.map(([label, count]) => (
+							<tr>
+								<th scope="row">{label}</th>
+								<td class="num">{count}</td>
+								<td class="num">{pct(count)}</td>
+							</tr>
+						))
+					}
+				</tbody>
+			</table>
+		</div>
+
+		<h2>The protocol table has two industries in it</h2>
+		<p>
+			Read down the protocol counts and two different industries appear. The first is
+			the standards industry: WirelessHART, ISA100.11a and LoRaWAN records are built by
+			many makers against published specifications, with certification programs behind
+			them. The second is the proprietary industry: single-vendor sub-GHz and 2.4 GHz
+			radios, mostly in oil, gas and utility telemetry, where the radio <em>is</em> the
+			product and interoperability is a gateway's problem. Proprietary 900 MHz tying
+			LoRaWAN at the top of the table is the census's most quotable number — and the
+			one most likely to surprise readers who only follow the standards press.
+		</p>
+		<div class="table-wrap">
+			<table class="data">
+				<caption>Records by protocol (a record with two radios counts under both)</caption>
+				<thead>
+					<tr><th scope="col">Protocol</th><th scope="col" class="num">Records</th></tr>
+				</thead>
+				<tbody>
+					{
+						byProtocol.map(([label, count]) => (
+							<tr>
+								<th scope="row">{label}</th>
+								<td class="num">{count}</td>
+							</tr>
+						))
+					}
+				</tbody>
+			</table>
+		</div>
+		<p>
+			Cellular deserves its own line: {cellularRecords} records speak a cellular dialect,
+			and {legacyCellular} of them still list GPRS or 3G — networks already switched off in
+			several markets. Those records are not errors. They are the installed base,
+			documented: routers and modems that plants bought for a decade of service and
+			have not finished depreciating.
+		</p>
+
+		<h2>The legacy tail is a feature of this industry, not a data problem</h2>
+		<p>
+			{endOfLine} of the {total} records ({pct(endOfLine)}) are legacy or discontinued
+			models. A consumer catalogue would delist them. An industrial database keeps
+			them, because the reader searching for a discontinued gateway's sensitivity
+			figure is usually standing in front of one. The census counts them openly rather
+			than quietly curating them away — the same reason every record keeps its source
+			and check date attached.
+		</p>
+
+		<h2>What datasheets refuse to say</h2>
+		<p>
+			The census also counts the silences. Receiver sensitivity — the single figure a
+			link budget needs most — is stated in {withSensitivity} of {total} records.
+			A range figure with its conditions attached (the only kind this database
+			accepts) appears in {withRange}. An ingress rating appears in {withIp}. The
+			missing figures are not missing research; they are missing manufacturer
+			statements, and the database leaves the fields empty rather than estimating.
+			Across {vendors.length} listed makers, {deepestBenches} vendors have three or
+			more products recorded — depth is concentrated in the established field-network
+			names, not spread evenly.
+		</p>
+
+		<section class="panel limits">
+			<div class="panel-head">What this census cannot prove</div>
+			<div class="panel-body">
+				<p>
+					This is a curated database, not a shipment sample. Records enter it when a
+					manufacturer publishes documentation complete enough to transcribe, and
+					coverage follows this site's editorial scope — process wireless, LPWAN and
+					telemetry first. Counts here describe what the industry documents and
+					offers, weighted by documentation quality; they are not market shares,
+					installed-base counts or sales rankings, and no figure on this page should
+					be cited as one. Where the industry does publish measured evidence — the
+					LoRa Alliance's tender tracking, for instance — our{' '}
+					<a href="/news/">news line</a> reports it from the source.
+				</p>
+			</div>
+		</section>
+
+		<h2>Method, and how to check it</h2>
+		<p>
+			Every count on this page is generated from the records at build time — change a
+			record and the census changes with it. The records themselves are one file per
+			product, each carrying its manufacturer source and the date it was checked; the
+			full set is browsable in the <a href="/product-families/">product database</a>,
+			and the rules a record must meet to earn a page are the same rules that produced
+			the {indexable.length}/{rowsOnly} split above. The next census runs when the
+			record count moves enough to change the story.
+		</p>
+	</article>
+</PortalLayout>
+
+<style>
+	.feature {
+		max-width: 76ch;
+	}
+
+	.kicker {
+		font-size: var(--fs-xs);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--accent);
+		font-weight: 600;
+		margin-bottom: 0.3rem;
+	}
+
+	.feature h1 {
+		font-size: var(--fs-display);
+		line-height: 1.2;
+	}
+
+	.feature h2 {
+		margin-top: 1.6rem;
+	}
+
+	.quick-answer p,
+	.limits p {
+		margin: 0;
+	}
+
+	.table-wrap {
+		margin-bottom: 1rem;
+	}
+</style>

@@ -1,0 +1,140 @@
+---
+/**
+ * Data Center — module hub (blueprint R1.3, second tier): the
+ * doorplate for the product database, protocol matrix, comparisons
+ * and tools, each with its live count, plus the three-axis module
+ * navigation demoted here by R1.4. This page is a signpost, not a
+ * destination: its whole job is to route a data-seeking reader into
+ * the right module in one click.
+ */
+import { getCollection } from 'astro:content';
+import PortalLayout from '../../layouts/PortalLayout.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import DataCenterNav from '../../components/DataCenterNav.astro';
+import { buildSeo } from '../../utils/seo';
+import { productGate } from '../../utils/products';
+
+const productRecords = (await getCollection('products')).map((item) => item.data);
+const vendorRecords = (await getCollection('vendors')).map((item) => item.data);
+const protocolRecords = (await getCollection('protocols')).map((item) => item.data);
+const indexableCount = productRecords.filter((record) => productGate(record).indexable).length;
+const latestCheck = productRecords.length
+	? new Date(Math.max(...productRecords.map((record) => record.dateChecked.getTime())))
+			.toISOString()
+			.slice(0, 10)
+	: null;
+
+const modules = [
+	{
+		name: 'Product database',
+		href: '/product-families/',
+		stat: `${productRecords.length} records · ${indexableCount} full spec pages`,
+		detail:
+			'Wireless I/O modules, gateways, adapters and routers as sourced spec records — filterable by protocol, band, I/O type and maker, with a Dataset description of every field.',
+	},
+	{
+		name: 'Protocol matrix',
+		href: '/protocols/',
+		stat: `${protocolRecords.length} protocol records`,
+		detail:
+			'WirelessHART, ISA100.11a, LoRaWAN and IO-Link Wireless on one axis — band, topology, latency class and best fit, generated from the same records as the protocol pages.',
+	},
+	{
+		name: 'Comparisons',
+		href: '/compare/',
+		stat: 'Conclusion-first pages',
+		detail:
+			'Head-to-head pages whose tables are aligned from the two records being compared, so a comparison can never drift from the pages it compares.',
+	},
+	{
+		name: 'Tools',
+		href: '/tools/',
+		stat: '2 calculators live',
+		detail:
+			'Link budget and Fresnel zone calculators — formulas and worked examples on the page, presets only from recorded products.',
+	},
+];
+
+const seo = buildSeo(
+	{
+		id: 'data-center',
+		locale: 'en',
+		title: 'Data Center',
+		description:
+			'The data modules of Industrial Wireless I/O: the product database, protocol matrix, comparisons and link tools — every figure sourced from manufacturer datasheets and standards publications.',
+		kind: 'section',
+	},
+	'/data-center/',
+);
+---
+
+<PortalLayout seo={seo}>
+	<SectionHead name="Data Center" asPageTitle />
+	<p class="lede">
+		The portal's instrument room: the records, matrices and calculators the editorial
+		side is built on. <span class="num">{productRecords.length}</span> product records
+		from <span class="num">{vendorRecords.length}</span> makers, latest source check{' '}
+		<span class="num">{latestCheck}</span> — every figure traceable to a manufacturer
+		datasheet or a standards-body publication.
+	</p>
+
+	<div class="module-grid">
+		{
+			modules.map((module) => (
+				<article class="panel module-card">
+					<div class="panel-body">
+						<h2>
+							<a href={module.href}>{module.name}</a>
+						</h2>
+						<p class="module-stat num">{module.stat}</p>
+						<p class="module-detail">{module.detail}</p>
+						<a class="btn" href={module.href}>
+							Open {module.name.toLowerCase()}
+						</a>
+					</div>
+				</article>
+			))
+		}
+	</div>
+
+	<section class="panel" aria-label="Browse the data center">
+		<div class="panel-head">Browse by protocol, object or task</div>
+		<div class="panel-body">
+			<DataCenterNav />
+		</div>
+	</section>
+</PortalLayout>
+
+<style>
+	.module-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+		gap: 1rem;
+		margin-bottom: 1.4rem;
+	}
+
+	.module-card h2 {
+		font-size: var(--fs-lg);
+		margin-bottom: 0.2rem;
+	}
+
+	.module-card h2 a {
+		color: var(--ink);
+		text-decoration: none;
+	}
+
+	.module-card h2 a:hover {
+		color: var(--accent-hover);
+		text-decoration: underline;
+	}
+
+	.module-stat {
+		color: var(--accent);
+		font-weight: 600;
+		margin-bottom: 0.4rem;
+	}
+
+	.module-detail {
+		color: var(--ink-2);
+	}
+</style>

@@ -1,213 +1,733 @@
 ---
 /**
- * Homepage (hub) — blueprint §2.3 anatomy:
- *   page head (name + positioning + ONE primary action, R4)
- *   → spectrum rail (signature component, fed by protocol records)
- *   → protocol matrix teaser (same records, compact columns)
- *   → link-budget tool embed block (engine lands in Phase 3)
- *   → object entries (protocols / product database / tools)
- *   → three application scenarios
- *   → most recently reviewed pages (route manifest, real data)
- * No hero image, no marketing copy sections.
+ * Homepage — the industry front page (blueprint R1.2, slots H0–H9;
+ * this file renders H0–H8, the Footer renders H9):
+ *   H0 utility strip (date + slogan | Subscribe / Data Center / Search)
+ *   H1 headlines (1 lead + 3 secondary, editorially pinned — never
+ *      date-sorted) + sponsor slot (structural, renders nothing)
+ *   H2 industry news line (fixed 5 items, each with source + date,
+ *      linking out to the primary source)
+ *   H3 markets & trends (feature + data strip computed from the
+ *      records — no hand-written figures)
+ *   H4 ecosystem picks (latest verified records + directory entry)
+ *      + featured-vendor slot (structural)
+ *   H5 tech depth picks (editorial weight order)
+ *   H6 events & resources band
+ *   H7 data center band (doorplate only)
+ *   H8 partner & subscribe band (structural entries)
+ * Acceptance: the 5-second test (R1.2) — portal identity, news entry,
+ * ecosystem entry and data-center entry must each be findable at a
+ * glance; the anti-pattern gate (R1.4) — no search-box hero, no
+ * latest-articles stream, no card wall as the page's body.
  */
 import { getCollection } from 'astro:content';
-import BaseLayout from '../layouts/BaseLayout.astro';
+import PortalLayout from '../layouts/PortalLayout.astro';
+import SectionHead from '../components/SectionHead.astro';
+import Slot from '../components/Slot.astro';
 import SpectrumRail from '../components/SpectrumRail.astro';
-import ProtocolMatrix from '../components/ProtocolMatrix.astro';
 import { brand } from '../data/brand';
 import { buildSeo } from '../utils/seo';
-import { buildRouteManifest, hreflangLinksFor, parseEntryId } from '../utils/routes';
+import { productGate, productPath, protocolLabel } from '../utils/products';
 
-const entries = await getCollection('pages');
-const manifest = buildRouteManifest(entries);
-const hreflang = hreflangLinksFor(manifest, '');
+const today = new Date().toLocaleDateString('en-US', {
+	weekday: 'long',
+	year: 'numeric',
+	month: 'long',
+	day: 'numeric',
+});
+
+/* H2 — news line: the desk's current items, newest first, capped at
+   the R1.2 fixed band (4–6). */
+const newsItems = (await getCollection('news'))
+	.map((item) => item.data)
+	.sort((a, b) => b.date.getTime() - a.date.getTime())
+	.slice(0, 6);
+
+/* H3/H4/H7 — every figure below is computed from the records at
+   build time; the front page holds no hand-typed counts. */
+const productRecords = (await getCollection('products')).map((item) => item.data);
+const vendorRecords = (await getCollection('vendors')).map((item) => item.data);
 const protocolRecords = (await getCollection('protocols')).map((item) => item.data);
+const indexableCount = productRecords.filter((record) => productGate(record).indexable).length;
+const latestCheck = productRecords.length
+	? new Date(Math.max(...productRecords.map((record) => record.dateChecked.getTime())))
+			.toISOString()
+			.slice(0, 10)
+	: null;
 
-const recent = entries
-	.map((entry) => ({ entry, parsed: parseEntryId(entry.id) }))
-	.filter((item) => item.parsed && item.parsed.locale === 'en' && item.parsed.slug !== '')
+const recentRecords = [...productRecords]
 	.sort(
 		(a, b) =>
-			(b.entry.data.lastReviewed?.getTime() ?? 0) - (a.entry.data.lastReviewed?.getTime() ?? 0),
+			b.dateChecked.getTime() - a.dateChecked.getTime() ||
+			`${a.vendor} ${a.model}`.localeCompare(`${b.vendor} ${b.model}`),
 	)
-	.slice(0, 5);
+	.slice(0, 4);
 
-const objects = [
+/* H6 — next events, organizer-sourced. */
+const events = (await getCollection('events'))
+	.map((item) => item.data)
+	.sort((a, b) => a.startDate.getTime() - b.startDate.getTime())
+	.slice(0, 3);
+const eventResources = (await getCollection('resources'))
+	.map((item) => item.data)
+	.slice(0, 3);
+
+const fmtDay = (date: Date) => date.toISOString().slice(0, 10);
+const fmtRange = (start: Date, end: Date) =>
+	start.getUTCFullYear() === end.getUTCFullYear() && start.getUTCMonth() === end.getUTCMonth()
+		? `${start.getUTCDate()}–${end.getUTCDate()} ${start.toLocaleDateString('en-US', { month: 'short', timeZone: 'UTC' })} ${start.getUTCFullYear()}`
+		: `${fmtDay(start)} → ${fmtDay(end)}`;
+
+/* H1 — editorial pins. Order and wording are the desk's choice; the
+   zone is assembled by hand here precisely so it can never degrade
+   into a newest-first stream. */
+const lead = {
+	kicker: 'Markets · Database census',
+	title: 'Forty records in: what the industrial wireless database actually shows',
+	dek: 'Gateways outnumber modules, proprietary 900 MHz ties LoRaWAN, and every second protocol in the field is still a single-vendor radio. Our first census of the product database — every figure computed from the records themselves.',
+	href: '/markets/database-census-2026/',
+};
+const secondaries = [
 	{
-		name: 'Protocol graph',
-		href: '/protocols/',
-		detail: `${protocolRecords.length} protocol records with reference pages and the protocol matrix, organized by band and topology.`,
+		kicker: 'Tech Depth · Head-to-head',
+		title: 'WirelessHART vs ISA100.11a: the two process-wireless standards, compared on the record',
+		dek: 'Same band, same mesh idea, different answers on gateways, security and device power — the comparison page aligns both protocol records line by line.',
+		href: '/protocols/wirelesshart-vs-isa100/',
 	},
 	{
-		name: 'Product database',
-		href: '/product-families/',
-		detail: 'Wireless I/O modules, gateways and routers as sourced spec records — not prose.',
+		kicker: 'Products · LoRaWAN',
+		title: 'Kerlink turns on LR-FHSS reception across its installed iBTS gateway fleet',
+		dek: 'A software upgrade, no hardware change: the frequency-hopping uplink that denser metering rollouts need, activated on gateways already in the field.',
+		href: '/news/',
 	},
 	{
-		name: 'Toolbox',
-		href: '/tools/',
-		detail: 'Link engineering calculators that live inside the reading flow.',
+		kicker: 'Tech Depth · Protocol',
+		title: 'LoRaWAN, specified from the source documents',
+		dek: 'Regional parameters, payload ceilings and duty-cycle limits taken from the Alliance documents themselves — not from gateway marketing.',
+		href: '/protocols/lorawan/',
 	},
 ];
 
-const scenarios = [
-	{ name: 'Factory automation', href: '/applications/' },
-	{ name: 'Process industry', href: '/applications/' },
-	{ name: 'Utility telemetry', href: '/applications/' },
+/* H5 — tech depth picks, editorial weight order. */
+const depthPicks = [
+	{
+		title: 'WirelessHART (IEC 62591), the process-industry mesh',
+		dek: 'Definition, sourced parameters and per-model gateway capacity — the reference page behind the protocol matrix row.',
+		href: '/protocols/wirelesshart/',
+		tag: 'Protocol deep dive',
+	},
+	{
+		title: 'IO-Link Wireless (IEC 61139-3): 5 ms cycles without the cable',
+		dek: 'How the factory-floor profile fits 40 devices per master into the 2.4 GHz band, from the System Extensions text.',
+		href: '/protocols/io-link-wireless/',
+		tag: 'Protocol deep dive',
+	},
+	{
+		title: 'Link budget calculator: will this link close?',
+		dek: 'Transmit power and gains against path, cable and fade losses, checked against receiver sensitivity — formula and worked example on the page.',
+		href: '/tools/link-budget-calculator/',
+		tag: 'Engineering tool',
+	},
 ];
 
-const seo = buildSeo(
-	{ id: 'index', locale: 'en', title: brand.name, kind: 'home' },
-	'/',
-);
+const seo = buildSeo({ id: 'index', locale: 'en', title: brand.name, kind: 'home' }, '/');
 ---
 
-<BaseLayout seo={seo} hreflang={hreflang}>
-	<section class="page-head">
-		<h1>{brand.name}</h1>
-		<p class="positioning">{brand.positioning}</p>
-		<p>
-			<a class="btn primary" href="/tools/link-budget-calculator/">Open the link budget calculator</a>
-		</p>
-	</section>
+<PortalLayout seo={seo}>
+	{/* H0 — utility strip */}
+	<div class="h0">
+		<span class="h0-date num">{today}</span>
+		<span class="h0-slogan">{brand.slogan}</span>
+		<span class="h0-links">
+			<a href="/subscribe/">Subscribe</a> · <a href="/data-center/">Data Center</a> · <a
+				href="/search/">Search</a
+			>
+		</span>
+	</div>
 
-	<section class="panel spectrum" aria-label="Protocol spectrum">
-		<div class="panel-head">Spectrum rail — protocols by band</div>
-		<div class="panel-body">
-			<SpectrumRail protocols={protocolRecords} />
-			<p class="rail-note">
-				Every marker is a protocol record; NB-IoT/LTE-M and private 5G join the rail
-				when their records are verified. The full band axis, including proprietary
-				sub-GHz links in the 900 MHz ISM range, is walked through on the
-				<a href="/protocols/">protocol hub</a>.
-			</p>
-		</div>
-	</section>
-
-	<section class="panel" aria-label="Protocol matrix preview">
-		<div class="panel-head">Protocol matrix</div>
-		<div class="panel-body">
-			<ProtocolMatrix protocols={protocolRecords} compact />
-			<p class="rail-note">
-				<a href="/protocols/">Open the full protocol matrix</a> — every row is
-				generated from the same record that drives the protocol's own page.
-			</p>
-		</div>
-	</section>
-
-	<section class="panel" aria-label="Link budget tool">
-		<div class="panel-head">Link budget — will this link close?</div>
-		<div class="panel-body">
-			<p>
-				Transmit power and antenna gains against free-space path loss, cable loss and
-				fade margin, checked against receiver sensitivity. The calculator engine lands
-				in Phase 3; the same engine will serve the embedded mini version on protocol
-				and guide pages.
-			</p>
-			<a class="btn" href="/tools/link-budget-calculator/">Go to the tool page</a>
-		</div>
-	</section>
-
-	<section aria-label="Reference objects">
-		<h2>Reference objects</h2>
-		<div class="object-grid">
+	{/* H1 — headlines */}
+	<section class="headlines" aria-label="Headlines">
+		<article class="lead">
+			<p class="kicker">{lead.kicker}</p>
+			<h1><a href={lead.href}>{lead.title}</a></h1>
+			<p class="dek">{lead.dek}</p>
+		</article>
+		<div class="secondary-col">
 			{
-				objects.map((object) => (
-					<article class="panel object-card">
-						<div class="panel-body">
-							<h3>
-								<a href={object.href}>{object.name}</a>
-							</h3>
-							<p>{object.detail}</p>
+				secondaries.map((item) => (
+					<article class="secondary">
+						<p class="kicker">{item.kicker}</p>
+						<h2>
+							<a href={item.href}>{item.title}</a>
+						</h2>
+						<p>{item.dek}</p>
+					</article>
+				))
+			}
+			<Slot name="sponsor-headline" />
+		</div>
+	</section>
+
+	{/* H2 — industry news line */}
+	<section aria-label="Industry news">
+		<SectionHead name="Industry News" allHref="/news/" allLabel="All news" />
+		<ul class="news-line">
+			{
+				newsItems.map((item) => (
+					<li>
+						<span class="news-date num">{fmtDay(item.date)}</span>
+						<span class="news-main">
+							<a href={item.sourceUrl} rel="noopener">
+								{item.headline}
+							</a>
+							<span class="news-source">{item.sourceName}</span>
+						</span>
+						<span class="news-tag">{item.tag}</span>
+					</li>
+				))
+			}
+		</ul>
+	</section>
+
+	{/* H3 — markets & trends */}
+	<section aria-label="Markets and trends">
+		<SectionHead name="Markets & Trends" allHref="/markets/" allLabel="All markets coverage" />
+		<div class="markets-grid">
+			<article class="feature-card">
+				<p class="kicker">The census</p>
+				<h2><a href={lead.href}>{lead.title}</a></h2>
+				<p>{lead.dek}</p>
+			</article>
+			<div class="data-strip panel">
+				<div class="panel-head">The database, counted — spectrum of coverage</div>
+				<div class="panel-body">
+					<dl class="strip-nums">
+						<div>
+							<dt>Product records</dt>
+							<dd class="num">{productRecords.length}</dd>
 						</div>
+						<div>
+							<dt>Full spec pages</dt>
+							<dd class="num">{indexableCount}</dd>
+						</div>
+						<div>
+							<dt>Makers listed</dt>
+							<dd class="num">{vendorRecords.length}</dd>
+						</div>
+						<div>
+							<dt>Protocol references</dt>
+							<dd class="num">{protocolRecords.length}</dd>
+						</div>
+						<div>
+							<dt>Latest source check</dt>
+							<dd class="num">{latestCheck}</dd>
+						</div>
+					</dl>
+					<SpectrumRail protocols={protocolRecords} />
+					<p class="strip-note">
+						Counts are generated from the records at build time — the same records
+						that drive the <a href="/product-families/">product database</a> and the{' '}
+						<a href="/protocols/">protocol matrix</a>.
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	{/* H4 — ecosystem picks */}
+	<section aria-label="Vendors and ecosystem">
+		<SectionHead name="Vendors & Ecosystem" allHref="/ecosystem/" allLabel="Ecosystem hub" />
+		<div class="ecosystem-grid">
+			<div>
+				<h3 class="sub-head">Latest verified records</h3>
+				<ul class="record-list">
+					{
+						recentRecords.map((record) => (
+							<li>
+								<span class="record-main">
+									{productGate(record).indexable ? (
+										<a href={productPath(record)}>
+											{record.vendor} {record.model}
+										</a>
+									) : (
+										<a href={record.sourceUrl} rel="noopener">
+											{record.vendor} {record.model}
+										</a>
+									)}
+									<span class="record-meta">
+										{record.protocols.map(protocolLabel).join(' / ')} ·{' '}
+										{record.frequencyBands.join(', ')}
+									</span>
+								</span>
+								<span class="record-date num">{fmtDay(record.dateChecked)}</span>
+							</li>
+						))
+					}
+				</ul>
+				<Slot name="featured-vendor" />
+			</div>
+			<div class="panel directory-entry">
+				<div class="panel-head">Vendor directory</div>
+				<div class="panel-body">
+					<p>
+						<span class="num">{vendorRecords.length}</span> makers listed with their
+						wireless lines, the protocols they build for, and every recorded product
+						— each listing traceable to the maker's own documentation.
+					</p>
+					<p>
+						<a class="btn" href="/vendors/">Browse the directory</a>{' '}
+						<a class="btn" href="/product-families/">Open the product database</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	{/* H5 — tech depth picks */}
+	<section aria-label="Tech depth">
+		<SectionHead name="Tech Depth" allHref="/tech-depth/" allLabel="All tech depth" />
+		<div class="depth-grid">
+			{
+				depthPicks.map((pick) => (
+					<article class="depth-card">
+						<p class="kicker">{pick.tag}</p>
+						<h3>
+							<a href={pick.href}>{pick.title}</a>
+						</h3>
+						<p>{pick.dek}</p>
 					</article>
 				))
 			}
 		</div>
 	</section>
 
-	<section aria-label="Application scenarios">
-		<h2>Application scenarios</h2>
-		<ul class="scenario-list">
-			{
-				scenarios.map((scenario) => (
-					<li>
-						<a href={scenario.href}>{scenario.name}</a>
-					</li>
-				))
-			}
-		</ul>
+	{/* H6 — events & resources band */}
+	<section aria-label="Events and resources">
+		<SectionHead name="Events & Resources" allHref="/events/" allLabel="All events" />
+		<div class="band-grid">
+			<ul class="band-list">
+				{
+					events.map((event) => (
+						<li>
+							<span class="band-main">
+								<a href={event.url} rel="noopener">
+									{event.name}
+								</a>
+								<span class="band-meta">{event.city}</span>
+							</span>
+							<span class="num">{fmtRange(event.startDate, event.endDate)}</span>
+						</li>
+					))
+				}
+			</ul>
+			<ul class="band-list">
+				{
+					eventResources.map((resource) => (
+						<li>
+							<span class="band-main">
+								<a href={resource.url} rel="noopener">
+									{resource.name}
+								</a>
+								<span class="band-meta">{resource.kind}</span>
+							</span>
+							<a href="/resources/">Resources →</a>
+						</li>
+					))
+				}
+			</ul>
+		</div>
 	</section>
 
-	<section aria-label="Recently reviewed">
-		<h2>Recently reviewed</h2>
-		<ul class="recent-list">
-			{
-				recent.map(({ entry, parsed }) => (
-					<li>
-						<a href={`/${parsed!.slug}/`}>{entry.data.title}</a>
-						{entry.data.lastReviewed && (
-							<span class="recent-date num">
-								{entry.data.lastReviewed.toISOString().slice(0, 10)}
-							</span>
-						)}
-					</li>
-				))
-			}
-		</ul>
+	{/* H7 — data center band (doorplate only) */}
+	<section class="dc-band" aria-label="Data center">
+		<span class="dc-label">Data Center</span>
+		<a href="/product-families/"
+			>Product database · <span class="num">{productRecords.length}</span> records</a
+		>
+		<a href="/protocols/">Protocol matrix</a>
+		<a href="/tools/">Link tools · <span class="num">2</span> live</a>
+		<a href="/compare/">Comparisons</a>
+		<a class="dc-enter" href="/data-center/">Enter the Data Center →</a>
 	</section>
-</BaseLayout>
+
+	{/* H8 — partner & subscribe band (structure only, R1.6) */}
+	<section aria-label="Partner and subscribe">
+		<SectionHead name="Work With the Portal" />
+		<div class="partner-grid">
+			<div class="panel">
+				<div class="panel-body">
+					<h3>List or claim your company</h3>
+					<p>
+						Makers in the directory can claim their listing to correct product
+						lines and point us at current datasheets.
+					</p>
+					<a class="btn" href={`mailto:${brand.email}?subject=Directory%20listing`}>
+						Contact the desk
+					</a>
+				</div>
+			</div>
+			<div class="panel">
+				<div class="panel-body">
+					<h3>Advertising & sponsorship</h3>
+					<p>
+						Sponsorship positions exist in this layout and open by decision, not by
+						default — the policy page states the terms.
+					</p>
+					<a class="btn" href="/advertising/">Advertising policy</a>
+				</div>
+			</div>
+			<div class="panel">
+				<div class="panel-body">
+					<h3>Subscribe</h3>
+					<p>
+						The industry briefing is in preparation: the week's wireless moves,
+						sourced and dated, with the database changes that came with them.
+					</p>
+					<a class="btn" href="/subscribe/">About the briefing</a>
+					<Slot name="subscribe-slot" />
+				</div>
+			</div>
+		</div>
+	</section>
+</PortalLayout>
 
 <style>
-	.page-head {
+	.h0 {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.3rem 1.2rem;
+		align-items: baseline;
+		border-bottom: 1px solid var(--line);
+		padding-bottom: 0.5rem;
 		margin-bottom: 1.2rem;
-	}
-
-	.positioning {
-		max-width: 62ch;
-		color: var(--ink-2);
-		font-size: var(--fs-lg);
-	}
-
-	.panel {
-		margin-bottom: 1.2rem;
-	}
-
-	.rail-note {
-		color: var(--ink-2);
 		font-size: var(--fs-sm);
-		margin: 0.4rem 0 0;
+		color: var(--ink-2);
 	}
 
-	.object-grid {
+	.h0-slogan {
+		flex: 1;
+	}
+
+	.kicker {
+		font-size: var(--fs-xs);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--accent);
+		font-weight: 600;
+		margin-bottom: 0.3rem;
+	}
+
+	/* H1 */
+	.headlines {
 		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
-		gap: 1rem;
-		margin-bottom: 1.2rem;
+		grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+		gap: 1.5rem;
 	}
 
-	.object-card .panel-body {
-		padding-bottom: 0.4rem;
+	.lead h1 {
+		font-size: var(--fs-display);
+		line-height: 1.2;
 	}
 
-	.scenario-list,
-	.recent-list {
+	.lead h1 a {
+		color: var(--ink);
+		text-decoration: none;
+	}
+
+	.lead h1 a:hover {
+		color: var(--accent-hover);
+		text-decoration: underline;
+	}
+
+	.lead .dek {
+		font-size: var(--fs-lg);
+		line-height: var(--lede-lh);
+		color: var(--ink-2);
+		max-width: 60ch;
+	}
+
+	.secondary-col {
+		border-left: 1px solid var(--line);
+		padding-left: 1.5rem;
+	}
+
+	.secondary {
+		padding: 0.7rem 0;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.secondary:first-child {
+		padding-top: 0;
+	}
+
+	.secondary h2 {
+		font-size: var(--fs-headline);
+		margin-bottom: 0.3rem;
+	}
+
+	.secondary h2 a {
+		color: var(--ink);
+		text-decoration: none;
+	}
+
+	.secondary h2 a:hover {
+		color: var(--accent-hover);
+		text-decoration: underline;
+	}
+
+	.secondary p {
+		color: var(--ink-2);
+		margin: 0;
+	}
+
+	/* H2 */
+	.news-line {
 		list-style: none;
-		margin: 0 0 1.2rem;
+		margin: 0;
 		padding: 0;
 	}
 
-	.scenario-list li,
-	.recent-list li {
-		padding: 0.35rem 0;
+	.news-line li {
+		display: flex;
+		gap: 1rem;
+		align-items: baseline;
+		padding: 0.5rem 0;
 		border-bottom: 1px solid var(--line);
+	}
+
+	.news-date {
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+		white-space: nowrap;
+	}
+
+	.news-main {
+		flex: 1;
+	}
+
+	.news-source {
+		display: block;
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+	}
+
+	.news-tag {
+		font-size: var(--fs-xs);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		white-space: nowrap;
+	}
+
+	/* H3 */
+	.markets-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+		gap: 1.5rem;
+		align-items: start;
+	}
+
+	.feature-card h2 {
+		font-size: var(--fs-headline);
+	}
+
+	.feature-card h2 a {
+		color: var(--ink);
+		text-decoration: none;
+	}
+
+	.feature-card h2 a:hover {
+		color: var(--accent-hover);
+		text-decoration: underline;
+	}
+
+	.feature-card p {
+		color: var(--ink-2);
+	}
+
+	.strip-nums {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.8rem 2rem;
+		margin: 0 0 0.8rem;
+	}
+
+	.strip-nums dt {
+		font-size: var(--fs-xs);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+	}
+
+	.strip-nums dd {
+		margin: 0;
+		font-size: var(--fs-2xl);
+	}
+
+	.strip-note {
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+		margin: 0.6rem 0 0;
+	}
+
+	/* H4 */
+	.ecosystem-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+		gap: 1.5rem;
+		align-items: start;
+	}
+
+	.sub-head {
+		font-size: var(--fs-md);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--ink-2);
+		margin-bottom: 0.4rem;
+	}
+
+	.record-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.record-list li {
 		display: flex;
 		justify-content: space-between;
 		gap: 1rem;
+		padding: 0.5rem 0;
+		border-bottom: 1px solid var(--line);
 	}
 
-	.recent-date {
+	.record-meta {
+		display: block;
 		color: var(--ink-2);
 		font-size: var(--fs-sm);
+	}
+
+	.record-date {
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+		white-space: nowrap;
+	}
+
+	.directory-entry .num {
+		font-size: var(--fs-lg);
+	}
+
+	/* H5 */
+	.depth-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+		gap: 1.5rem;
+	}
+
+	.depth-card {
+		border-top: 3px solid var(--accent);
+		padding-top: 0.6rem;
+	}
+
+	.depth-card h3 a {
+		color: var(--ink);
+		text-decoration: none;
+	}
+
+	.depth-card h3 a:hover {
+		color: var(--accent-hover);
+		text-decoration: underline;
+	}
+
+	.depth-card p {
+		color: var(--ink-2);
+		margin: 0;
+	}
+
+	/* H6 */
+	.band-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+		gap: 1.5rem;
+	}
+
+	.band-list {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.band-list li {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.45rem 0;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.band-meta {
+		display: block;
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+	}
+
+	/* H7 */
+	.dc-band {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.6rem;
+		align-items: baseline;
+		background: var(--sidebar);
+		color: var(--rail-ink);
+		padding: 0.8rem 1rem;
+		border-radius: var(--r-md);
+	}
+
+	.dc-band a {
+		color: var(--rail-ink);
+		text-decoration: none;
+	}
+
+	.dc-band a:hover {
+		text-decoration: underline;
+	}
+
+	.dc-label {
+		font-size: var(--fs-xs);
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--rail-mute);
+	}
+
+	.dc-enter {
+		margin-left: auto;
+		font-weight: 600;
+	}
+
+	/* H8 */
+	.partner-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+		gap: 1rem;
+	}
+
+	.partner-grid h3 {
+		margin-bottom: 0.3rem;
+	}
+
+	.partner-grid p {
+		color: var(--ink-2);
+	}
+
+	@media (max-width: 60rem) {
+		.headlines,
+		.markets-grid,
+		.ecosystem-grid {
+			grid-template-columns: minmax(0, 1fr);
+		}
+
+		.secondary-col {
+			border-left: none;
+			padding-left: 0;
+		}
 	}
 </style>

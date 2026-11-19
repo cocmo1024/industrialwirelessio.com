@@ -1,0 +1,184 @@
+---
+/**
+ * Ecosystem — section hub (blueprint R1.3): ecosystem overview,
+ * product/release movement drawn from the records and the news line,
+ * the directory entry, and the featured-vendor slot (structural,
+ * R1.6). This is the portal face of the vendor/product data layer;
+ * the directory itself lives at /vendors/.
+ */
+import { getCollection } from 'astro:content';
+import PortalLayout from '../../layouts/PortalLayout.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import Slot from '../../components/Slot.astro';
+import { buildSeo } from '../../utils/seo';
+import {
+	productGate,
+	productPath,
+	PRODUCT_TYPE_LABELS,
+	protocolLabel,
+} from '../../utils/products';
+
+const productRecords = (await getCollection('products')).map((item) => item.data);
+const vendorRecords = (await getCollection('vendors')).map((item) => item.data);
+const recentRecords = [...productRecords]
+	.sort(
+		(a, b) =>
+			b.dateChecked.getTime() - a.dateChecked.getTime() ||
+			`${a.vendor} ${a.model}`.localeCompare(`${b.vendor} ${b.model}`),
+	)
+	.slice(0, 4);
+const ecosystemNews = (await getCollection('news'))
+	.map((item) => item.data)
+	.filter((item) => item.relatedVendors?.length || item.tag === 'Ecosystem')
+	.sort((a, b) => b.date.getTime() - a.date.getTime())
+	.slice(0, 3);
+
+const fmtDay = (date: Date) => date.toISOString().slice(0, 10);
+
+const seo = buildSeo(
+	{
+		id: 'ecosystem',
+		locale: 'en',
+		title: 'Vendors & Ecosystem',
+		description:
+			'The industrial wireless ecosystem as this site tracks it: makers and their product lines, newly verified records, release movement — and the directory that ties them together.',
+		kind: 'section',
+	},
+	'/ecosystem/',
+);
+---
+
+<PortalLayout seo={seo}>
+	<SectionHead name="Vendors & Ecosystem" asPageTitle />
+	<p class="lede">
+		<span class="num">{vendorRecords.length}</span> makers build the radios this site
+		tracks. This hub is where their movement shows up: products newly recorded from
+		manufacturer documentation, capability releases, and the directory that keeps every
+		listing traceable to its source.
+	</p>
+
+	<section aria-label="Latest verified records">
+		<SectionHead name="Latest Verified Records" allHref="/product-families/" allLabel="Product database" />
+		<div class="table-wrap">
+			<table class="data">
+				<thead>
+					<tr>
+						<th scope="col">Product</th>
+						<th scope="col">Maker</th>
+						<th scope="col">Type</th>
+						<th scope="col">Radio</th>
+						<th scope="col">Source checked</th>
+					</tr>
+				</thead>
+				<tbody>
+					{
+						recentRecords.map((record) => (
+							<tr>
+								<th scope="row">
+									{productGate(record).indexable ? (
+										<a href={productPath(record)}>{record.model}</a>
+									) : (
+										<a href={record.sourceUrl} rel="noopener">
+											{record.model}
+										</a>
+									)}
+								</th>
+								<td>
+									<a href={`/vendors/${record.vendorSlug}/`}>{record.vendor}</a>
+								</td>
+								<td>{PRODUCT_TYPE_LABELS[record.productType]}</td>
+								<td>
+									{record.protocols.map(protocolLabel).join(' / ')} ·{' '}
+									{record.frequencyBands.join(', ')}
+								</td>
+								<td class="num">{fmtDay(record.dateChecked)}</td>
+							</tr>
+						))
+					}
+				</tbody>
+			</table>
+		</div>
+		<p class="table-note">
+			Records enter the database only with a manufacturer datasheet or official product
+			documentation attached — see <a href="/product-families/">how the database works</a>.
+		</p>
+	</section>
+
+	<section aria-label="Ecosystem movement">
+		<SectionHead name="Ecosystem Movement" allHref="/news/" allLabel="All news" />
+		<div class="movement">
+			{
+				ecosystemNews.map((item) => (
+					<article class="movement-item">
+						<p class="item-meta">
+							<span class="num">{fmtDay(item.date)}</span> · {item.sourceName}
+						</p>
+						<h3>
+							<a href={item.sourceUrl} rel="noopener">
+								{item.headline}
+							</a>
+						</h3>
+						<p>{item.summary}</p>
+					</article>
+				))
+			}
+		</div>
+	</section>
+
+	<section class="panel" aria-label="Vendor directory entry">
+		<div class="panel-head">The directory</div>
+		<div class="panel-body directory-body">
+			<p>
+				Every listed maker, its wireless product lines, the protocols it builds for
+				and its recorded products — with listing status shown, and a claim path for
+				makers who want their entry corrected at the source.
+			</p>
+			<p>
+				<a class="btn primary" href="/vendors/">Browse the vendor directory</a>
+			</p>
+			<Slot name="featured-vendor" />
+		</div>
+	</section>
+</PortalLayout>
+
+<style>
+	.table-note {
+		color: var(--ink-2);
+		font-size: var(--fs-sm);
+		margin-top: 0.5rem;
+	}
+
+	.movement-item {
+		padding: 0.9rem 0;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.movement-item:first-child {
+		padding-top: 0;
+	}
+
+	.item-meta {
+		font-size: var(--fs-sm);
+		color: var(--ink-2);
+		margin-bottom: 0.3rem;
+	}
+
+	.movement-item h3 a {
+		color: var(--ink);
+		text-decoration: none;
+	}
+
+	.movement-item h3 a:hover {
+		color: var(--accent-hover);
+		text-decoration: underline;
+	}
+
+	.movement-item p {
+		max-width: 72ch;
+		margin-bottom: 0;
+	}
+
+	.directory-body p {
+		max-width: 68ch;
+	}
+</style>

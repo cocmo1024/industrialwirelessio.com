@@ -1,0 +1,187 @@
+---
+/**
+ * News — section index (blueprint R1.3): section head, one editorial
+ * lead item, then the dated line. Every item is an editorially
+ * written summary of a primary-source announcement and links OUT to
+ * that source; the sourcing rule is stated on the page. Items live
+ * in src/data/news/ — an item without a primary source does not
+ * exist here (R1.2 H2 discipline, applied to the whole section).
+ */
+import { getCollection } from 'astro:content';
+import PortalLayout from '../../layouts/PortalLayout.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import Slot from '../../components/Slot.astro';
+import { buildSeo } from '../../utils/seo';
+import { protocolLabel } from '../../utils/products';
+
+const items = (await getCollection('news'))
+	.map((item) => item.data)
+	.sort((a, b) => b.date.getTime() - a.date.getTime());
+const [lead, ...rest] = items;
+
+const fmtDay = (date: Date) => date.toISOString().slice(0, 10);
+
+const seo = buildSeo(
+	{
+		id: 'news',
+		locale: 'en',
+		title: 'Industry News',
+		description:
+			'Industrial wireless news, written from the primary source: standards-body releases, manufacturer announcements and organizer publications — each item dated, sourced and linked to the original.',
+		kind: 'section',
+	},
+	'/news/',
+);
+---
+
+<PortalLayout seo={seo}>
+	<SectionHead name="Industry News" asPageTitle />
+	<p class="lede">
+		What moved in industrial wireless — standards, products, markets and the events that
+		gather them. Every item below is the desk's own write-up of a primary-source
+		announcement and links to that source; nothing is aggregated sight-unseen.
+	</p>
+
+	{
+		lead && (
+			<article class="lead-item">
+				<p class="item-meta">
+					<span class="num">{fmtDay(lead.date)}</span> · {lead.tag} · {lead.sourceName}
+				</p>
+				<h2>
+					<a href={lead.sourceUrl} rel="noopener">
+						{lead.headline}
+					</a>
+				</h2>
+				<p class="summary">{lead.summary}</p>
+				{lead.editorsNote && (
+					<p class="editors-note">
+						<strong>Desk note.</strong> {lead.editorsNote}
+					</p>
+				)}
+				<p class="item-links">
+					<a href={lead.sourceUrl} rel="noopener">
+						Read the source →
+					</a>
+					{lead.internalLink && <a href={lead.internalLink}>On this site →</a>}
+					{lead.relatedProtocols?.map((slug) => (
+						<a href={`/protocols/${slug}/`}>{protocolLabel(slug)} reference →</a>
+					))}
+				</p>
+			</article>
+		)
+	}
+
+	<Slot name="sponsor-section-news" />
+
+	<div class="item-list">
+		{
+			rest.map((item) => (
+				<article class="item">
+					<p class="item-meta">
+						<span class="num">{fmtDay(item.date)}</span> · {item.tag} ·{' '}
+						{item.sourceName}
+					</p>
+					<h3>
+						<a href={item.sourceUrl} rel="noopener">
+							{item.headline}
+						</a>
+					</h3>
+					<p class="summary">{item.summary}</p>
+					{item.editorsNote && (
+						<p class="editors-note">
+							<strong>Desk note.</strong> {item.editorsNote}
+						</p>
+					)}
+					<p class="item-links">
+						<a href={item.sourceUrl} rel="noopener">
+							Read the source →
+						</a>
+						{item.internalLink && <a href={item.internalLink}>On this site →</a>}
+						{item.relatedProtocols?.map((slug) => (
+							<a href={`/protocols/${slug}/`}>{protocolLabel(slug)} reference →</a>
+						))}
+					</p>
+				</article>
+			))
+		}
+	</div>
+
+	<section class="panel sourcing" aria-label="How items are chosen">
+		<div class="panel-head">How an item gets here</div>
+		<div class="panel-body">
+			<p>
+				An item runs when a manufacturer, a standards body or an event organizer
+				publishes something a wireless practitioner would act on — a specification
+				release, a product or capability launch, market evidence with a named
+				methodology, a dated event. The desk reads the original, writes the summary,
+				and adds a note on why it matters. Trade-press rewrites of a release are
+				never the source of an item; the release is.
+			</p>
+		</div>
+	</section>
+</PortalLayout>
+
+<style>
+	.lead-item {
+		border-bottom: 2px solid var(--ink);
+		padding-bottom: 1.2rem;
+		margin-bottom: 0.5rem;
+	}
+
+	.lead-item h2 {
+		font-size: var(--fs-headline);
+		max-width: 46ch;
+	}
+
+	.lead-item h2 a,
+	.item h3 a {
+		color: var(--ink);
+		text-decoration: none;
+	}
+
+	.lead-item h2 a:hover,
+	.item h3 a:hover {
+		color: var(--accent-hover);
+		text-decoration: underline;
+	}
+
+	.item {
+		padding: 1.1rem 0;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.item-meta {
+		font-size: var(--fs-sm);
+		color: var(--ink-2);
+		margin-bottom: 0.3rem;
+	}
+
+	.summary {
+		max-width: 72ch;
+	}
+
+	.editors-note {
+		max-width: 72ch;
+		color: var(--ink-2);
+		border-left: 3px solid var(--accent);
+		padding-left: 0.8rem;
+	}
+
+	.item-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem 1.4rem;
+		font-size: var(--fs-sm);
+		margin: 0;
+	}
+
+	.sourcing {
+		margin-top: 1.6rem;
+	}
+
+	.sourcing p {
+		margin: 0;
+		max-width: 72ch;
+	}
+</style>
